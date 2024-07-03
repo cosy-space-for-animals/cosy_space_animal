@@ -176,7 +176,15 @@ const baseStyle = css`
   }
 
   :root {
-    font-family: 'Pretendard GOV Variable';
+    font-family: 'Pretendard GOV Variable',sans-serif;
+  }
+
+  input[type="date"] {
+    font-family: 'Pretendard GOV Variable', sans-serif;
+  }
+
+  input[type="date"] {
+    font-family: 'Pretendard GOV Variable', sans-serif;
   }
 `;
 

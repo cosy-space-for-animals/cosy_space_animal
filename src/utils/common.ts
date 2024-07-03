@@ -174,7 +174,7 @@ type DateFormat = 'YYYY-MM-DD' | 'YYYY-MM-DD hh:mm:ss' | 'YY-MM-DD' | 'YY-MM-DD 
  * @param format
  * @param defaultValue
  */
-export function formatDate(date: string | number | Date, format: DateFormat, defaultValue: string = '-'): string {
+export function formatDate(date: string | number | Date, format: DateFormat, defaultValue: string = ''): string {
   if (!date) return defaultValue;
   date = new Date(date);
   const pad = (num: number) => (num < 10 ? '0' + num : num);

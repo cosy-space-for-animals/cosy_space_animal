@@ -1,16 +1,22 @@
-import { IInputItemProps, TOverride } from '@/types/common';
-import { css } from '@emotion/react';
+'use client';
+
+import { IInputItemProps, TInputDateProps } from '@/types/common';
+import { css, useTheme } from '@emotion/react';
 import Image from 'next/image';
-import { type MouseEvent, type ChangeEvent, useEffect, useState } from 'react';
+import { type MouseEvent, type ChangeEvent, useState } from 'react';
 import { formatDate } from '@/utils/common';
 
 const InputCalendarItem = ({
-  value,
-  setValue,
-  validate,
-  errorMessage,
-  disabled = false,
-}: IInputItemProps) => {
+                             value,
+                             setValue,
+                             validate,
+                             errorMessage,
+                             deleteBtn = true,
+                             disabled = false,
+                             min,
+                             max,
+                           }: TInputDateProps) => {
+  const theme = useTheme();
   const [focus, setFocus] = useState(false);
 
   const onFocus = () => setFocus(true);
@@ -31,13 +37,15 @@ const InputCalendarItem = ({
         `}
       >
         <input
-          id='date'
+          id="date"
           disabled={disabled}
           onFocus={onFocus}
           onBlur={onBlur}
           onChange={onChange}
           value={value}
-          type='date'
+          type="date"
+          min={min ? formatDate(min, 'YYYY-MM-DD') : undefined}
+          max={max ? formatDate(max, 'YYYY-MM-DD') : undefined}
           css={css`
             width: 100%;
             height: 52px;
@@ -46,12 +54,8 @@ const InputCalendarItem = ({
             line-height: 24px;
             letter-spacing: -0.5px;
             outline: none;
-            padding: 14px ${Boolean(value)
-              ? focus
-                ? '76px'
-                : '44px'
-              : '12px'} 14px 12px;
-            border: 1px solid ${!validate && errorMessage ? 'var(--main-red-500)' : 'var(--grey-700)'};
+            padding: 14px 12px 14px 12px;
+            border: 1px solid ${!validate && errorMessage ? 'var(--main-red-500)' : focus ? `${theme.colors.primary[500]}` : 'var(--grey-700)'};
             border-radius: 6px;
             color: ${value ? 'var(--grey-900)' : 'var(--grey-400)'};
 
@@ -78,9 +82,9 @@ const InputCalendarItem = ({
             }
           `}
         />
-        {Boolean(value) && focus && (
+        {Boolean(value) && Boolean(deleteBtn) && focus && (
           <button
-            type='button'
+            type="button"
             onMouseDown={preventEventHandler}
             onClick={() => {
               setValue('');
@@ -93,27 +97,28 @@ const InputCalendarItem = ({
             `}
           >
             <Image
-              src='/button-delete.svg'
+              src="/button-delete.svg"
               width={24}
               height={24}
-              alt='delete-button'
+              alt="delete-button"
             />
           </button>
         )}
         <button
           disabled={disabled}
-          type='button'
+          type="button"
           css={css`
             position: absolute;
-            right: 12px;
+            right: 14px;
             top: 14px;
             pointer-events: none;
+
             &:disabled {
               opacity: 50%;
             }
           `}
         >
-          <Image src='/icon-calendar.svg' width={24} height={24} alt='icon' />
+          <Image src="/icon-calendar.svg" width={24} height={24} alt="icon" />
         </button>
       </div>
 
@@ -132,10 +137,10 @@ const InputCalendarItem = ({
           `}
         >
           <Image
-            src='/icon-error.svg'
+            src="/icon-error.svg"
             width={16}
             height={16}
-            alt='icon-error'
+            alt="icon-error"
           />
           {errorMessage}
         </div>

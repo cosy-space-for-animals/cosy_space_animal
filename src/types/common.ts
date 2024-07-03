@@ -1,6 +1,8 @@
 import type { Dispatch, SetStateAction } from 'react';
 import { SetRecoilState } from 'recoil';
 
+export type TOverride<T, U> = Omit<T, keyof U> & U;
+
 export interface IIconProps {
   color?: string;
   size?: number;
@@ -15,4 +17,9 @@ export interface IInputItemProps {
   placeholder?: string;
 }
 
-export type TOverride<T, U> = Omit<T, keyof U> & U;
+export type TInputDateProps = TOverride<IInputItemProps, {
+  value: string;
+  deleteBtn?: boolean;
+  min?: string | Date;
+  max?: string | Date;
+}>;
