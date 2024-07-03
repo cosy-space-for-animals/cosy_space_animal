@@ -1,22 +1,47 @@
-import { IInputItemProps } from '@/types/common';
+'use client';
+
+import { IInputItemProps, TTextareaProps } from '@/types/common';
 import { css } from '@emotion/react';
 import Image from 'next/image';
-import { type ChangeEvent, useEffect, useState } from 'react';
+import { type ChangeEvent, useEffect, useRef, useState } from 'react';
 
-const InputCharacterCounterItem: React.FC<IInputItemProps> = ({
-  value,
-  setValue,
-  validate,
-  errorMessage,
-  disabled = false,
-  placeholder,
-}) => {
+const InputCharacterCounterItem = ({
+                                     value,
+                                     setValue,
+                                     validate,
+                                     errorMessage,
+                                     maxLength,
+                                     disabled = false,
+                                     placeholder,
+                                   }: TTextareaProps) => {
   const [count, setCount] = useState(0);
+  const hiddenTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setCount(e.target.value.length);
+  const onChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    calculateRows(e.target.value);
     setValue(e.target.value);
+    setCount(e.target.value.length);
   };
+
+  const calculateRows = (value: string) => {
+    const textarea = textareaRef.current;
+    const hiddenTextarea = hiddenTextareaRef.current;
+
+    if (textarea && hiddenTextarea) {
+      hiddenTextarea.value = value;
+      hiddenTextarea.style.height = 'auto';
+
+      textarea.style.height = `${hiddenTextarea.scrollHeight}px`;
+    }
+  };
+
+  useEffect(() => {
+    if (hiddenTextareaRef.current && textareaRef.current) {
+      hiddenTextareaRef.current.value = textareaRef.current.value;
+      calculateRows(textareaRef.current.value);
+    }
+  }, [count]);
 
   return (
     <>
@@ -24,38 +49,78 @@ const InputCharacterCounterItem: React.FC<IInputItemProps> = ({
         css={css`
           position: relative;
           width: 100%;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
         `}
       >
-        <input
+        <textarea
           disabled={disabled}
           placeholder={placeholder}
           onChange={onChange}
           value={value}
-          type='text'
+          maxLength={maxLength}
+          ref={textareaRef}
           css={css`
             width: 100%;
-            height: 52px;
+            resize: none;
+            min-height: 52px;
             font-size: 16px;
             font-weight: 400;
             line-height: 24px;
             letter-spacing: -0.5px;
             outline: none;
             padding: 14px 12px;
-            border: 1px solid
-              ${!validate && errorMessage ? 'var(--main-red-500)' : 'var(--grey-700)'};
+            border: 1px solid ${!validate && errorMessage ? 'var(--main-red-500)' : 'var(--grey-700)'};
             border-radius: 6px;
+            max-height: 100px;
+
             &:focus {
               border: 1px solid var(--main-red-500);
             }
+
             &::placeholder {
               color: var(--grey-400);
             }
+
             &:disabled {
               opacity: 50%;
               background: var(--grey-0);
             }
           `}
         />
+        <textarea
+          name="hidden"
+          id="hidden-textarea"
+          css={css`
+            width: 100%;
+            position: absolute;
+            top: -9999px;
+            left: -9999px;
+            resize: none;
+            min-height: 52px;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 24px;
+            letter-spacing: -0.5px;
+            outline: none;
+            padding: 14px 12px;
+            border: 1px solid black;
+            border-radius: 6px;
+          `}
+          ref={hiddenTextareaRef}
+        />
+        <span
+          css={css`
+            color: var(--danger);
+            font-size: 13px;
+            font-weight: 400;
+            line-height: 19.5px;
+            letter-spacing: -0.25px;
+          `}
+        >
+          {count}/90
+        </span>
       </div>
 
       <div
@@ -82,25 +147,14 @@ const InputCharacterCounterItem: React.FC<IInputItemProps> = ({
             `}
           >
             <Image
-              src='/icon-error.svg'
+              src="/icon-error.svg"
               width={16}
               height={16}
-              alt='icon-error'
+              alt="icon-error"
             />
             {errorMessage}
           </span>
         )}
-        <span
-          css={css`
-            color: var(--danger);
-            font-size: 13px;
-            font-weight: 400;
-            line-height: 19.5px;
-            letter-spacing: -0.25px;
-          `}
-        >
-          {count}/90
-        </span>
       </div>
     </>
   );

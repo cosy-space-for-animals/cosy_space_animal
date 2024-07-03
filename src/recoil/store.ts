@@ -23,7 +23,7 @@ export const postProfileStepState: RecoilState<TPostProfileStep> = atom({
   key: 'postProfileStep',
   default: {
     maxStep: 4,
-    step: 2,
+    step: 3,
     data: {
       email: '',
       petName: '',
@@ -101,7 +101,31 @@ export const secondStep = selector<SecondStepData>({
         ...newValue,
       },
     });
+  },
+});
 
-    console.log(currentState.data);
+type ThirdStepData = {
+  petDesc: string;
+  petFavs: string[];
+};
+
+export const thirdStep = selector<ThirdStepData>({
+  key: 'thirdStep',
+  get: ({ get }) => {
+    const { data } = get(postProfileStepState);
+    return {
+      petDesc: data.petDesc,
+      petFavs: data.petFavs,
+    };
+  },
+  set: ({ set, get }, newValue) => {
+    const currentState = get(postProfileStepState);
+    set(postProfileStepState, {
+      ...currentState,
+      data: {
+        ...currentState.data,
+        ...newValue,
+      },
+    });
   },
 });

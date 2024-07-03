@@ -10,6 +10,7 @@ import ThemedText from '@/components/atoms/ThemedText';
 import ProfileSettingStep1 from '@/components/organisms/profile/ProfileSettingStep1';
 import { theme } from '@/types/theme';
 import ProfileSettingStep2 from '@/components/organisms/profile/ProfileSettingStep2';
+import ProfileSettingStep3 from '@/components/organisms/profile/ProfileSettingStep3';
 
 
 const headerText = {
@@ -79,6 +80,7 @@ const PostProfile = () => {
 
       {postProfileStep.step === 1 && <ProfileSettingStep1 />}
       {postProfileStep.step === 2 && <ProfileSettingStep2 />}
+      {postProfileStep.step === 3 && <ProfileSettingStep3 />}
 
       <div css={css`
         display: flex;

@@ -111,6 +111,7 @@ const ProfileSettingStep2 = () => {
             setValue={(date: string) => setParam({ ...param, birthDate: date })}
             validate={true}
             deleteBtn={false}
+            max={new Date()}
             placeholder={'생년월일을 입력해주세요'}
           />
           <span css={css`

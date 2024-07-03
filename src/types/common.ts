@@ -23,3 +23,8 @@ export type TInputDateProps = TOverride<IInputItemProps, {
   min?: string | Date;
   max?: string | Date;
 }>;
+
+export type TTextareaProps = TOverride<IInputItemProps, {
+  value: string;
+  maxLength: number;
+}>;
