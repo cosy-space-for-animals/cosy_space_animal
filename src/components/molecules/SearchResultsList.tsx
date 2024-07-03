@@ -23,7 +23,7 @@ const SearchResultsList = (
   }: Props) => {
   const theme = useTheme();
   const [firstRender, setFirstRender] = useState<boolean>(true);
-  const [searchText, setSearchText] = useState<string>(value);
+  const [searchText, setSearchText] = useState<string>(value as string);
   const [filteredList, setFilteredList] = useState<string[]>(searchResults);
   const [isListOpen, setIsListOpen] = useState<boolean>(false);
 

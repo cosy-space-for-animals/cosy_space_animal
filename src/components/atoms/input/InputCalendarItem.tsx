@@ -1,15 +1,16 @@
-import { IInputItemProps } from '@/types/common';
+import { IInputItemProps, TOverride } from '@/types/common';
 import { css } from '@emotion/react';
 import Image from 'next/image';
 import { type MouseEvent, type ChangeEvent, useEffect, useState } from 'react';
+import { formatDate } from '@/utils/common';
 
-const InputCalendarItem: React.FC<IInputItemProps> = ({
+const InputCalendarItem = ({
   value,
   setValue,
   validate,
   errorMessage,
   disabled = false,
-}) => {
+}: IInputItemProps) => {
   const [focus, setFocus] = useState(false);
 
   const onFocus = () => setFocus(true);
@@ -17,7 +18,7 @@ const InputCalendarItem: React.FC<IInputItemProps> = ({
   const preventEventHandler = (e: MouseEvent<HTMLElement>) =>
     e.preventDefault();
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value);
+    setValue(formatDate(e.target.value, 'YYYY-MM-DD'));
     onFocus();
   };
 
@@ -45,23 +46,24 @@ const InputCalendarItem: React.FC<IInputItemProps> = ({
             line-height: 24px;
             letter-spacing: -0.5px;
             outline: none;
-            padding: 14px 12px;
-            padding-right: ${Boolean(value)
+            padding: 14px ${Boolean(value)
               ? focus
                 ? '76px'
                 : '44px'
-              : '12px'};
-            border: 1px solid
-              ${!validate && errorMessage ? 'var(--main-red-500)' : 'var(--grey-700)'};
+              : '12px'} 14px 12px;
+            border: 1px solid ${!validate && errorMessage ? 'var(--main-red-500)' : 'var(--grey-700)'};
             border-radius: 6px;
             color: ${value ? 'var(--grey-900)' : 'var(--grey-400)'};
+
             &:focus {
               border: 1px solid var(--main-red-500);
             }
+
             &:disabled {
               opacity: 50%;
               background: var(--grey-0);
             }
+
             &::-webkit-calendar-picker-indicator {
               width: auto;
               height: auto;

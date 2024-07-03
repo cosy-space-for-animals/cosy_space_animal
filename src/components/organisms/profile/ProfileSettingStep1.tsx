@@ -1,11 +1,11 @@
-'use recoil';
+'use client';
 
 import React from 'react';
 import { css } from '@emotion/react';
 import ThemedText from '@/components/atoms/ThemedText';
 import InputDefaultItem from '@/components/atoms/input/InputDefaultItem';
 import { useRecoilState } from 'recoil';
-import { firstStep } from '@/recoil/store';
+import { firstStep, postProfileStepState } from '@/recoil/store';
 import { useDebounce } from '@/hooks/useDebounce';
 import SearchResultsList from '@/components/molecules/SearchResultsList';
 import SegmentedAnimalItem, { i18n } from '@/components/atoms/buttons/SegmentedAnimalItem';
@@ -25,13 +25,13 @@ const petSpecs: Animals[] = [
 ];
 
 const ProfileSettingStep1 = () => {
-  const [obj, setObj] = useRecoilState(firstStep);
-  const { debouncedValue } = useDebounce({ value: obj.petName, delay: 500 });
+  const [param, setParam] = useRecoilState(firstStep);
+  const { debouncedValue } = useDebounce({ value: param.petName, delay: 500 });
   const { isMobile } = useDevice();
 
   const setPetName = (str: string) => {
-    setObj({
-      ...obj,
+    setParam({
+      ...param,
       petName: str,
     });
   };
@@ -63,7 +63,7 @@ const ProfileSettingStep1 = () => {
       `}>
         <ThemedText type={isMobile ? 'labelMedium' : 'labelLarge'}>이름</ThemedText>
         <InputDefaultItem
-          value={obj.petName}
+          value={param.petName}
           setValue={setPetName}
           errorMessage={'한글 또는 영문만 입력할 수 있어요.'}
           validate={validatePetName(debouncedValue)}
@@ -87,10 +87,10 @@ const ProfileSettingStep1 = () => {
             <React.Fragment key={index}>
               <SegmentedAnimalItem
                 type={petSpec}
-                selected={obj.petSpecM === i18n[petSpec].ko}
+                selected={param.petSpecM === i18n[petSpec].ko}
                 setSelected={(str: Animals) => {
-                  setObj({
-                    ...obj,
+                  setParam({
+                    ...param,
                     petSpecM: i18n[str].ko,
                   });
                 }}
@@ -100,25 +100,25 @@ const ProfileSettingStep1 = () => {
         </div>
         <SearchResultsList
           searchResults={['품종1', '품종2', '품종3']}
-          value={obj.petSpecS === '알수없음' ? '' : obj.petSpecS}
+          value={param.petSpecS === '알수없음' ? '' : param.petSpecS}
           setValue={(str: string) => {
-            setObj({
-              ...obj,
+            setParam({
+              ...param,
               petSpecS: str,
             });
           }}
           placeholder={'품종을 입력해주세요'}
           errorMessage={''}
           validate={true}
-          isShown={obj.petSpecS !== '알수없음'}
-          disabled={obj.petSpecM === ''}
+          isShown={param.petSpecS !== '알수없음'}
+          disabled={param.petSpecM === ''}
         />
         <CheckBoxWithLabel
           name={'petSpecM'}
-          value={obj.petSpecS === '알수없음'}
+          value={param.petSpecS === '알수없음'}
           onChange={(e) => {
-            setObj({
-              ...obj,
+            setParam({
+              ...param,
               petSpecS: e.target.checked ? '알수없음' : '',
             });
           }}

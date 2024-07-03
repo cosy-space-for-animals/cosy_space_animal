@@ -2,13 +2,14 @@
 
 import React from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { firstStep, postProfileStepState } from '@/recoil/store';
+import { firstStep, postProfileStepState, TPostProfileStep } from '@/recoil/store';
 import ProgressIndicatorDot from '@/components/atoms/ProgressIndicatorDot';
 import ProfileMoveButton from '@/components/atoms/buttons/ProfileMoveButton';
 import { css } from '@emotion/react';
 import ThemedText from '@/components/atoms/ThemedText';
 import ProfileSettingStep1 from '@/components/organisms/profile/ProfileSettingStep1';
 import { theme } from '@/types/theme';
+import ProfileSettingStep2 from '@/components/organisms/profile/ProfileSettingStep2';
 
 
 const headerText = {
@@ -26,10 +27,27 @@ const PostProfile = () => {
     } else {
       if (postProfileStep.step === 1) {
         return !firstStepState.petName || !firstStepState.petSpecM || !firstStepState.petSpecS;
+      } else if (postProfileStep.step === 2) {
+        return !postProfileStep.data.petGender || !postProfileStep.data.birthDate;
       }
       return postProfileStep.step === postProfileStep.maxStep;
     }
   };
+
+  const getHeaderText = (step: TPostProfileStep['step'], name:string = ''): string => {
+    switch (step) {
+      case 1:
+        return `반려동물의 이름과 종류를 알려주세요`;
+      case 2:
+        return `${name}의 성별과 생일을 알려주세요`;
+      case 3:
+        return `${name}를 소개해 주세요`;
+      case 4:
+        return `${name}의 사진을 등록해주세요`;
+      default:
+        return '';
+    }
+  }
 
   return (
     <div css={css`
@@ -56,10 +74,11 @@ const PostProfile = () => {
           align-items: flex-start;
         }
       `}>
-        <ThemedText type={'titleMedium'}>{headerText[postProfileStep.step]}</ThemedText>
+        <ThemedText type={'titleMedium'}>{getHeaderText(postProfileStep.step, postProfileStep.data.petName)}</ThemedText>
       </div>
 
       {postProfileStep.step === 1 && <ProfileSettingStep1 />}
+      {postProfileStep.step === 2 && <ProfileSettingStep2 />}
 
       <div css={css`
         display: flex;

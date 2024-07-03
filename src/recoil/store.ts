@@ -1,4 +1,4 @@
-import { atom, RecoilState, selector } from 'recoil';
+import { atom, AtomEffect, RecoilState, selector, useSetRecoilState } from 'recoil';
 import { Animals } from '@/components/atoms/AnimalIcon';
 import { Nullable } from '@/types/global';
 
@@ -12,7 +12,7 @@ export type TPostProfileStep = {
     petSpecM: string;
     petSpecS: string;
     petProfileFrame: string;
-    petGender: string;
+    petGender: "M" | "F" | "O" | "";
     birthDate: string;
     deathDate: string;
     petFavs: string[];
@@ -23,7 +23,7 @@ export const postProfileStepState: RecoilState<TPostProfileStep> = atom({
   key: 'postProfileStep',
   default: {
     maxStep: 4,
-    step: 1,
+    step: 2,
     data: {
       email: '',
       petName: '',
@@ -37,6 +37,15 @@ export const postProfileStepState: RecoilState<TPostProfileStep> = atom({
       petFavs: [],
     },
   },
+  effects_UNSTABLE: [
+    ({ onSet }) => {
+      onSet((newVal) => {
+        if (newVal.step > newVal.maxStep) {
+          throw new Error('Invalid step');
+        }
+      });
+    },
+  ],
 });
 
 type FirstStepData = {
@@ -64,5 +73,35 @@ export const firstStep = selector<FirstStepData>({
         ...newValue,
       },
     });
+  },
+});
+
+type SecondStepData = {
+  petGender: TPostProfileStep['data']['petGender'];
+  birthDate: TPostProfileStep['data']['birthDate'];
+  deathDate: TPostProfileStep['data']['deathDate'];
+};
+
+export const secondStep = selector<SecondStepData>({
+  key: 'secondStep',
+  get: ({ get }) => {
+    const { data } = get(postProfileStepState);
+    return {
+      petGender: data.petGender,
+      birthDate: data.birthDate,
+      deathDate: data.deathDate,
+    };
+  },
+  set: ({ set, get }, newValue) => {
+    const currentState = get(postProfileStepState);
+    set(postProfileStepState, {
+      ...currentState,
+      data: {
+        ...currentState.data,
+        ...newValue,
+      },
+    });
+
+    console.log(currentState.data);
   },
 });

@@ -37,7 +37,8 @@ const Post = () => {
         box-shadow: 0 2px 0 0 #00000000;
         background: #ffffff;
         align-items: center;
-        min-width: 520px;
+        width: 100%;
+        max-width: 520px;
         @media ${theme.device.mobile} {
           min-width: 0;
           width: 100%;

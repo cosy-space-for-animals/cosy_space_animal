@@ -7,10 +7,12 @@ export interface IIconProps {
 }
 
 export interface IInputItemProps {
-  value: string;
+  value: string | number;
   setValue: Dispatch<SetStateAction<string>> | ((e: string) => void);
   validate: boolean;
   errorMessage?: string;
   disabled?: boolean;
   placeholder?: string;
 }
+
+export type TOverride<T, U> = Omit<T, keyof U> & U;
