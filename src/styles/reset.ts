@@ -1,8 +1,6 @@
 import { css } from '@emotion/react';
 
 const baseStyle = css`
-  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-gov.min.css');
-
   /* styles/reset.css */
   /* 최신 reset CSS 코드 (예: Eric Meyer's Reset CSS) */
   /* http://meyerweb.com/eric/tools/css/reset/ 
@@ -175,16 +173,8 @@ const baseStyle = css`
     line-height: 1.5;
   }
 
-  :root {
-    font-family: 'Pretendard GOV Variable',sans-serif;
-  }
-
-  input[type="date"] {
-    font-family: 'Pretendard GOV Variable', sans-serif;
-  }
-
-  input[type="date"] {
-    font-family: 'Pretendard GOV Variable', sans-serif;
+  input {
+    font-family: 'Pretendard-Regular', sans-serif;
   }
 `;
 

@@ -7,6 +7,7 @@ import { useDevice } from '@/context/DeviceContext';
 import { useRecoilState } from 'recoil';
 import { thirdStep } from '@/recoil/store';
 import InputCharacterCounterItem from '@/components/atoms/input/InputCharacterCouterItem';
+import ColorTag from '@/components/atoms/ColorTag';
 
 
 const ProfileSettingStep3 = () => {
@@ -55,6 +56,7 @@ const ProfileSettingStep3 = () => {
         </div>
         <div>
           dnd zone
+          <ColorTag color={theme.colors.secondary.pink} setColor={(color) => {}} />
         </div>
         <div css={css`
           display: flex;

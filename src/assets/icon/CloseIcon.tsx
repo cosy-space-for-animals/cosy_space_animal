@@ -14,9 +14,9 @@ const CloseIcon = ({ color, size = 24 }: IIconProps) => {
       <path
         d='M4 4L20 20M4 20L20 4'
         stroke={color || defaultColor}
-        stroke-width='1.5'
-        stroke-linecap='round'
-        stroke-linejoin='round'
+        strokeWidth='1.5'
+        strokeLinecap='round'
+        strokeLinejoin='round'
       />
     </svg>
   );

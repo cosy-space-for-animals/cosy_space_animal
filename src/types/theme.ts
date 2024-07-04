@@ -1,5 +1,14 @@
 import { Theme } from '@emotion/react';
 
+type RGB = `rgb(${number},${number},${number})`;
+type RGBA = `rgba(${number},${number},${number},${number})`;
+type HEX = `#${string}`;
+type HSL = `hsl(${number},${number}%,${number}%)`;
+type HSLA = `hsla(${number},${number}%,${number}%,${number})`;
+type VAR = `var(${string})`;
+
+export type TColor = RGB | RGBA | HEX | HSL | HSLA | VAR;
+
 export const theme: Theme = {
   colors: {
     primary: {
