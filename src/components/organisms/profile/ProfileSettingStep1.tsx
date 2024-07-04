@@ -5,7 +5,7 @@ import { css } from '@emotion/react';
 import ThemedText from '@/components/atoms/ThemedText';
 import InputDefaultItem from '@/components/atoms/input/InputDefaultItem';
 import { useRecoilState } from 'recoil';
-import { firstStep, postProfileStepState } from '@/recoil/store';
+import { firstStep } from '@/recoil/store';
 import { useDebounce } from '@/hooks/useDebounce';
 import SearchResultsList from '@/components/molecules/SearchResultsList';
 import SegmentedAnimalItem, { i18n } from '@/components/atoms/buttons/SegmentedAnimalItem';
