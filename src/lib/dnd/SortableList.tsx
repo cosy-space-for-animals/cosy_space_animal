@@ -1,18 +1,18 @@
-import React, { useMemo, useState } from "react";
-import type { ReactNode } from "react";
+import React, { useMemo, useState } from 'react';
+import type { ReactNode } from 'react';
 import {
   DndContext,
-  KeyboardSensor,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
   useSensor,
-  useSensors
-} from "@dnd-kit/core";
-import type { Active, UniqueIdentifier } from "@dnd-kit/core";
+  useSensors,
+} from '@dnd-kit/core';
+import type { Active, UniqueIdentifier } from '@dnd-kit/core';
 import {
   SortableContext,
   arrayMove,
-  sortableKeyboardCoordinates
-} from "@dnd-kit/sortable";
+  sortableKeyboardCoordinates,
+} from '@dnd-kit/sortable';
 import { DragHandle, SortableItem } from './SortableItem';
 import SortableOverlay from '@/lib/dnd/SortableOverlay';
 import { css } from '@emotion/react';
@@ -22,30 +22,34 @@ interface BaseItem {
 }
 
 interface Props<T extends BaseItem> {
+  id: string;
   items: T[];
+
   onChange(items: T[]): void;
+
   renderItem(item: T): ReactNode;
 }
 
-export function SortableList<T extends BaseItem>({
-                                                   items,
-                                                   onChange,
-                                                   renderItem
-                                                 }: Props<T>) {
+export function SortableList<T extends BaseItem>(
+  {
+    id,
+    items,
+    onChange,
+    renderItem,
+  }: Props<T>) {
   const [active, setActive] = useState<Active | null>(null);
   const activeItem = useMemo(
     () => items.find((item) => item.id === active?.id),
-    [active, items]
+    [active, items],
   );
   const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates
-    })
+    useSensor(MouseSensor),
+    useSensor(TouchSensor),
   );
 
   return (
     <DndContext
+      id={id}
       sensors={sensors}
       onDragStart={({ active }) => {
         setActive(active);

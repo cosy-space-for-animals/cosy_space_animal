@@ -7,29 +7,38 @@ import { useDevice } from '@/context/DeviceContext';
 import { useRecoilState } from 'recoil';
 import { thirdStep } from '@/recoil/store';
 import InputCharacterCounterItem from '@/components/atoms/input/InputCharacterCouterItem';
-import ColorTag from '@/components/molecules/ColorTag';
-import { Nullable } from '@/types/global';
+import ColoredTag from '@/components/molecules/ColoredTag';
 import { SortableList } from '@/lib/dnd/SortableList';
 
-type Item = {
+export type TItem = {
   id: string;
+  label: string;
 }
 
+const allColors = ['yellow', 'sky', 'green', 'pink', 'purple'];
 const ProfileSettingStep3 = () => {
   const theme = useTheme();
   const { isMobile } = useDevice();
   const [param, setParam] = useRecoilState(thirdStep);
-  const [items, setItems] = useState<Item[]>([
-    { id: 'yellow' },
-    { id: 'sky' },
-    { id: 'green' },
-    { id: 'pink' },
-    { id: 'purple' },
+  const [items, setItems] = useState<TItem[]>([
+    { id: 'yellow', label: '노랑' },
   ]);
+  const [availableColors, setAvailableColors] = useState<string[]>(allColors.filter((color) => !items.some((item) => item.id === color)));
+  const [currentItem, setCurrentItem] = useState<TItem>({
+    id: availableColors[0],
+    label: '',
+  });
+
+  const newAvailableColors = useMemo(() => allColors.filter((color) => !items.some((item) => item.id === color)), [items]);
 
   useEffect(() => {
-    console.log(items);
-  }, [items]);
+    setAvailableColors(newAvailableColors);
+  }, [items, newAvailableColors]);
+
+  useEffect(() => {
+    setCurrentItem({ id: availableColors[0], label: '' });
+  }, [availableColors]);
+
 
   return (
     <div css={css`
@@ -73,12 +82,14 @@ const ProfileSettingStep3 = () => {
         </div>
 
         <SortableList
+          id="sortable-list"
           items={items}
           onChange={setItems}
           renderItem={(item) => (
             <SortableList.Item id={item.id}>
               <SortableList.DragHandle />
-              <ColorTag
+              <ColoredTag
+                id={item.id}
                 color={theme.colors.secondary[item.id]}
                 setColor={(color) => {
                   setItems((items) => {
@@ -88,11 +99,36 @@ const ProfileSettingStep3 = () => {
                     return newItems;
                   });
                 }}
-                label={item.id}
+                label={item.label}
+                mode={'view'}
+                removeHandler={(id) => {
+                  setItems((items) => items.filter((item) => item.id !== id));
+                }}
               />
             </SortableList.Item>
           )}
         />
+
+        {items.length < 3 && (
+          <ColoredTag
+            id={currentItem.id}
+            mode={'edit'}
+            color={theme.colors.secondary[currentItem.id]}
+            setColor={(color) => {
+              setItems((items) => {
+                const index = items.findIndex((item) => item.id === currentItem.id);
+                const newItems = [...items];
+                newItems[index] = { ...newItems[index], id: color };
+                return newItems;
+              });
+            }}
+            label={items.find((item) => item.id === currentItem.id)?.label || ''}
+            onBlur={(item) => {
+              if (item.label === '') return;
+              setItems((items) => [...items, item]);
+            }}
+          />
+        )}
 
         <div css={css`
           display: flex;

@@ -4,14 +4,28 @@ import React, { useEffect, useRef, useState } from 'react';
 import CloseIcon from '@/assets/icon/CloseIcon';
 import { css, useTheme } from '@emotion/react';
 import { TColor } from '@/types/theme';
+import { TItem } from '@/components/organisms/profile/ProfileSettingStep3';
 
 type Props = {
+  id: string;
+  mode: 'edit' | 'view';
   color: TColor;
   setColor: (color: TColor) => void;
+  removeHandler?: (id: string) => void;
   label?: string;
+  onBlur?: (item: TItem) => void;
 }
 
-const ColorTag = ({ color, setColor, label }: Props) => {
+const ColoredTag = (
+  {
+    id,
+    mode,
+    color,
+    setColor,
+    label,
+    removeHandler,
+    onBlur
+  }: Props) => {
   const theme = useTheme();
   const [palletOpen, setPalletOpen] = useState(false);
   const [palletColor, setPalletColor] = useState<TColor>(color);
@@ -19,7 +33,6 @@ const ColorTag = ({ color, setColor, label }: Props) => {
   const [isFocus, setIsFocus] = useState(false);
   const spanRef = useRef<HTMLSpanElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-
 
 
   useEffect(() => {
@@ -36,9 +49,9 @@ const ColorTag = ({ color, setColor, label }: Props) => {
   }, [color]);
 
   useEffect(() => {
-    if(label === undefined) return;
+    if (label === undefined) return;
 
-    setText(label)
+    setText(label);
 
   }, [label]);
 
@@ -75,36 +88,55 @@ const ColorTag = ({ color, setColor, label }: Props) => {
         border-radius: 999px;
         background: ${palletColor};
       `}></button>
-      <input
-        type="text"
+      <span
         css={css`
           border: none;
-          display: block;
+          display: flex;
           font-weight: 400;
           font-size: 1rem;
           line-height: 24px;
           letter-spacing: -0.5px;
           background: transparent;
-          min-width: 84px;
-          max-width: 280px;
-          padding: 0 4px 0 0;
-
-          &::placeholder {
-            color: ${theme.colors.grey[900]}80;
-          }
-
-          &:focus {
-            outline: none;
-          }
+          position: ${mode === 'edit' ? 'absolute': 'relative'};
+          visibility: ${mode === 'edit' ? 'hidden': 'visible'};
         `}
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        placeholder={'입력해주세요'}
-        ref={inputRef}
-      />
-      <span>{color}</span>
-      {isFocus &&
-        <button>
+        ref={spanRef}
+      >{text}</span>
+      {
+        mode === 'edit' && (
+          <input
+            type="text"
+            css={css`
+              border: none;
+              display: block;
+              font-weight: 400;
+              font-size: 1rem;
+              line-height: 24px;
+              letter-spacing: -0.5px;
+              background: transparent;
+              min-width: 84px;
+              max-width: 280px;
+              width: 84px;
+              padding: 0 4px 0 0;
+
+              &::placeholder {
+                color: ${theme.colors.grey[900]}80;
+              }
+
+              &:focus {
+                outline: none;
+              }
+            `}
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            onBlur={() => onBlur && onBlur({ id, label: text })}
+            placeholder={'입력해주세요'}
+            ref={inputRef}
+          />
+        )
+      }
+      {(text.length > 0 && mode === 'view') &&
+        <button onClick={() => removeHandler ? removeHandler(id) : null}>
           <CloseIcon color={theme.colors.grey[900]} />
         </button>
       }
@@ -112,4 +144,4 @@ const ColorTag = ({ color, setColor, label }: Props) => {
   );
 };
 
-export default ColorTag;
+export default ColoredTag;
