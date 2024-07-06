@@ -129,6 +129,11 @@ const ColoredTag = (
             `}
             value={text}
             onChange={(e) => setText(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                inputRef.current?.blur();
+              }
+            }}
             onBlur={() => onBlur && onBlur({ id, label: text })}
             placeholder={'입력해주세요'}
             ref={inputRef}

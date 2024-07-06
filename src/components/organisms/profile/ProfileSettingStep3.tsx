@@ -20,9 +20,7 @@ const ProfileSettingStep3 = () => {
   const theme = useTheme();
   const { isMobile } = useDevice();
   const [param, setParam] = useRecoilState(thirdStep);
-  const [items, setItems] = useState<TItem[]>([
-    { id: 'yellow', label: '노랑' },
-  ]);
+  const [items, setItems] = useState<TItem[]>([]);
   const [availableColors, setAvailableColors] = useState<string[]>(allColors.filter((color) => !items.some((item) => item.id === color)));
   const [currentItem, setCurrentItem] = useState<TItem>({
     id: availableColors[0],
@@ -33,6 +31,7 @@ const ProfileSettingStep3 = () => {
 
   useEffect(() => {
     setAvailableColors(newAvailableColors);
+    setParam({ ...param, petFavs: items.map((item) => item.label) })
   }, [items, newAvailableColors]);
 
   useEffect(() => {
