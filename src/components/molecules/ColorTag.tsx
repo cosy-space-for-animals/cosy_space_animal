@@ -20,6 +20,8 @@ const ColorTag = ({ color, setColor, label }: Props) => {
   const spanRef = useRef<HTMLSpanElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
+
+
   useEffect(() => {
     if (spanRef.current && inputRef.current) {
       const span = spanRef.current;
@@ -28,6 +30,17 @@ const ColorTag = ({ color, setColor, label }: Props) => {
       input.style.width = `${spanWidth + 4}px`;
     }
   }, [text]);
+
+  useEffect(() => {
+    setPalletColor(color);
+  }, [color]);
+
+  useEffect(() => {
+    if(label === undefined) return;
+
+    setText(label)
+
+  }, [label]);
 
   return (
     <div css={css`
@@ -89,6 +102,7 @@ const ColorTag = ({ color, setColor, label }: Props) => {
         placeholder={'입력해주세요'}
         ref={inputRef}
       />
+      <span>{color}</span>
       {isFocus &&
         <button>
           <CloseIcon color={theme.colors.grey[900]} />

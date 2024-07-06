@@ -1,5 +1,3 @@
-'use client';
-
 import React from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { firstStep, postProfileStepState, TPostProfileStep } from '@/recoil/store';
@@ -11,12 +9,6 @@ import ProfileSettingStep1 from '@/components/organisms/profile/ProfileSettingSt
 import { theme } from '@/types/theme';
 import ProfileSettingStep2 from '@/components/organisms/profile/ProfileSettingStep2';
 import ProfileSettingStep3 from '@/components/organisms/profile/ProfileSettingStep3';
-
-
-const headerText = {
-  1: '반려동물의 이름과 종류를 알려주세요',
-  2: ''
-};
 
 const PostProfile = () => {
   const [postProfileStep, setPostProfileStep] = useRecoilState(postProfileStepState);

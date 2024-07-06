@@ -3,9 +3,10 @@ import Image from 'next/image';
 import ClipSVG from '@/assets/images/clip.svg';
 import { css, useTheme } from '@emotion/react';
 import Logo from '@/components/atoms/Logo';
-import PostProfile from '@/components/organisms/profile/PostProfile';
 import { useDevice } from '@/context/DeviceContext';
+import dynamic from 'next/dynamic';
 
+const PostProfile = dynamic(() => import('@/components/organisms/profile/PostProfile'));
 
 const Post = () => {
   const theme = useTheme();

@@ -1,19 +1,35 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { css, useTheme } from '@emotion/react';
 import ThemedText from '@/components/atoms/ThemedText';
 import { useDevice } from '@/context/DeviceContext';
 import { useRecoilState } from 'recoil';
 import { thirdStep } from '@/recoil/store';
 import InputCharacterCounterItem from '@/components/atoms/input/InputCharacterCouterItem';
-import ColorTag from '@/components/atoms/ColorTag';
+import ColorTag from '@/components/molecules/ColorTag';
+import { Nullable } from '@/types/global';
+import { SortableList } from '@/lib/dnd/SortableList';
 
+type Item = {
+  id: string;
+}
 
 const ProfileSettingStep3 = () => {
   const theme = useTheme();
   const { isMobile } = useDevice();
   const [param, setParam] = useRecoilState(thirdStep);
+  const [items, setItems] = useState<Item[]>([
+    { id: 'yellow' },
+    { id: 'sky' },
+    { id: 'green' },
+    { id: 'pink' },
+    { id: 'purple' },
+  ]);
+
+  useEffect(() => {
+    console.log(items);
+  }, [items]);
 
   return (
     <div css={css`
@@ -52,12 +68,32 @@ const ProfileSettingStep3 = () => {
       `}>
         <div>
           <ThemedText type={isMobile ? 'labelLarge' : 'labelLarge'}>좋아하는 것 </ThemedText>
-          <ThemedText type={isMobile ? 'labelLarge' : 'labelLarge'} css={css`color: ${theme.colors.grey[500]}`}>(최대 3개)</ThemedText>
+          <ThemedText type={isMobile ? 'labelLarge' : 'labelLarge'} css={css`color: ${theme.colors.grey[500]}`}>(최대
+            3개)</ThemedText>
         </div>
-        <div>
-          dnd zone
-          <ColorTag color={theme.colors.secondary.pink} setColor={(color) => {}} />
-        </div>
+
+        <SortableList
+          items={items}
+          onChange={setItems}
+          renderItem={(item) => (
+            <SortableList.Item id={item.id}>
+              <SortableList.DragHandle />
+              <ColorTag
+                color={theme.colors.secondary[item.id]}
+                setColor={(color) => {
+                  setItems((items) => {
+                    const index = items.findIndex((item) => item.id === item.id);
+                    const newItems = [...items];
+                    newItems[index] = { ...newItems[index], id: color };
+                    return newItems;
+                  });
+                }}
+                label={item.id}
+              />
+            </SortableList.Item>
+          )}
+        />
+
         <div css={css`
           display: flex;
           flex-direction: column;
