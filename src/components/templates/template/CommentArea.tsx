@@ -44,7 +44,7 @@ const CommentArea = () => {
           css={css`
             position: absolute;
             left: 0;
-            z-index: 1;
+            z-index: 2;
           `}
         >
           <CommentArrowButton />
@@ -61,6 +61,7 @@ const CommentArea = () => {
               rgba(247, 245, 241, 0) 0%,
               #f7f5f1 100%
             );
+            z-index: 1;
           `}
         ></div>
         <ul
@@ -70,6 +71,7 @@ const CommentArea = () => {
             gap: 8px;
             overflow-x: auto;
           `}
+          className='hide-scrollbar'
         >
           <CommentInput />
           <CommentItem
@@ -101,11 +103,11 @@ const CommentArea = () => {
           css={css`
             position: absolute;
             right: 0;
-            z-index: 1;
+            z-index: 2;
           `}
         >
           <CommentArrowButton />
-        </div>{' '}
+        </div>
         <div
           css={css`
             position: absolute;
@@ -118,6 +120,7 @@ const CommentArea = () => {
               #f7f5f1 0%,
               rgba(247, 245, 241, 0) 100%
             );
+            z-index: 1;
           `}
         ></div>
       </div>

@@ -9,6 +9,7 @@ const MemoryMonthList = () => {
         height: 680px;
         overflow-y: auto;
       `}
+      className='hide-scrollbar'
     >
       <div
         css={css`
@@ -26,7 +27,7 @@ const MemoryMonthList = () => {
       ></div>
       <div
         css={css`
-          padding: 24px 20px;
+          padding: 0 20px;
           display: flex;
           flex-direction: column;
           align-items: end;
