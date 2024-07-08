@@ -9,7 +9,9 @@ interface IScrimProps {
 const Scrim: React.FC<IScrimProps> = ({ setScrim, children }) => {
   return (
     <div
-      onClick={() => setScrim(false)}
+      onClick={() => {
+        setScrim((prev) => !prev);
+      }}
       css={css`
         width: 100vw;
         height: 100vh;
@@ -17,9 +19,19 @@ const Scrim: React.FC<IScrimProps> = ({ setScrim, children }) => {
         position: fixed;
         top: 0;
         left: 0;
+        z-index: 99999999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
       `}
     >
-      {children}
+      <div
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      >
+        {children}
+      </div>
     </div>
   );
 };

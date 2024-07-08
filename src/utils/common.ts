@@ -14,6 +14,13 @@ export const validatePassword = (password: string): boolean => {
   return passwordRegex.test(password);
 };
 
+export const validateUserName = (name: string): boolean => {
+  // 한글만 입력 가능 (영어, 특수문자 포함 불가)
+  const nameRegex: RegExp = /^[가-힣]+$/;
+
+  return nameRegex.test(name);
+};
+
 /**
  * @description 객체를 깊은 복사합니다.
  * @param arg 복사할 객체

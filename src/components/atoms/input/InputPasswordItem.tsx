@@ -1,9 +1,10 @@
-import { IInputItemProps } from '@/types/common';
+import { IInputItemProps, IInputItemProps2 } from '@/types/common';
 import { css } from '@emotion/react';
 import Image from 'next/image';
-import { type MouseEvent, type ChangeEvent, useEffect, useState } from 'react';
+import { type MouseEvent, type ChangeEvent, useState, FocusEvent } from 'react';
 
-const InputPasswordItem: React.FC<IInputItemProps> = ({
+const InputPasswordItem: React.FC<IInputItemProps2> = ({
+  id,
   value,
   setValue,
   validate,
@@ -13,15 +14,20 @@ const InputPasswordItem: React.FC<IInputItemProps> = ({
 }) => {
   const [focus, setFocus] = useState(false);
   const [inputType, setInputType] = useState<'password' | 'text'>('password');
+  const [error, setError] = useState(false);
 
   const onFocus = () => setFocus(true);
-  const onBlur = () => setFocus(false);
-  const preventEventHandler = (e: MouseEvent<HTMLElement>) =>
-    e.preventDefault();
+  const onBlur = (e: FocusEvent<HTMLInputElement>) => {
+    setFocus(false);
+    setError(!validate(e.target.value));
+  };
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
     onFocus();
   };
+  const remove = () => setValue('');
+  const preventEventHandler = (e: MouseEvent<HTMLElement>) =>
+    e.preventDefault();
   const setInputTypeHandler = () => {
     if (disabled) return;
     setInputType((prev) => {
@@ -42,7 +48,7 @@ const InputPasswordItem: React.FC<IInputItemProps> = ({
         `}
       >
         <input
-          id='input'
+          id={id}
           placeholder={placeholder}
           disabled={disabled}
           onFocus={onFocus}
@@ -65,7 +71,9 @@ const InputPasswordItem: React.FC<IInputItemProps> = ({
                 : '44px'
               : '12px'};
             border: 1px solid
-              ${!validate && errorMessage ? 'var(--main-red-500)' : 'var(--grey-700)'};
+              ${error && errorMessage
+                ? 'var(--main-red-500)'
+                : 'var(--grey-700)'};
             border-radius: 6px;
             &:focus {
               border: 1px solid var(--main-red-500);
@@ -83,10 +91,7 @@ const InputPasswordItem: React.FC<IInputItemProps> = ({
           <button
             type='button'
             onMouseDown={preventEventHandler}
-            onClick={() => {
-              setValue('');
-              onBlur();
-            }}
+            onClick={remove}
             css={css`
               position: absolute;
               top: 14px;
@@ -122,7 +127,7 @@ const InputPasswordItem: React.FC<IInputItemProps> = ({
         )}
       </div>
 
-      {!validate && errorMessage && (
+      {error && errorMessage && (
         <div
           css={css`
             margin-top: 4px;

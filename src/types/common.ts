@@ -7,10 +7,22 @@ export interface IIconProps {
 }
 
 export interface IInputItemProps {
+  id?: string;
   value: string;
   setValue: Dispatch<SetStateAction<string>> | ((e: string) => void);
   validate: boolean;
   errorMessage?: string;
   disabled?: boolean;
   placeholder?: string;
+}
+export interface IInputItemProps2 {
+  id: string;
+  value: string;
+  setValue: Dispatch<SetStateAction<string>> | ((e: string) => void);
+  validate: (arg: string) => boolean;
+  errorMessage?: string;
+  disabled?: boolean;
+  placeholder?: string;
+  onBlur?: () => void;
+  submit?: () => void;
 }

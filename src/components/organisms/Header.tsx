@@ -398,8 +398,8 @@ const Logout = <T extends PageType>({ type, color }: IHeaderProps<T>) => {
         onClick={() => setSignUpModal((prev) => !prev)}
       >
         회원가입
-        {signUpModal && <SignUp />}
       </div>
+      {signUpModal && <SignUp render={setSignUpModal} />}
     </div>
   );
 };

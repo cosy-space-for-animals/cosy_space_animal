@@ -9,16 +9,15 @@ type Props = {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   disabled?: boolean;
   label?: string;
-}
+};
 
-export default function CheckBoxWithLabel(
-  {
-    name,
-    value,
-    onChange,
-    disabled,
-    label,
-  }: Props) {
+export default function CheckBoxWithLabel({
+  name,
+  value,
+  onChange,
+  disabled,
+  label,
+}: Props) {
   return (
     <label
       css={css`
@@ -32,7 +31,7 @@ export default function CheckBoxWithLabel(
     >
       <input
         name={name}
-        type="checkbox"
+        type='checkbox'
         css={css`
           display: none;
         `}
@@ -41,9 +40,7 @@ export default function CheckBoxWithLabel(
         checked={value}
         id={`checkbox-${name}`}
       />
-      <CheckButton
-        checked={value}
-      />
+      <CheckButton checked={value} />
       <ThemedText>{label}</ThemedText>
     </label>
   );

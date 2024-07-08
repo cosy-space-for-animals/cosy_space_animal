@@ -39,19 +39,18 @@ const styles: { [key in Type]: SerializedStyles } = {
   `,
 };
 
-export default function MainButton(
-  {
-    type = 'filled',
-    disabled = false,
-    children,
-    onClick,
-  }: IMainButtonProps) {
+export default function MainButton({
+  type = 'filled',
+  disabled = false,
+  children,
+  onClick,
+}: IMainButtonProps) {
   return (
     <button
       disabled={disabled}
       css={css(
         css`
-          width: 358px;
+          width: 100%;
           height: 52px;
           border-radius: 8px;
           outline: none;
@@ -60,6 +59,9 @@ export default function MainButton(
           letter-spacing: -0.25px;
           font-weight: 600;
           font-size: 1rem;
+          &:disabled {
+            cursor: default;
+          }
         `,
         styles[type],
       )}
