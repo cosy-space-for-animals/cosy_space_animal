@@ -1,0 +1,127 @@
+import ArrowButton from '@/components/atoms/buttons/ArrowButton';
+import CommentArrowButton from '@/components/atoms/buttons/CommentArrowButton';
+import CommentInput from '@/components/organisms/comment/CommentInput';
+import CommentItem from '@/components/organisms/comment/CommentItem';
+import { css, useTheme } from '@emotion/react';
+
+const CommentArea = () => {
+  const theme = useTheme();
+  return (
+    <div
+      css={css`
+        padding: 0 16px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      `}
+    >
+      <div
+        css={css`
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        `}
+      >
+        <span
+          css={css`
+            font-weight: ${theme.fontWeights.bold};
+            font-size: ${theme.fontSizes['2xl']}px;
+          `}
+        >
+          따뜻한 한마디
+        </span>
+        <ArrowButton type='borderlessGrey' children='모두 보기' />
+      </div>
+      <div
+        css={css`
+          position: relative;
+          display: flex;
+          align-items: center;
+        `}
+      >
+        <div
+          css={css`
+            position: absolute;
+            left: 0;
+            z-index: 1;
+          `}
+        >
+          <CommentArrowButton />
+        </div>
+        <div
+          css={css`
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 80px;
+            height: 100%;
+            background: linear-gradient(
+              270deg,
+              rgba(247, 245, 241, 0) 0%,
+              #f7f5f1 100%
+            );
+          `}
+        ></div>
+        <ul
+          css={css`
+            display: flex;
+            align-items: start;
+            gap: 8px;
+            overflow-x: auto;
+          `}
+        >
+          <CommentInput />
+          <CommentItem
+            profileImg=''
+            name='몽구'
+            time='10분 전'
+            comment='저희 강아지도 올해 봄에 강아지별로 떠나갔어요. 마음 잘 추스리시길 바랍니다.. 위로의 말씀 전해요..'
+          />
+          <CommentItem
+            profileImg=''
+            name='코코'
+            time='1시간 전'
+            comment='나랑 같은 이름이구나! 반가와 :)'
+          />
+          <CommentItem
+            profileImg=''
+            name='몽구'
+            time='10분 전'
+            comment='저희 강아지도 올해 봄에 강아지별로 떠나갔어요. 마음 잘 추스리시길 바랍니다.. 위로의 말씀 전해요..'
+          />
+          <CommentItem
+            profileImg=''
+            name='코코'
+            time='1시간 전'
+            comment='나랑 같은 이름이구나! 반가와 :)'
+          />
+        </ul>
+        <div
+          css={css`
+            position: absolute;
+            right: 0;
+            z-index: 1;
+          `}
+        >
+          <CommentArrowButton />
+        </div>{' '}
+        <div
+          css={css`
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 80px;
+            height: 100%;
+            background: linear-gradient(
+              270deg,
+              #f7f5f1 0%,
+              rgba(247, 245, 241, 0) 100%
+            );
+          `}
+        ></div>
+      </div>
+    </div>
+  );
+};
+
+export default CommentArea;
