@@ -6,7 +6,7 @@ interface IProfileLikeButtonProps {
   number: number;
   checked?: boolean;
   color?: 'white' | 'default';
-  isMobile: boolean;
+  isMobile?: boolean;
 }
 
 const ProfileLikeButton: React.FC<IProfileLikeButtonProps> = ({
