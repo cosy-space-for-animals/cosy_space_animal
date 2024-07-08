@@ -38,9 +38,10 @@ const CommentArea = ({ handleOpenPopup }: IProps) => {
         </span>
         <ArrowButton
           type='borderlessGrey'
-          children='모두 보기'
           onClick={() => handleOpenPopup('comment')}
-        />
+        >
+          모두 보기
+        </ArrowButton>
       </div>
       <div
         css={css`

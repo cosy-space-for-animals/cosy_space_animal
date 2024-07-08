@@ -18,22 +18,26 @@ export default function Home({ userAgent }) {
     <>
       {isMobile ? (
         <>
-          <section css={css`
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 40px;
-            padding: 84px 20px 0;
-            margin: 0 auto;
-          `}>
-            <div css={css`
+          <section
+            css={css`
               display: flex;
               flex-direction: column;
               justify-content: center;
               align-items: center;
-              gap: 32px;
-            `}>
+              gap: 40px;
+              padding: 84px 20px 0;
+              margin: 0 auto;
+            `}
+          >
+            <div
+              css={css`
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 32px;
+              `}
+            >
               <ThemedText type={'headlineSmall'}>환영합니다</ThemedText>
               <ThemedText
                 css={css`
@@ -46,10 +50,12 @@ export default function Home({ userAgent }) {
               </ThemedText>
             </div>
           </section>
-          <section css={css`
-            display: flex;
-            height: 100%;
-          `}>
+          <section
+            css={css`
+              display: flex;
+              height: 100%;
+            `}
+          >
             <RollingScrollBanner
               isMobile={isMobile}
               css={css`
@@ -58,13 +64,16 @@ export default function Home({ userAgent }) {
               `}
             />
           </section>
-          <div css={css`
-            position: fixed;
-            bottom: 0;
-            padding: 40px 20px;
-          `}>
+          <div
+            css={css`
+              position: fixed;
+              bottom: 0;
+              padding: 40px 20px;
+            `}
+          >
             <MainButton
               type={'filled'}
+              onClick={() => {}}
               // onClick={() => {
               //   console.log('프로필 만들기 버튼 클릭');
               // }}
@@ -77,28 +86,34 @@ export default function Home({ userAgent }) {
           </div>
         </>
       ) : (
-        <div css={css`
-          display: flex;
-          flex-direction: column;
-          height: 100%;
-          gap: 120px;
-          padding-top: 120px;
-        `}>
-          <section css={css`
+        <div
+          css={css`
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 40px;
-            margin: 0 auto;
-          `}>
-            <div css={css`
+            height: 100%;
+            gap: 120px;
+            padding-top: 120px;
+          `}
+        >
+          <section
+            css={css`
               display: flex;
               flex-direction: column;
               justify-content: center;
               align-items: center;
-              gap: 32px;
-            `}>
+              gap: 40px;
+              margin: 0 auto;
+            `}
+          >
+            <div
+              css={css`
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 32px;
+              `}
+            >
               <ThemedText type={'displaySmall'}>환영합니다.</ThemedText>
               <ThemedText
                 css={css`
@@ -112,6 +127,7 @@ export default function Home({ userAgent }) {
             </div>
             <MainButton
               type={'filled'}
+              onClick={() => {}}
               // onClick={() => {
               //   console.log('프로필 만들기 버튼 클릭');
               // }}
@@ -132,6 +148,5 @@ export default function Home({ userAgent }) {
         </div>
       )}
     </>
-  )
-    ;
+  );
 }

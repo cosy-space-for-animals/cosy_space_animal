@@ -41,7 +41,7 @@ const MemoryPopup = ({
   };
 
   return (
-    <Popup onClose={() => {}}>
+    <Popup open={false} onClose={() => {}}>
       <div
         css={css`
           display: flex;

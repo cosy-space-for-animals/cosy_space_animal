@@ -44,7 +44,7 @@ const TemplatePage = () => {
           gap: 96px;
         `}
       >
-        <Header />
+        <Header type='home-login' color='default' />
         <div>
           <ProfileBanner />
           <CommentArea handleOpenPopup={handleOpenPopUp} />
