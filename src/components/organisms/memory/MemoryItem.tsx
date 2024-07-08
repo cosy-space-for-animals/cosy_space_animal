@@ -1,6 +1,6 @@
 import { css, useTheme } from '@emotion/react';
 import Image from 'next/image';
-import sampleMemoryThumbnail from '@/assets/images/sampleMemoryThumbnail3.png';
+import sampleMemoryThumbnail from '@/assets/images/sampleMemoryThumbnail2.png';
 import MoreVerticalIcon from '@/assets/icon/MoreVerticalIcon';
 import MemoryThumbIcon from '@/components/molecules/memory/MemoryThumbIcon';
 import MemoryActionButton from '@/components/molecules/memory/MemoryActionButton';
@@ -11,12 +11,12 @@ interface IProps {
   thumbImgs: string[];
   date: string;
   title: string;
-  content: string;
+  content?: string;
   flowerAmount: number;
   commentAmount: number;
   isProfile?: boolean;
-  profileImg: string;
-  name: string;
+  profileImg?: string;
+  name?: string;
 }
 
 const MemoryItem = ({
@@ -38,16 +38,16 @@ const MemoryItem = ({
         border: 1px solid ${theme.colors.grey[700]};
         padding: 8px;
         background: ${theme.colors.grey[0]};
-        width: fit-content;
+        /* width: fit-content; */
         display: flex;
         flex-direction: column;
         gap: 8px;
-        width: 360px;
+        /* width: 360px; */
         &:hover {
           background: ${theme.colors.grey[100]};
         }
         @media ${theme.device.mobile} {
-          width: 343px;
+          /* width: 343px; */
         }
       `}
     >
@@ -136,7 +136,7 @@ const MemoryItem = ({
               border: 1px solid ${theme.colors.grey[700]};
               object-fit: cover;
               width: 100%;
-              height: 100%;
+              /* height: 100%; */
               @media ${theme.device.mobile} {
                 width: 327px;
                 height: 280px;
@@ -189,18 +189,20 @@ const MemoryItem = ({
         >
           {title}
         </p>
-        <p
-          css={css`
-            display: none;
-            font-size: ${theme.fontSizes.sm};
-            color: ${theme.colors.grey[700]};
-            @media ${theme.device.mobile} {
-              display: block;
-            }
-          `}
-        >
-          {content}
-        </p>
+        {content ? (
+          <p
+            css={css`
+              display: none;
+              font-size: ${theme.fontSizes.sm};
+              color: ${theme.colors.grey[700]};
+              @media ${theme.device.mobile} {
+                display: block;
+              }
+            `}
+          >
+            {content}
+          </p>
+        ) : null}
       </div>
       <div
         css={css`

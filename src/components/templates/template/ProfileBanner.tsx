@@ -11,7 +11,6 @@ const ProfileBanner = () => {
       css={css`
         position: relative;
         z-index: 1;
-        margin-top: 96px;
         display: flex;
         justify-content: space-between;
         padding: 0 16px;
