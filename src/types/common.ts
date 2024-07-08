@@ -14,3 +14,8 @@ export interface IInputItemProps {
   disabled?: boolean;
   placeholder?: string;
 }
+
+export interface IPopupProps {
+  open: boolean;
+  onClose: () => void;
+}
