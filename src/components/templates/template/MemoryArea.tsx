@@ -1,9 +1,14 @@
 import Timeline from '@/components/atoms/dropdown/Timeline';
 import MemoryItem from '@/components/organisms/memory/MemoryItem';
 import MemoryMonthList from '@/components/organisms/memory/MemoryMonthList';
+import { TTemaplatePopup } from '@/pages/template';
 import { css, useTheme } from '@emotion/react';
 
-const MemoryArea = () => {
+interface IProps {
+  handleOpenPopup: (type: TTemaplatePopup) => void;
+}
+
+const MemoryArea = ({ handleOpenPopup }: IProps) => {
   const theme = useTheme();
   return (
     <div
@@ -51,64 +56,18 @@ const MemoryArea = () => {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 24px;
+            min-height: 680px;
           `}
         >
-          <MemoryItem
-            thumbImgs={['', '', '']}
-            date='2023. 05. 24.'
-            title='입만 웃는 기묘한 녀석'
-            flowerAmount={45}
-            commentAmount={8}
-          />
-          <MemoryItem
-            thumbImgs={['', '', '']}
-            date='2023. 05. 24.'
-            title='입만 웃는 기묘한 녀석'
-            flowerAmount={45}
-            commentAmount={8}
-          />
-          <MemoryItem
-            thumbImgs={['', '', '']}
-            date='2023. 05. 24.'
-            title='입만 웃는 기묘한 녀석'
-            flowerAmount={45}
-            commentAmount={8}
-          />
-          <MemoryItem
-            thumbImgs={['', '', '']}
-            date='2023. 05. 24.'
-            title='입만 웃는 기묘한 녀석'
-            flowerAmount={45}
-            commentAmount={8}
-          />
-          <MemoryItem
-            thumbImgs={['', '', '']}
-            date='2023. 05. 24.'
-            title='입만 웃는 기묘한 녀석'
-            flowerAmount={45}
-            commentAmount={8}
-          />
-          <MemoryItem
-            thumbImgs={['', '', '']}
-            date='2023. 05. 24.'
-            title='입만 웃는 기묘한 녀석'
-            flowerAmount={45}
-            commentAmount={8}
-          />
-          <MemoryItem
-            thumbImgs={['', '', '']}
-            date='2023. 05. 24.'
-            title='입만 웃는 기묘한 녀석'
-            flowerAmount={45}
-            commentAmount={8}
-          />
-          <MemoryItem
-            thumbImgs={['', '', '']}
-            date='2023. 05. 24.'
-            title='입만 웃는 기묘한 녀석'
-            flowerAmount={45}
-            commentAmount={8}
-          />
+          <li onClick={() => handleOpenPopup('memory')}>
+            <MemoryItem
+              thumbImgs={['', '', '']}
+              date='2023. 05. 24.'
+              title='입만 웃는 기묘한 녀석'
+              flowerAmount={45}
+              commentAmount={8}
+            />
+          </li>
         </ul>
         <div
           css={css`

@@ -2,9 +2,14 @@ import ArrowButton from '@/components/atoms/buttons/ArrowButton';
 import CommentArrowButton from '@/components/atoms/buttons/CommentArrowButton';
 import CommentInput from '@/components/organisms/comment/CommentInput';
 import CommentItem from '@/components/organisms/comment/CommentItem';
+import { TTemaplatePopup } from '@/pages/template';
 import { css, useTheme } from '@emotion/react';
 
-const CommentArea = () => {
+interface IProps {
+  handleOpenPopup: (type: TTemaplatePopup) => void;
+}
+
+const CommentArea = ({ handleOpenPopup }: IProps) => {
   const theme = useTheme();
   return (
     <div
@@ -31,7 +36,11 @@ const CommentArea = () => {
         >
           따뜻한 한마디
         </span>
-        <ArrowButton type='borderlessGrey' children='모두 보기' />
+        <ArrowButton
+          type='borderlessGrey'
+          children='모두 보기'
+          onClick={() => handleOpenPopup('comment')}
+        />
       </div>
       <div
         css={css`
@@ -70,6 +79,7 @@ const CommentArea = () => {
             align-items: start;
             gap: 8px;
             overflow-x: auto;
+            padding-bottom: 4px;
           `}
           className='hide-scrollbar'
         >
