@@ -1,5 +1,6 @@
 import Timeline from '@/components/atoms/dropdown/Timeline';
 import MemoryItem from '@/components/organisms/memory/MemoryItem';
+import MemoryMonthList from '@/components/organisms/memory/MemoryMonthList';
 import { css, useTheme } from '@emotion/react';
 
 const MemoryArea = () => {
@@ -40,70 +41,85 @@ const MemoryArea = () => {
         </div>
         <Timeline color='ivory' selectedYear={2023} />
       </div>
-      <ul
+      <div
         css={css`
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 24px;
+          position: relative;
         `}
       >
-        <MemoryItem
-          thumbImgs={['', '', '']}
-          date='2023. 05. 24.'
-          title='입만 웃는 기묘한 녀석'
-          flowerAmount={45}
-          commentAmount={8}
-        />
-        <MemoryItem
-          thumbImgs={['', '', '']}
-          date='2023. 05. 24.'
-          title='입만 웃는 기묘한 녀석'
-          flowerAmount={45}
-          commentAmount={8}
-        />
-        <MemoryItem
-          thumbImgs={['', '', '']}
-          date='2023. 05. 24.'
-          title='입만 웃는 기묘한 녀석'
-          flowerAmount={45}
-          commentAmount={8}
-        />
-        <MemoryItem
-          thumbImgs={['', '', '']}
-          date='2023. 05. 24.'
-          title='입만 웃는 기묘한 녀석'
-          flowerAmount={45}
-          commentAmount={8}
-        />
-        <MemoryItem
-          thumbImgs={['', '', '']}
-          date='2023. 05. 24.'
-          title='입만 웃는 기묘한 녀석'
-          flowerAmount={45}
-          commentAmount={8}
-        />
-        <MemoryItem
-          thumbImgs={['', '', '']}
-          date='2023. 05. 24.'
-          title='입만 웃는 기묘한 녀석'
-          flowerAmount={45}
-          commentAmount={8}
-        />
-        <MemoryItem
-          thumbImgs={['', '', '']}
-          date='2023. 05. 24.'
-          title='입만 웃는 기묘한 녀석'
-          flowerAmount={45}
-          commentAmount={8}
-        />
-        <MemoryItem
-          thumbImgs={['', '', '']}
-          date='2023. 05. 24.'
-          title='입만 웃는 기묘한 녀석'
-          flowerAmount={45}
-          commentAmount={8}
-        />
-      </ul>
+        <ul
+          css={css`
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+          `}
+        >
+          <MemoryItem
+            thumbImgs={['', '', '']}
+            date='2023. 05. 24.'
+            title='입만 웃는 기묘한 녀석'
+            flowerAmount={45}
+            commentAmount={8}
+          />
+          <MemoryItem
+            thumbImgs={['', '', '']}
+            date='2023. 05. 24.'
+            title='입만 웃는 기묘한 녀석'
+            flowerAmount={45}
+            commentAmount={8}
+          />
+          <MemoryItem
+            thumbImgs={['', '', '']}
+            date='2023. 05. 24.'
+            title='입만 웃는 기묘한 녀석'
+            flowerAmount={45}
+            commentAmount={8}
+          />
+          <MemoryItem
+            thumbImgs={['', '', '']}
+            date='2023. 05. 24.'
+            title='입만 웃는 기묘한 녀석'
+            flowerAmount={45}
+            commentAmount={8}
+          />
+          <MemoryItem
+            thumbImgs={['', '', '']}
+            date='2023. 05. 24.'
+            title='입만 웃는 기묘한 녀석'
+            flowerAmount={45}
+            commentAmount={8}
+          />
+          <MemoryItem
+            thumbImgs={['', '', '']}
+            date='2023. 05. 24.'
+            title='입만 웃는 기묘한 녀석'
+            flowerAmount={45}
+            commentAmount={8}
+          />
+          <MemoryItem
+            thumbImgs={['', '', '']}
+            date='2023. 05. 24.'
+            title='입만 웃는 기묘한 녀석'
+            flowerAmount={45}
+            commentAmount={8}
+          />
+          <MemoryItem
+            thumbImgs={['', '', '']}
+            date='2023. 05. 24.'
+            title='입만 웃는 기묘한 녀석'
+            flowerAmount={45}
+            commentAmount={8}
+          />
+        </ul>
+        <div
+          css={css`
+            position: absolute;
+            top: 0;
+            left: 100%;
+          `}
+        >
+          <MemoryMonthList />
+        </div>
+      </div>
     </div>
   );
 };

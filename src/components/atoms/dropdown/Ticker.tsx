@@ -39,7 +39,11 @@ const Ticker = ({
             ? 'column-reverse'
             : 'column'};
           align-items: ${type === 'horizontal' ? 'center' : 'end'};
-          gap: ${type === 'horizontal' ? '16px' : 0};
+          gap: ${type === 'horizontal'
+            ? '16px'
+            : state === 'withYear'
+              ? '4px'
+              : 0};
         `}
       >
         <span
