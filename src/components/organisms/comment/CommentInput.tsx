@@ -21,6 +21,7 @@ const CommentInput = () => {
     <div
       css={css`
         width: 360px;
+        flex-shrink: 0;
         border-radius: 8px;
         background: ${theme.colors.grey[0]};
         border: 1px solid ${theme.colors.grey[700]};

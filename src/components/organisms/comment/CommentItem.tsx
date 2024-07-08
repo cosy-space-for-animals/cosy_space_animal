@@ -18,6 +18,7 @@ const CommentItem = ({ profileImg, name, time, comment }: IProps) => {
       css={css`
         position: relative;
         width: 360px;
+        flex-shrink: 0;
         padding: 16px 20px;
         display: flex;
         flex-direction: column;
