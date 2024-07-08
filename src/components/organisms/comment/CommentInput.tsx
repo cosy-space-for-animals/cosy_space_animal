@@ -1,4 +1,5 @@
 import RoundButton from '@/components/atoms/buttons/RoundButton';
+import InputDefaultItem from '@/components/atoms/input/InputDefaultItem';
 import { css, useTheme } from '@emotion/react';
 import { ChangeEvent, useState } from 'react';
 
@@ -34,10 +35,11 @@ const CommentInput = () => {
         }
       `}
     >
-      <input
-        placeholder='따뜻한 한마디를 남겨주세요'
+      <InputDefaultItem
         value={inputValue}
-        onChange={handleChangeInputValue}
+        setValue={setInputValue}
+        validate={true}
+        placeholder='따뜻한 한마디를 남겨주세요'
       />
       <div
         css={css`
