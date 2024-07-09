@@ -234,39 +234,6 @@ const Step2 = ({ setStep }) => {
           </label>
         </div>
         {/* verificationCode */}
-        /*{' '}
-        <div
-          css={css`
-            margin-top: -12px;
-          `}
-        >
-          <label
-            htmlFor='verificationCode'
-            css={css`
-              font-size: 13px;
-              font-weight: 400;
-              line-height: 19.5px;
-              letter-spacing: -0.25px;
-              color: ${theme.colors.grey[700]};
-            `}
-          >
-            인증번호를 문자 메시지로 보냈어요!
-            <div
-              css={css`
-                margin-top: 4px;
-              `}
-            >
-              <InputDefaultItem
-                id='verificationCode'
-                value={verificationCode}
-                setValue={setVerificationCode}
-                validate={() => true}
-                placeholder='인증번호 6자리 입력'
-              />
-            </div>
-          </label>
-        </div>{' '}
-        */
       </div>
       <MainButton disabled={!canGoNext} onClick={signUp}>
         회원가입
