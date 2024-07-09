@@ -2,15 +2,17 @@ import { css } from '@emotion/react';
 
 interface IPhotoArrowButtonProps {
   direction: 'left' | 'right';
+  onClick?(): void;
 }
 
 export default function PhotoArrowButton({
   direction = 'right',
+  onClick,
 }: IPhotoArrowButtonProps) {
   const isLeft = Boolean(direction === 'left');
 
   return (
-    <div
+    <button
       css={css`
         width: 40px;
         height: 40px;
@@ -19,6 +21,7 @@ export default function PhotoArrowButton({
         justify-content: center;
         transform: ${isLeft ? 'rotateY(180deg)' : 'rotate(0)'};
       `}
+      onClick={onClick}
     >
       <svg
         width='32'
@@ -85,6 +88,6 @@ export default function PhotoArrowButton({
           </filter>
         </defs>
       </svg>
-    </div>
+    </button>
   );
 }

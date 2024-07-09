@@ -1,3 +1,5 @@
+import { TFetchError, TFetchResponse } from '@/types/common';
+
 const FETCH_METHODS = {
   GET: 'GET',
   POST: 'POST',
@@ -39,7 +41,7 @@ const rewrite = (url: string): string => {
  * @example await fetchWrapper(url, options);
  *
  */
-export const fetchWrapper = async (url: string, options?: RequestInit) => {
+export const fetchWrapper = async <T>(url: string, options?: RequestInit): Promise<TFetchResponse<T> | TFetchError> => {
   try {
     const response = await fetch(isServer ? rewrite(url) : `${url}`, {
       ...defaultOptions,

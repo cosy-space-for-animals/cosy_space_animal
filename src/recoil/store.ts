@@ -23,7 +23,7 @@ export const postProfileStepState: RecoilState<TPostProfileStep> = atom({
   key: 'postProfileStep',
   default: {
     maxStep: 4,
-    step: 3,
+    step: 4,
     data: {
       email: '',
       petName: '',

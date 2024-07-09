@@ -28,3 +28,19 @@ export type TTextareaProps = TOverride<IInputItemProps, {
   value: string;
   maxLength: number;
 }>;
+
+export type TUploadImageResponse = {
+  url: string;
+  key: string;
+};
+
+export type TFetchResponse<T> = {
+  status: number;
+  message: string;
+  data: T;
+};
+
+export type TFetchError = {
+  status: number;
+  message: string;
+};

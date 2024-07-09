@@ -9,6 +9,7 @@ import ProfileSettingStep1 from '@/components/organisms/profile/ProfileSettingSt
 import { theme } from '@/types/theme';
 import ProfileSettingStep2 from '@/components/organisms/profile/ProfileSettingStep2';
 import ProfileSettingStep3 from '@/components/organisms/profile/ProfileSettingStep3';
+import ProfileSettingStep4 from '@/components/organisms/profile/ProfileSettingStep4';
 
 const PostProfile = () => {
   const [postProfileStep, setPostProfileStep] = useRecoilState(postProfileStepState);
@@ -62,17 +63,30 @@ const PostProfile = () => {
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 2rem;
+        gap: 0.5rem;
         @media ${theme.device.mobile} {
           align-items: flex-start;
         }
       `}>
         <ThemedText type={'titleMedium'}>{getHeaderText(postProfileStep.step, postProfileStep.data.petName)}</ThemedText>
+        {postProfileStep.step === 4 && (
+          <ThemedText
+            type={'bodySmall'}
+            css={css`
+              color: ${theme.colors.grey[600]};
+            `}
+          >
+            프로필 사진의 최대 파일 크기는
+            <span css={css`color: ${theme.colors.primary[500]}`}>2MB</span>
+            입니다.
+          </ThemedText>
+        )}
       </div>
 
       {postProfileStep.step === 1 && <ProfileSettingStep1 />}
       {postProfileStep.step === 2 && <ProfileSettingStep2 />}
       {postProfileStep.step === 3 && <ProfileSettingStep3 />}
+      {postProfileStep.step === 4 && <ProfileSettingStep4 />}
 
       <div css={css`
         display: flex;

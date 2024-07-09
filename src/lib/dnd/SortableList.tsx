@@ -11,7 +11,6 @@ import type { Active, UniqueIdentifier } from '@dnd-kit/core';
 import {
   SortableContext,
   arrayMove,
-  sortableKeyboardCoordinates,
 } from '@dnd-kit/sortable';
 import { DragHandle, SortableItem } from './SortableItem';
 import SortableOverlay from '@/lib/dnd/SortableOverlay';

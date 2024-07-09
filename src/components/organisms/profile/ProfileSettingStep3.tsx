@@ -46,7 +46,7 @@ const ProfileSettingStep3 = () => {
 
   useEffect(() => {
     setAvailableColors(newAvailableColors);
-    setParam({ ...param, petFavs: items.map((item) => item.label) });
+    setParam({ ...param, petFavs: items.map((item) => `${item.label},${item.id}`) });
   }, [items, newAvailableColors, currentItem.code]);
 
   useEffect(() => {
