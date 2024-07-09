@@ -78,6 +78,9 @@ export default function RoundButton({
           text-align: center;
           border: none;
           outline: none;
+          &:disabled {
+            cursor: default;
+          }
         `,
         styles[type],
       )}
