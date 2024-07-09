@@ -51,13 +51,6 @@ const TestPage = ({ todos }: Props) => {
   });
 
 
-  useEffect(() => {
-    if (data) {
-      setList((prev) => [...prev, data.pages.at(-1)]);
-    }
-  }, [data]);
-
-
   const test = async () => {
     await copyToClipboard('test');
   };
