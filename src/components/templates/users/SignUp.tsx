@@ -1,6 +1,7 @@
 import Scrim from '@/components/atoms/Scrim';
 import MainButton from '@/components/atoms/buttons/MainButton';
 import InputDefaultItem from '@/components/atoms/input/InputDefaultItem';
+import InputMobileVerification from '@/components/atoms/input/InputMobileVerification';
 import InputPasswordItem from '@/components/atoms/input/InputPasswordItem';
 import AccordionMenuItem, {
   TAccordionMenuItem,
@@ -20,19 +21,13 @@ interface ISignUpProps {
   render: Dispatch<SetStateAction<boolean>>;
 }
 
-type TSignUpAgree = {
-  id: number;
-  title: string;
-  desc: Nullable<string>;
-  required: boolean;
-};
-
 const Step1 = ({ setStep }) => {
   const [canGoNext, setCanGoNext] = useState(false);
   const [selected, setSelected] = useState<Set<number>>(new Set([]));
-  const [data, setData] = useState<Array<TAccordionMenuItem>>([]);
+  const [data, setData] = useState<Nullable<Array<TAccordionMenuItem>>>(null);
 
   function goToNextStep() {
+    if (!canGoNext) return;
     setStep(2);
   }
 
@@ -44,6 +39,15 @@ const Step1 = ({ setStep }) => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (!data) return;
+    if (data.length === selected.size) {
+      setCanGoNext(true);
+    } else {
+      setCanGoNext(false);
+    }
+  }, [selected, data]);
 
   return (
     <div>
@@ -71,6 +75,7 @@ const Step2 = ({ setStep }) => {
   const [passwordCheck, setPasswordCheck] = useState('');
   const [name, setName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [verificationCode, setVerificationCode] = useState('');
 
   function validatePasswordCheck() {
     return Boolean(password === passwordCheck);
@@ -86,7 +91,6 @@ const Step2 = ({ setStep }) => {
           margin-bottom: 32px;
           display: flex;
           flex-direction: column;
-
           gap: 24px;
         `}
       >
@@ -219,7 +223,7 @@ const Step2 = ({ setStep }) => {
                 margin-top: 4px;
               `}
             >
-              <InputDefaultItem
+              <InputMobileVerification
                 id='phoneNumber'
                 value={phoneNumber}
                 setValue={setPhoneNumber}
@@ -229,6 +233,40 @@ const Step2 = ({ setStep }) => {
             </div>
           </label>
         </div>
+        {/* verificationCode */}
+        /*{' '}
+        <div
+          css={css`
+            margin-top: -12px;
+          `}
+        >
+          <label
+            htmlFor='verificationCode'
+            css={css`
+              font-size: 13px;
+              font-weight: 400;
+              line-height: 19.5px;
+              letter-spacing: -0.25px;
+              color: ${theme.colors.grey[700]};
+            `}
+          >
+            인증번호를 문자 메시지로 보냈어요!
+            <div
+              css={css`
+                margin-top: 4px;
+              `}
+            >
+              <InputDefaultItem
+                id='verificationCode'
+                value={verificationCode}
+                setValue={setVerificationCode}
+                validate={() => true}
+                placeholder='인증번호 6자리 입력'
+              />
+            </div>
+          </label>
+        </div>{' '}
+        */
       </div>
       <MainButton disabled={!canGoNext} onClick={signUp}>
         회원가입

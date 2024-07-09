@@ -6,32 +6,61 @@ import {
   type ChangeEvent,
   useState,
   type FocusEvent,
+  useCallback,
+  useEffect,
 } from 'react';
+import RoundButton from '../buttons/RoundButton';
 
-const InputDefaultItem: React.FC<IInputItemProps2> = ({
+const InputMobileVerification: React.FC<any> = ({
   id,
   value,
+  code,
   setValue,
   validate,
   errorMessage,
   placeholder,
   disabled = false,
 }) => {
+  const [canGoNext, setCanGoNext] = useState(false);
   const [focus, setFocus] = useState(false);
   const [error, setError] = useState(false);
 
-  const onFocus = () => setFocus(true);
-  const onBlur = (e: FocusEvent<HTMLInputElement>) => {
-    setFocus(false);
-    setError(!validate(e.target.value));
-  };
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setValue(e.target.value);
-    onFocus();
-  };
-  const remove = () => setValue('');
-  const mouseDownHandler = (e: MouseEvent<HTMLButtonElement>) =>
-    e.preventDefault();
+  const checkOnlyNumbers = useCallback((string: string): string => {
+    return string.replace(/[^0-9]/g, '');
+  }, []);
+  const mouseDownHandler = useCallback(
+    (e: MouseEvent<HTMLButtonElement>) => e.preventDefault(),
+    [],
+  );
+  const onFocus = useCallback(() => setFocus(true), []);
+  const onBlur = useCallback(
+    (e: FocusEvent<HTMLInputElement>) => {
+      setFocus(false);
+      setError(!validate(e.target.value));
+    },
+    [setFocus, setError, validate],
+  );
+  const onChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      setValue(checkOnlyNumbers(e.target.value).slice(0, 11));
+      onFocus();
+    },
+    [onFocus, setValue, checkOnlyNumbers],
+  );
+  const remove = useCallback(() => setValue(''), [setValue]);
+  const request = useCallback(() => {
+    console.log('통신성공');
+    // 번호수정을 눌러야 포커스 => Input focus 빼기
+    // 인증번호 Input active되면서 나타남, focus도 됨
+  }, []);
+
+  useEffect(() => {
+    if (value.length === 11) {
+      setCanGoNext(true);
+    } else {
+      setCanGoNext(false);
+    }
+  }, [value]);
 
   return (
     <>
@@ -49,7 +78,9 @@ const InputDefaultItem: React.FC<IInputItemProps2> = ({
           onBlur={onBlur}
           onChange={onChange}
           value={value}
-          type='text'
+          type='tel'
+          inputMode='numeric'
+          maxLength={11}
           css={css`
             width: 100%;
             height: 52px;
@@ -59,7 +90,7 @@ const InputDefaultItem: React.FC<IInputItemProps2> = ({
             letter-spacing: -0.5px;
             outline: none;
             padding: 14px 12px;
-            padding-right: ${focus ? '46px' : '12px'};
+            padding-right: ${focus ? '134px' : '103px'};
             border: 1px solid
               ${error && errorMessage
                 ? 'var(--main-red-500)'
@@ -85,7 +116,7 @@ const InputDefaultItem: React.FC<IInputItemProps2> = ({
             css={css`
               position: absolute;
               top: 14px;
-              right: 12px;
+              right: 103px;
             `}
           >
             <Image
@@ -96,6 +127,17 @@ const InputDefaultItem: React.FC<IInputItemProps2> = ({
             />
           </button>
         )}
+        <div
+          css={css`
+            position: absolute;
+            top: 10px;
+            right: 12px;
+          `}
+        >
+          <RoundButton disabled={!canGoNext} type='filled' onClick={request}>
+            인증 요청
+          </RoundButton>
+        </div>
       </div>
       {error && errorMessage && (
         <div
@@ -124,4 +166,4 @@ const InputDefaultItem: React.FC<IInputItemProps2> = ({
   );
 };
 
-export default InputDefaultItem;
+export default InputMobileVerification;
