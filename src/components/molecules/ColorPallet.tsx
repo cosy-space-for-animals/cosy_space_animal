@@ -26,7 +26,6 @@ const ColorPallet = (
     onSelect,
     availableColors,
   }: Props) => {
-  console.log(currentColor);
   const theme = useTheme();
   const { isMobile } = useDevice();
 

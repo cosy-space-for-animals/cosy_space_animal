@@ -25,8 +25,6 @@ const MaskedImage = (
     { file: Nullable<File>, currenTFrameShape: TFrameShape, theme: ReturnType<typeof useTheme> }
 ) => {
 
-  console.log(file);
-
   return (
     <>
       {file ? (

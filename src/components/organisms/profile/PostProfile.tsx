@@ -157,13 +157,6 @@ const PostProfile = ({ step }: Props) => {
           onClick={() => paginationHandler('next')}
         />
       </div>
-      <button
-        onClick={() => {
-          console.log(data);
-        }}
-      >
-        <ThemedText type={'bodySmall'}>Check</ThemedText>
-      </button>
     </div>
   );
 };

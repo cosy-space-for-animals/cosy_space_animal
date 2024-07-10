@@ -19,7 +19,6 @@ export default function CheckBoxWithLabel(
     disabled,
     label,
   }: Props) {
-  console.log(checked);
 
   return (
     <label
