@@ -14,12 +14,11 @@ const InputCharacterCounterItem = ({
                                      disabled = false,
                                      placeholder,
                                    }: TTextareaProps) => {
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(value.length);
   const hiddenTextareaRef = useRef<HTMLTextAreaElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const onChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    calculateRows(e.target.value);
     setValue(e.target.value);
     setCount(e.target.value.length);
   };
@@ -42,6 +41,10 @@ const InputCharacterCounterItem = ({
       calculateRows(textareaRef.current.value);
     }
   }, [count]);
+
+  useEffect(() => {
+    setCount(value.length);
+  }, [value]);
 
   return (
     <>

@@ -11,18 +11,21 @@ import ImageMask from '@/components/atoms/ImageMask';
 import frames from '@/constants/frames.json';
 import PhotoArrowButton from '@/components/atoms/buttons/PhotoArrowButton';
 import Thumbs from '@/assets/frames/thumb';
-import { useRecoilState } from 'recoil';
-import { fourthStep } from '@/recoil/store';
+import { fourthStep, profileImageAtom } from '@/recoil/store';
 import { Nullable } from '@/types/global';
+import { useSSR } from '@/lib/recoil/useSSR';
+import { useRecoilState } from 'recoil';
 
 const thumbKeys = Object.keys(Thumbs) as Array<keyof typeof Thumbs>;
 
-export type TShape = keyof typeof frames;
+export type TFrameShape = keyof typeof frames;
 
 const MaskedImage = (
-  { file, currentShape, theme }:
-    { file: Nullable<File>, currentShape: TShape, theme: ReturnType<typeof useTheme> }
+  { file, currenTFrameShape, theme }:
+    { file: Nullable<File>, currenTFrameShape: TFrameShape, theme: ReturnType<typeof useTheme> }
 ) => {
+
+  console.log(file);
 
   return (
     <>
@@ -33,8 +36,8 @@ const MaskedImage = (
             <Image
               src={URL.createObjectURL(file)}
               alt="profile image"
-              width={frames[currentShape].width}
-              height={frames[currentShape].height}
+              width={frames[currenTFrameShape].width}
+              height={frames[currenTFrameShape].height}
               css={css`
                   border-radius: 6px;
                   object-fit: cover;
@@ -43,9 +46,9 @@ const MaskedImage = (
                 `}
             />
           }
-          width={frames[currentShape].width}
-          height={frames[currentShape].height}
-          svgShape={frames[currentShape].path}
+          width={frames[currenTFrameShape].width}
+          height={frames[currenTFrameShape].height}
+          svgShape={frames[currenTFrameShape].path}
         />
       ) : (
         <div
@@ -60,8 +63,8 @@ const MaskedImage = (
             color: ${theme.colors.grey[500]};
           `}
         >
-          {frames[currentShape].path && (
-            <div dangerouslySetInnerHTML={{ __html: frames[currentShape].path }} />
+          {frames[currenTFrameShape].path && (
+            <div dangerouslySetInnerHTML={{ __html: frames[currenTFrameShape].path }} />
           )}
           <ThemedText
             type={'labelLarge'}
@@ -81,9 +84,12 @@ const MaskedImage = (
 const ProfileSettingStep4 = () => {
   const theme = useTheme();
   const { isMobile } = useDevice();
-  const [param, setParam] = useRecoilState(fourthStep);
+  const [param, setParam] = useSSR(fourthStep, {
+    petProfileFrame: 'oval_vertical' as TFrameShape,
+  });
+  const [profileImage, setProfileImage] = useRecoilState(profileImageAtom)
   const inputRef = useRef<HTMLInputElement>(null);
-  const framesKeys = Object.keys(frames) as TShape[];
+  const framesKeys = Object.keys(frames) as TFrameShape[];
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -92,12 +98,12 @@ const ProfileSettingStep4 = () => {
         alert('2MB 이하의 이미지만 업로드 가능합니다.');
         return;
       } else {
-        setParam({ ...param, petProfileImage: file });
+        setProfileImage(file);
       }
     }
   };
 
-  const handleCurrentShape = (direction: 'left' | 'right') => {
+  const handleCurrenTFrameShape = (direction: 'left' | 'right') => {
     const currentIndex = framesKeys.indexOf(param.petProfileFrame);
     if (direction === 'left') {
       if (currentIndex === 0) {
@@ -113,10 +119,6 @@ const ProfileSettingStep4 = () => {
       }
     }
   };
-
-  useEffect(() => {
-    console.log(param.petProfileImage);
-  }, [param.petProfileImage]);
 
   return (
     <div
@@ -164,15 +166,15 @@ const ProfileSettingStep4 = () => {
         {isMobile ? (
           <label htmlFor="image-upload" css={css`z-index: 999`}>
             <MaskedImage
-              file={param.petProfileImage}
-              currentShape={param.petProfileFrame}
+              file={profileImage}
+              currenTFrameShape={param.petProfileFrame}
               theme={theme}
             />
           </label>
         ) : (
           <MaskedImage
-            file={param.petProfileImage}
-            currentShape={param.petProfileFrame}
+            file={profileImage}
+            currenTFrameShape={param.petProfileFrame}
             theme={theme}
           />
         )}
@@ -188,8 +190,8 @@ const ProfileSettingStep4 = () => {
             padding: 0 20px;
           }
         `}>
-          <PhotoArrowButton onClick={() => handleCurrentShape('left')} direction={'left'} />
-          <PhotoArrowButton onClick={() => handleCurrentShape('right')} direction={'right'} />
+          <PhotoArrowButton onClick={() => handleCurrenTFrameShape('left')} direction={'left'} />
+          <PhotoArrowButton onClick={() => handleCurrenTFrameShape('right')} direction={'right'} />
         </div>
       </div>
       <div

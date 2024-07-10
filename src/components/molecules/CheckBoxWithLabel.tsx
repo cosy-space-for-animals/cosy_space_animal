@@ -5,7 +5,7 @@ import CheckButton from '@/components/atoms/buttons/CheckButton';
 
 type Props = {
   name: string;
-  value: boolean;
+  checked: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   disabled?: boolean;
   label?: string;
@@ -14,11 +14,13 @@ type Props = {
 export default function CheckBoxWithLabel(
   {
     name,
-    value,
+    checked,
     onChange,
     disabled,
     label,
   }: Props) {
+  console.log(checked);
+
   return (
     <label
       css={css`
@@ -38,11 +40,11 @@ export default function CheckBoxWithLabel(
         `}
         onChange={onChange}
         disabled={disabled}
-        checked={value}
+        checked={checked}
         id={`checkbox-${name}`}
       />
       <CheckButton
-        checked={value}
+        checked={checked}
       />
       <ThemedText>{label}</ThemedText>
     </label>

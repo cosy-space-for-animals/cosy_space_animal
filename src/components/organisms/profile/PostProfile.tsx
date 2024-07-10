@@ -1,6 +1,7 @@
+'use client'
+
 import React from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { firstStep, postProfileStepState, TPostProfileStep } from '@/recoil/store';
+import { defaultProfileData, profileDataAtom, profileImageAtom } from '@/recoil/store';
 import ProgressIndicatorDot from '@/components/atoms/ProgressIndicatorDot';
 import ProfileMoveButton from '@/components/atoms/buttons/ProfileMoveButton';
 import { css } from '@emotion/react';
@@ -10,29 +11,40 @@ import { theme } from '@/types/theme';
 import ProfileSettingStep2 from '@/components/organisms/profile/ProfileSettingStep2';
 import ProfileSettingStep3 from '@/components/organisms/profile/ProfileSettingStep3';
 import ProfileSettingStep4 from '@/components/organisms/profile/ProfileSettingStep4';
+import { useRouter } from 'next/router';
+import { useSSR, useSSRValue } from '@/lib/recoil/useSSR';
 
-const PostProfile = () => {
-  const [postProfileStep, setPostProfileStep] = useRecoilState(postProfileStepState);
-  const firstStepState = useRecoilValue(firstStep);
+type Props = {
+  step: number;
+}
+
+const PostProfile = ({ step }: Props) => {
+  const router = useRouter();
+  // const { data } = useRecoilValue(profileData);
+
+  const data = useSSRValue(profileDataAtom, defaultProfileData);
+  const profileImage = useSSRValue(profileImageAtom, null);
+
+  const maxStep = 4;
 
   const buttonDisabled = (type: 'prev' | 'next') => {
     if (type === 'prev') {
-      return postProfileStep.step === 1;
+      return step === 1;
     } else {
-      if (postProfileStep.step === 1) {
-        return !firstStepState.petName || !firstStepState.petSpecM || !firstStepState.petSpecS;
-      } else if (postProfileStep.step === 2) {
-        return !postProfileStep.data.petGender || !postProfileStep.data.birthDate;
-      } else if (postProfileStep.step === 3) {
-        return !postProfileStep.data.petDesc;
-      } else if (postProfileStep.step === 4) {
-        return !postProfileStep.data.petProfileImage;
+      if (step === 1) {
+        return !data.petName || !data.petSpecM || !data.petSpecS;
+      } else if (step === 2) {
+        return !data.petGender || !data.birthDate;
+      } else if (step === 3) {
+        return !data.petDesc;
+      } else if (step === 4) {
+        return !profileImage;
       }
-      return postProfileStep.step === postProfileStep.maxStep;
+      return step === maxStep;
     }
   };
 
-  const getHeaderText = (step: TPostProfileStep['step'], name:string = ''): string => {
+  const getHeaderText = (step: number, name: string = ''): string => {
     switch (step) {
       case 1:
         return `반려동물의 이름과 종류를 알려주세요`;
@@ -45,7 +57,20 @@ const PostProfile = () => {
       default:
         return '';
     }
-  }
+  };
+
+  const paginationHandler = async (type: 'prev' | 'next') => {
+    if (type === 'prev') {
+      await router.push(`/profile/register/step?step=${step - 1}`);
+    } else {
+      if (step === maxStep) {
+        // API 호출
+        return;
+      } else {
+        await router.push(`/profile/register/step?step=${step + 1}`);
+      }
+    }
+  };
 
   return (
     <div css={css`
@@ -72,8 +97,8 @@ const PostProfile = () => {
           align-items: flex-start;
         }
       `}>
-        <ThemedText type={'titleMedium'}>{getHeaderText(postProfileStep.step, postProfileStep.data.petName)}</ThemedText>
-        {postProfileStep.step === 4 && (
+        <ThemedText type={'titleMedium'}>{getHeaderText(step, data.petName)}</ThemedText>
+        {step === 4 && (
           <ThemedText
             type={'bodySmall'}
             css={css`
@@ -87,10 +112,10 @@ const PostProfile = () => {
         )}
       </div>
 
-      {postProfileStep.step === 1 && <ProfileSettingStep1 />}
-      {postProfileStep.step === 2 && <ProfileSettingStep2 />}
-      {postProfileStep.step === 3 && <ProfileSettingStep3 />}
-      {postProfileStep.step === 4 && <ProfileSettingStep4 />}
+      {step === 1 && <ProfileSettingStep1 />}
+      {step === 2 && <ProfileSettingStep2 />}
+      {step === 3 && <ProfileSettingStep3 />}
+      {step === 4 && <ProfileSettingStep4 />}
 
       <div css={css`
         display: flex;
@@ -106,12 +131,7 @@ const PostProfile = () => {
         <ProfileMoveButton
           type={'prev'}
           disabled={buttonDisabled('prev')}
-          onClick={() => {
-            setPostProfileStep({
-              ...postProfileStep,
-              step: postProfileStep.step - 1,
-            });
-          }}
+          onClick={() => paginationHandler('prev')}
         />
         <div css={css`
           flex: 1;
@@ -121,9 +141,9 @@ const PostProfile = () => {
           align-items: center;
           gap: 0.5rem;
         `}>
-          {Array.from({ length: postProfileStep.maxStep }).map((_, index) => (
+          {Array.from({ length: maxStep }).map((_, index) => (
             <ProgressIndicatorDot
-              type={index + 1 === postProfileStep.step ? 'primaryPresent' : (index + 1 < postProfileStep.step ? 'primaryAfter' : 'greyAfter')}
+              type={index + 1 === step ? 'primaryPresent' : (index + 1 < step ? 'primaryAfter' : 'greyAfter')}
               key={index}
               cssStyle={css`
                 position: relative;
@@ -134,22 +154,12 @@ const PostProfile = () => {
         <ProfileMoveButton
           type={'next'}
           disabled={buttonDisabled('next')}
-          onClick={() => {
-            setPostProfileStep((prev) => {
-              if (prev.step === prev.maxStep) {
-                return prev;
-              }
-              return {
-                ...prev,
-                step: prev.step + 1,
-              };
-            });
-          }}
+          onClick={() => paginationHandler('next')}
         />
       </div>
       <button
         onClick={() => {
-          console.log(postProfileStep.data)
+          console.log(data);
         }}
       >
         <ThemedText type={'bodySmall'}>Check</ThemedText>

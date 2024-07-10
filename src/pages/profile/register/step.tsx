@@ -8,7 +8,21 @@ import dynamic from 'next/dynamic';
 
 const PostProfile = dynamic(() => import('@/components/organisms/profile/PostProfile'));
 
-const Post = () => {
+type StepProps = {
+  step: string;
+};
+
+
+export async function getServerSideProps({ query }: { query: { step: string } }) {
+
+  return {
+    props: {
+      step: query.step,
+    },
+  };
+}
+
+const Step = ({ step }: StepProps) => {
   const theme = useTheme();
   const { isMobile } = useDevice();
 
@@ -62,10 +76,12 @@ const Post = () => {
             priority={true}
           />
         )}
-        <PostProfile />
+        <PostProfile
+          step={parseInt(step)}
+        />
       </section>
     </div>
   );
 };
 
-export default Post;
+export default Step;

@@ -1,10 +1,9 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { css, useTheme } from '@emotion/react';
 import ThemedText from '@/components/atoms/ThemedText';
 import { useDevice } from '@/context/DeviceContext';
-import { useRecoilState } from 'recoil';
 import { thirdStep } from '@/recoil/store';
 import InputCharacterCounterItem from '@/components/atoms/input/InputCharacterCouterItem';
 import ColoredTag from '@/components/organisms/ColoredTag';
@@ -12,6 +11,7 @@ import { SortableList } from '@/lib/dnd/SortableList';
 import { TColor } from '@/types/theme';
 import ColorPallet from '@/components/molecules/ColorPallet';
 import { Nullable } from '@/types/global';
+import { useSSR } from '@/lib/recoil/useSSR';
 
 export type TItem = {
   id: string;
@@ -27,12 +27,12 @@ const ProfileSettingStep3 = () => {
     });
 
   const { isMobile } = useDevice();
-  const [param, setParam] = useRecoilState(thirdStep);
+  const [param, setParam] = useSSR(thirdStep, {
+    petDesc: '',
+    petFavs: [],
+  });
   const [availableColors, setAvailableColors] = useState<TItem[]>(secondaryColors);
-  const [items, setItems] = useState<TItem[]>(param.petFavs.map((item) => {
-    const [label, id] = item.split(',');
-    return { id, code: theme.colors.secondary[id], label };
-  }))
+  const [items, setItems] = useState<TItem[]>([]);
   const [currentItem, setCurrentItem] = useState<TItem>({
     id: availableColors[0].id,
     code: availableColors[0].code,
@@ -44,25 +44,40 @@ const ProfileSettingStep3 = () => {
 
 
   const newAvailableColors =
-    useMemo(() =>
-      secondaryColors.filter((color: TItem) => !items.some((item) => item.id === color.id)), [items]);
+    useCallback((items: TItem[]) => {
+      return secondaryColors.filter((color) => !items.map((item) => item.code).includes(color.code));
+    }, [secondaryColors]);
 
-  useEffect(() => {
-    setAvailableColors(newAvailableColors);
-    setParam({ ...param, petFavs: items.map((item) => `${item.label},${item.id}`) });
-  }, [items, newAvailableColors, currentItem.code]);
+  const addColorTagHandler = (item: TItem) => {
+    if (item.label === '') return;
+    const newItems = [...items, item];
+
+    setItems(newItems);
+    setParam({ ...param, petFavs: newItems.map((item) => `${item.label},${item.id}`) });
+    setAvailableColors(newAvailableColors(newItems));
+    if (isOpenColorPallet) setIsOpenColorPallet(!isOpenColorPallet);
+  };
 
   useEffect(() => {
     setCurrentItem({ id: availableColors[0].id, code: availableColors[0].code, label: '' });
   }, [availableColors]);
 
+  useEffect(() => {
+    if (param.petFavs.length > 0) {
+      const newItems = param.petFavs.map((item) => {
+        const [label, id] = item.split(',');
+        return { id, code: theme.colors.secondary[id], label };
+      });
+      setItems(newItems);
+      setAvailableColors(newAvailableColors(newItems));
+    }
+  }, [param]);
+
   const getCurrentItem = (currentColor: TColor) => {
-    // items에 있는 아이템 중 현재 선택된 아이템을 찾아서 반환
     const current = items.find((item) => item.code === currentColor);
     if (current) {
       return current;
     } else {
-      // 전체에서 검색
       const res = secondaryColors.find((item) => item.code === currentColor);
       if (res) {
         return res;
@@ -70,7 +85,6 @@ const ProfileSettingStep3 = () => {
         return null;
       }
     }
-
   };
 
   const openPalletHandler = (target: HTMLButtonElement, currentColor: TColor) => {
@@ -84,8 +98,7 @@ const ProfileSettingStep3 = () => {
       setActiveItem(getCurrentItem(currentColor));
       setIsOpenColorPallet(!isOpenColorPallet);
     } else {
-      console.log(position, palletPosition);
-      if(position.x !== palletPosition.x || position.y !== palletPosition.y) {
+      if (position.x !== palletPosition.x || position.y !== palletPosition.y) {
         setPalletPosition(position);
       } else {
         setActiveItem(null);
@@ -102,12 +115,17 @@ const ProfileSettingStep3 = () => {
         target!.code = newItem.code;
         target!.id = newItem.id;
       }
-      setItems(prev => {
-        if (target) {
-          prev[prev.indexOf(target)] = target;
+      const newItems = items.map((item) => {
+        if (item === target) {
+          return target!;
         }
-        return [...prev];
+        return item;
       });
+
+      setItems(newItems);
+      setAvailableColors(newAvailableColors(newItems));
+      setParam({ ...param, petFavs: newItems.map((item) => `${item.label},${item.id}`) });
+      setIsOpenColorPallet(!isOpenColorPallet)
     } else {
       const newItem = getCurrentItem(color);
       if (newItem) {
@@ -184,18 +202,14 @@ const ProfileSettingStep3 = () => {
             />
           )}
 
-          {items.length < 3 && (
+          {param.petFavs.length < 3 && (
             <ColoredTag
               id={currentItem.id}
               mode={'edit'}
               color={theme.colors.secondary[currentItem.id]}
               setOpen={openPalletHandler}
               label={items.find((item) => item.id === currentItem.id)?.label || ''}
-              onBlur={(item) => {
-                if (item.label === '') return;
-                setItems((items) => [...items, item]);
-                if (isOpenColorPallet) setIsOpenColorPallet(!isOpenColorPallet);
-              }}
+              onBlur={addColorTagHandler}
             />
           )}
 
@@ -215,16 +229,15 @@ const ProfileSettingStep3 = () => {
         </div>
       </div>
 
-      {
-        isOpenColorPallet && (
-          <ColorPallet
-            position={palletPosition}
-            colors={secondaryColors.map((color) => color.code)}
-            currentColor={activeItem?.code}
-            onSelect={selectColorHandler}
-            availableColors={availableColors.map((color) => color.code)}
-          />
-        )
+      {isOpenColorPallet && (
+        <ColorPallet
+          position={palletPosition}
+          colors={secondaryColors.map((color) => color.code)}
+          currentColor={activeItem?.code}
+          onSelect={selectColorHandler}
+          availableColors={availableColors.map((color) => color.code)}
+        />
+      )
       }
     </>
   );

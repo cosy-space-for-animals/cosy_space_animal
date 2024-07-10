@@ -1,14 +1,14 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { css, useTheme } from '@emotion/react';
 import ThemedText from '@/components/atoms/ThemedText';
 import { useDevice } from '@/context/DeviceContext';
 import SegmentedButton from '@/components/atoms/buttons/SegmentedButton';
-import { useRecoilState } from 'recoil';
 import { secondStep } from '@/recoil/store';
 import InputCalendarItem from '@/components/atoms/input/InputCalendarItem';
 import CheckBoxWithLabel from '@/components/molecules/CheckBoxWithLabel';
+import { useSSR } from '@/lib/recoil/useSSR';
 
 export type TPetGender = {
   gender: '수컷' | '암컷' | '기타',
@@ -33,14 +33,23 @@ const genderList: TPetGender[] = [
 const ProfileSettingStep2 = () => {
   const theme = useTheme();
   const { isMobile } = useDevice();
-  const [param, setParam] = useRecoilState(secondStep);
-  const [gender, setGender] = useState<Partial<TPetGender>>(genderList.find((item) => item.value === param.petGender) ?? {});
+  const [param, setParam] = useSSR(secondStep, {
+    petGender: '',
+    birthDate: '',
+    deathDate: '',
+  });
   const [calendarDisabled, setCalendarDisabled] = useState<boolean>(false);
 
   const petGenderHandler = (obj: TPetGender) => {
-    setGender(obj);
     setParam({ ...param, petGender: obj.value });
   };
+
+  useEffect(() => {
+    if (param.deathDate.length > 0) setCalendarDisabled(true)
+  }, [param.deathDate]);
+
+
+
 
   return (
     <div css={css`
@@ -69,7 +78,7 @@ const ProfileSettingStep2 = () => {
               onChange={() => petGenderHandler(item)}
               name={'gender'}
               id={`gender-${item.value}`}
-              checked={gender?.value === item.value}
+              checked={param.petGender === item.value}
             >
               {item.gender}
             </SegmentedButton>
@@ -127,6 +136,7 @@ const ProfileSettingStep2 = () => {
             disabled={!calendarDisabled}
             placeholder={'생년월일을 입력해주세요'}
             min={param.birthDate}
+            max={new Date()}
           />
         </div>
         <div css={css`
@@ -136,8 +146,11 @@ const ProfileSettingStep2 = () => {
         `}>
           <CheckBoxWithLabel
             name={'rainbow'}
-            onChange={() => setCalendarDisabled(!calendarDisabled)}
-            value={calendarDisabled}
+            onChange={() => {
+              if (calendarDisabled) setParam({ ...param, deathDate: '' });
+              setCalendarDisabled(!calendarDisabled)
+            }}
+            checked={calendarDisabled}
             label={'무지개 다리를 건넜나요?'}
           />
         </div>

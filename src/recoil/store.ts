@@ -1,55 +1,58 @@
-import { atom, AtomEffect, RecoilState, selector, useSetRecoilState } from 'recoil';
-import { Animals } from '@/components/atoms/AnimalIcon';
+import { atom, AtomEffect, RecoilState, selector } from 'recoil';
 import { Nullable } from '@/types/global';
-import { TShape } from '@/components/organisms/profile/ProfileSettingStep4';
+import { TFrameShape } from '@/components/organisms/profile/ProfileSettingStep4';
 
-export type TPostProfileStep = {
-  maxStep: number;
-  step: number;
-  data: {
-    email: string;
-    petName: string;
-    petDesc: string;
-    petSpecM: string;
-    petSpecS: string;
-    petProfileFrame: TShape;
-    petGender: "M" | "F" | "O" | "";
-    birthDate: string;
-    deathDate: string;
-    petFavs: string[];
-    petProfileImage: Nullable<File>
-  };
+export type TProfileData = {
+  email: string;
+  petName: string;
+  petDesc: string;
+  petSpecM: string;
+  petSpecS: string;
+  petProfileFrame: TFrameShape;
+  petGender: 'M' | 'F' | 'O' | '';
+  birthDate: string;
+  deathDate: string;
+  petFavs: string[];
 }
 
-export const postProfileStepState: RecoilState<TPostProfileStep> = atom({
+const localStorageEffect = <T>(key: string): AtomEffect<T> => ({ setSelf, onSet }) => {
+  if (typeof window === 'undefined') return;
+
+  const savedValue = localStorage.getItem(key);
+  if (savedValue != null) {
+    setSelf(JSON.parse(savedValue));
+  }
+
+  onSet(newValue => {
+    localStorage.setItem(key, JSON.stringify(newValue));
+  });
+};
+
+export const defaultProfileData: TProfileData = {
+  email: '',
+  petName: '',
+  petDesc: '',
+  petSpecM: '',
+  petSpecS: '',
+  petProfileFrame: 'oval_vertical',
+  petGender: '',
+  birthDate: '',
+  deathDate: '',
+  petFavs: [],
+};
+
+export const profileDataAtom: RecoilState<TProfileData> = atom({
   key: 'postProfileStep',
-  default: {
-    maxStep: 4,
-    step: 1,
-    data: {
-      email: '',
-      petName: '',
-      petDesc: '',
-      petSpecM: '',
-      petSpecS: '',
-      petGender: '',
-      birthDate: '',
-      deathDate: '',
-      petFavs: [],
-      petProfileFrame: 'oval_vertical',
-      petProfileImage: null,
-    },
-  },
+  default: defaultProfileData,
   effects_UNSTABLE: [
-    ({ onSet }) => {
-      onSet((newVal) => {
-        if (newVal.step > newVal.maxStep) {
-          throw new Error('Invalid step');
-        }
-      });
-    },
+    localStorageEffect('profileDataAtom'),
   ],
 });
+
+export const profileImageAtom: RecoilState<Nullable<File>> = atom({
+  key: 'profileImage',
+  default: null,
+})
 
 type FirstStepData = {
   petName: string;
@@ -60,7 +63,7 @@ type FirstStepData = {
 export const firstStep = selector<FirstStepData>({
   key: 'firstStep',
   get: ({ get }) => {
-    const { data } = get(postProfileStepState);
+    const data = get(profileDataAtom);
     return {
       petName: data.petName,
       petSpecM: data.petSpecM,
@@ -68,27 +71,24 @@ export const firstStep = selector<FirstStepData>({
     };
   },
   set: ({ set, get }, newValue) => {
-    const currentState = get(postProfileStepState);
-    set(postProfileStepState, {
+    const currentState = get(profileDataAtom);
+    set(profileDataAtom, {
       ...currentState,
-      data: {
-        ...currentState.data,
-        ...newValue,
-      },
+      ...newValue,
     });
   },
 });
 
 type SecondStepData = {
-  petGender: TPostProfileStep['data']['petGender'];
-  birthDate: TPostProfileStep['data']['birthDate'];
-  deathDate: TPostProfileStep['data']['deathDate'];
+  petGender: TProfileData['petGender'];
+  birthDate: TProfileData['birthDate'];
+  deathDate: TProfileData['deathDate'];
 };
 
 export const secondStep = selector<SecondStepData>({
   key: 'secondStep',
   get: ({ get }) => {
-    const { data } = get(postProfileStepState);
+    const data = get(profileDataAtom);
     return {
       petGender: data.petGender,
       birthDate: data.birthDate,
@@ -96,13 +96,10 @@ export const secondStep = selector<SecondStepData>({
     };
   },
   set: ({ set, get }, newValue) => {
-    const currentState = get(postProfileStepState);
-    set(postProfileStepState, {
+    const currentState = get(profileDataAtom);
+    set(profileDataAtom, {
       ...currentState,
-      data: {
-        ...currentState.data,
-        ...newValue,
-      },
+      ...newValue,
     });
   },
 });
@@ -115,47 +112,39 @@ type ThirdStepData = {
 export const thirdStep = selector<ThirdStepData>({
   key: 'thirdStep',
   get: ({ get }) => {
-    const { data } = get(postProfileStepState);
+    const data = get(profileDataAtom);
     return {
       petDesc: data.petDesc,
       petFavs: data.petFavs,
     };
   },
   set: ({ set, get }, newValue) => {
-    const currentState = get(postProfileStepState);
-    set(postProfileStepState, {
+    const currentState = get(profileDataAtom);
+    set(profileDataAtom, {
       ...currentState,
-      data: {
-        ...currentState.data,
-        ...newValue,
-      },
+      ...newValue,
     });
   },
 });
 
 type FourthStepData = {
-  petProfileFrame: TShape;
-  petProfileImage: Nullable<File>;
+  petProfileFrame: TFrameShape;
 };
 
 export const fourthStep = selector<FourthStepData>({
   key: 'fourthStep',
   get: ({ get }) => {
-    const { data } = get(postProfileStepState);
+    const data = get(profileDataAtom);
     return {
       petProfileFrame: data.petProfileFrame,
-      petProfileImage: data.petProfileImage,
     };
   },
   set: ({ set, get }, newValue) => {
-    const currentState = get(postProfileStepState);
-    set(postProfileStepState, {
+    const currentState = get(profileDataAtom);
+    // petProfileImage가 File이므로, set할 때는 제외하고 set
+    set(profileDataAtom, {
       ...currentState,
-      data: {
-        ...currentState.data,
-        ...newValue,
-      },
+      ...newValue,
     });
   },
 });
-

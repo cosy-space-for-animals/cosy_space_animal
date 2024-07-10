@@ -4,7 +4,6 @@ import React from 'react';
 import { css } from '@emotion/react';
 import ThemedText from '@/components/atoms/ThemedText';
 import InputDefaultItem from '@/components/atoms/input/InputDefaultItem';
-import { useRecoilState } from 'recoil';
 import { firstStep } from '@/recoil/store';
 import { useDebounce } from '@/hooks/useDebounce';
 import SearchResultsList from '@/components/molecules/SearchResultsList';
@@ -13,6 +12,7 @@ import { Animals } from '@/components/atoms/AnimalIcon';
 import CheckBoxWithLabel from '@/components/molecules/CheckBoxWithLabel';
 import { theme } from '@/types/theme';
 import { useDevice } from '@/context/DeviceContext';
+import { useSSR } from '@/lib/recoil/useSSR';
 
 const petSpecs: Animals[] = [
   'dog2',
@@ -25,7 +25,11 @@ const petSpecs: Animals[] = [
 ];
 
 const ProfileSettingStep1 = () => {
-  const [param, setParam] = useRecoilState(firstStep);
+  const [param, setParam] = useSSR(firstStep, {
+    petName: '',
+    petSpecM: '',
+    petSpecS: '',
+  });
   const { debouncedValue } = useDebounce({ value: param.petName, delay: 500 });
   const { isMobile } = useDevice();
 
@@ -115,7 +119,7 @@ const ProfileSettingStep1 = () => {
         />
         <CheckBoxWithLabel
           name={'petSpecM'}
-          value={param.petSpecS === '알수없음'}
+          checked={param.petSpecS === '알수없음'}
           onChange={(e) => {
             setParam({
               ...param,
