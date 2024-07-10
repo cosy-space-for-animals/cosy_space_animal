@@ -20,11 +20,8 @@ type Props = {
 
 const PostProfile = ({ step }: Props) => {
   const router = useRouter();
-  // const { data } = useRecoilValue(profileData);
-
   const data = useSSRValue(profileDataAtom, defaultProfileData);
   const profileImage = useSSRValue(profileImageAtom, null);
-
   const maxStep = 4;
 
   const buttonDisabled = (type: 'prev' | 'next') => {
@@ -65,6 +62,19 @@ const PostProfile = ({ step }: Props) => {
     } else {
       if (step === maxStep) {
         // API 호출
+        console.log(data, profileImage);
+        if (
+          data.birthDate.length > 0 &&
+          data.petDesc.length > 0 &&
+          data.petGender.length > 0 &&
+          data.petName.length > 0 &&
+          data.petSpecM.length > 0 &&
+          data.petSpecS.length > 0 &&
+          data.petProfileFrame.length > 0 &&
+          profileImage !== null
+        ) {
+          await router.push('/profile/register/complete');
+        }
         return;
       } else {
         await router.push(`/profile/register/step?step=${step + 1}`);
