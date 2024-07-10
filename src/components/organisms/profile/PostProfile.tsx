@@ -23,6 +23,10 @@ const PostProfile = () => {
         return !firstStepState.petName || !firstStepState.petSpecM || !firstStepState.petSpecS;
       } else if (postProfileStep.step === 2) {
         return !postProfileStep.data.petGender || !postProfileStep.data.birthDate;
+      } else if (postProfileStep.step === 3) {
+        return !postProfileStep.data.petDesc;
+      } else if (postProfileStep.step === 4) {
+        return !postProfileStep.data.petProfileImage;
       }
       return postProfileStep.step === postProfileStep.maxStep;
     }
@@ -131,14 +135,25 @@ const PostProfile = () => {
           type={'next'}
           disabled={buttonDisabled('next')}
           onClick={() => {
-            setPostProfileStep({
-              ...postProfileStep,
-              step: postProfileStep.step + 1,
+            setPostProfileStep((prev) => {
+              if (prev.step === prev.maxStep) {
+                return prev;
+              }
+              return {
+                ...prev,
+                step: prev.step + 1,
+              };
             });
           }}
         />
       </div>
-
+      <button
+        onClick={() => {
+          console.log(postProfileStep.data)
+        }}
+      >
+        <ThemedText type={'bodySmall'}>Check</ThemedText>
+      </button>
     </div>
   );
 };

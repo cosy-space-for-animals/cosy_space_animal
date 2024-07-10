@@ -1,6 +1,7 @@
 import { atom, AtomEffect, RecoilState, selector, useSetRecoilState } from 'recoil';
 import { Animals } from '@/components/atoms/AnimalIcon';
 import { Nullable } from '@/types/global';
+import { TShape } from '@/components/organisms/profile/ProfileSettingStep4';
 
 export type TPostProfileStep = {
   maxStep: number;
@@ -11,11 +12,12 @@ export type TPostProfileStep = {
     petDesc: string;
     petSpecM: string;
     petSpecS: string;
-    petProfileFrame: string;
+    petProfileFrame: TShape;
     petGender: "M" | "F" | "O" | "";
     birthDate: string;
     deathDate: string;
     petFavs: string[];
+    petProfileImage: Nullable<File>
   };
 }
 
@@ -23,18 +25,19 @@ export const postProfileStepState: RecoilState<TPostProfileStep> = atom({
   key: 'postProfileStep',
   default: {
     maxStep: 4,
-    step: 4,
+    step: 1,
     data: {
       email: '',
       petName: '',
       petDesc: '',
       petSpecM: '',
       petSpecS: '',
-      petProfileFrame: '',
       petGender: '',
       birthDate: '',
       deathDate: '',
       petFavs: [],
+      petProfileFrame: 'oval_vertical',
+      petProfileImage: null,
     },
   },
   effects_UNSTABLE: [
@@ -129,3 +132,30 @@ export const thirdStep = selector<ThirdStepData>({
     });
   },
 });
+
+type FourthStepData = {
+  petProfileFrame: TShape;
+  petProfileImage: Nullable<File>;
+};
+
+export const fourthStep = selector<FourthStepData>({
+  key: 'fourthStep',
+  get: ({ get }) => {
+    const { data } = get(postProfileStepState);
+    return {
+      petProfileFrame: data.petProfileFrame,
+      petProfileImage: data.petProfileImage,
+    };
+  },
+  set: ({ set, get }, newValue) => {
+    const currentState = get(postProfileStepState);
+    set(postProfileStepState, {
+      ...currentState,
+      data: {
+        ...currentState.data,
+        ...newValue,
+      },
+    });
+  },
+});
+

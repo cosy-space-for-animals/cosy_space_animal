@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useDevice } from '@/context/DeviceContext';
 import { css, useTheme } from '@emotion/react';
@@ -11,25 +11,27 @@ import ImageMask from '@/components/atoms/ImageMask';
 import frames from '@/constants/frames.json';
 import PhotoArrowButton from '@/components/atoms/buttons/PhotoArrowButton';
 import Thumbs from '@/assets/frames/thumb';
+import { useRecoilState } from 'recoil';
+import { fourthStep } from '@/recoil/store';
+import { Nullable } from '@/types/global';
 
 const thumbKeys = Object.keys(Thumbs) as Array<keyof typeof Thumbs>;
-
-console.log(thumbKeys);
 
 export type TShape = keyof typeof frames;
 
 const MaskedImage = (
-  { blob, currentShape, theme }:
-    { blob: Blob | null, currentShape: TShape, theme: ReturnType<typeof useTheme> }
+  { file, currentShape, theme }:
+    { file: Nullable<File>, currentShape: TShape, theme: ReturnType<typeof useTheme> }
 ) => {
+
   return (
     <>
-      {blob ? (
+      {file ? (
         <ImageMask
           maskId={'mask'}
           renderedImage={
             <Image
-              src={URL.createObjectURL(blob)}
+              src={URL.createObjectURL(file)}
               alt="profile image"
               width={frames[currentShape].width}
               height={frames[currentShape].height}
@@ -79,9 +81,8 @@ const MaskedImage = (
 const ProfileSettingStep4 = () => {
   const theme = useTheme();
   const { isMobile } = useDevice();
-  const [blob, setBlob] = useState<Blob | null>(null);
+  const [param, setParam] = useRecoilState(fourthStep);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [currentShape, setCurrentShape] = useState<TShape>('oval_vertical');
   const framesKeys = Object.keys(frames) as TShape[];
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,31 +92,31 @@ const ProfileSettingStep4 = () => {
         alert('2MB 이하의 이미지만 업로드 가능합니다.');
         return;
       } else {
-        setBlob(file);
+        setParam({ ...param, petProfileImage: file });
       }
     }
   };
 
   const handleCurrentShape = (direction: 'left' | 'right') => {
-    const currentIndex = framesKeys.indexOf(currentShape);
+    const currentIndex = framesKeys.indexOf(param.petProfileFrame);
     if (direction === 'left') {
       if (currentIndex === 0) {
-        setCurrentShape(framesKeys[framesKeys.length - 1]);
+        setParam({ ...param, petProfileFrame: framesKeys[framesKeys.length - 1] });
       } else {
-        setCurrentShape(framesKeys[currentIndex - 1]);
+        setParam({ ...param, petProfileFrame: framesKeys[currentIndex - 1] });
       }
     } else {
       if (currentIndex === framesKeys.length - 1) {
-        setCurrentShape(framesKeys[0]);
+        setParam({ ...param, petProfileFrame: framesKeys[0] });
       } else {
-        setCurrentShape(framesKeys[currentIndex + 1]);
+        setParam({ ...param, petProfileFrame: framesKeys[currentIndex + 1] });
       }
     }
   };
 
   useEffect(() => {
-    console.log(currentShape);
-  }, [currentShape]);
+    console.log(param.petProfileImage);
+  }, [param.petProfileImage]);
 
   return (
     <div
@@ -125,7 +126,7 @@ const ProfileSettingStep4 = () => {
         align-items: center;
         justify-content: center;
         width: 100%;
-        padding: 0 0px 80px 0px;
+        padding: 0 0 80px 0;
         @media ${theme.device.mobile} {
           padding: 0;
         }
@@ -163,15 +164,15 @@ const ProfileSettingStep4 = () => {
         {isMobile ? (
           <label htmlFor="image-upload" css={css`z-index: 999`}>
             <MaskedImage
-              blob={blob}
-              currentShape={currentShape}
+              file={param.petProfileImage}
+              currentShape={param.petProfileFrame}
               theme={theme}
             />
           </label>
         ) : (
           <MaskedImage
-            blob={blob}
-            currentShape={currentShape}
+            file={param.petProfileImage}
+            currentShape={param.petProfileFrame}
             theme={theme}
           />
         )}
@@ -214,7 +215,7 @@ const ProfileSettingStep4 = () => {
                 align-items: center;
               `}
             >
-              <Thumb color={currentShape === key ? '#F15139' : '#B3B3B3'} />
+              <Thumb color={param.petProfileFrame === key ? '#F15139' : '#B3B3B3'} />
             </div>
           )
         })

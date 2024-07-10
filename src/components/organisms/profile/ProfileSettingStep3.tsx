@@ -28,8 +28,11 @@ const ProfileSettingStep3 = () => {
 
   const { isMobile } = useDevice();
   const [param, setParam] = useRecoilState(thirdStep);
-  const [items, setItems] = useState<TItem[]>([]);
   const [availableColors, setAvailableColors] = useState<TItem[]>(secondaryColors);
+  const [items, setItems] = useState<TItem[]>(param.petFavs.map((item) => {
+    const [label, id] = item.split(',');
+    return { id, code: theme.colors.secondary[id], label };
+  }))
   const [currentItem, setCurrentItem] = useState<TItem>({
     id: availableColors[0].id,
     code: availableColors[0].code,
