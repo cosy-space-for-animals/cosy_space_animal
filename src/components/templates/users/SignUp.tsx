@@ -225,10 +225,11 @@ const Step2 = ({ setStep }) => {
             >
               <InputMobileVerification
                 id='phoneNumber'
+                // 폰번호 필요, 코드 필요
                 value={phoneNumber}
                 setValue={setPhoneNumber}
-                validate={() => true}
-                placeholder='‘-’ 없이 숫자만 입력'
+                code={verificationCode}
+                setCode={verificationCode}
               />
             </div>
           </label>
