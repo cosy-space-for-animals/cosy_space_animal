@@ -1,5 +1,11 @@
 import { css } from '@emotion/react';
-import { useEffect, type Dispatch, type SetStateAction } from 'react';
+import {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  type Dispatch,
+  type SetStateAction,
+} from 'react';
 
 interface IScrimProps {
   setScrim: Dispatch<SetStateAction<boolean>>;
@@ -7,11 +13,28 @@ interface IScrimProps {
 }
 
 const Scrim: React.FC<IScrimProps> = ({ setScrim, children }) => {
+  const click = useCallback(() => {
+    setScrim((prev) => !prev);
+  }, [setScrim]);
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      setScrim((prev) => !prev);
+    },
+    [setScrim],
+  );
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [setScrim, handleKeyDown]);
+
   return (
     <div
-      onClick={() => {
-        setScrim((prev) => !prev);
-      }}
+      onClick={click}
       css={css`
         width: 100vw;
         height: 100vh;
