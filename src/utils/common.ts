@@ -21,6 +21,11 @@ export const validateUserName = (name: string): boolean => {
   return nameRegex.test(name);
 };
 
+export const restrictToNumbers = (string: string): string => {
+  // 숫자만 입력 가능
+  return string.replace(/[^0-9]/g, '');
+};
+
 /**
  * @description 객체를 깊은 복사합니다.
  * @param arg 복사할 객체

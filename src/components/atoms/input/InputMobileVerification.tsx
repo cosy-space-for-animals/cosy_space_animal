@@ -12,6 +12,7 @@ import {
 } from 'react';
 import RoundButton from '../buttons/RoundButton';
 import Toast from '../Toast';
+import { restrictToNumbers } from '@/utils/common';
 
 const InputMobileVerification: React.FC<any> = ({
   id,
@@ -41,9 +42,6 @@ const InputMobileVerification: React.FC<any> = ({
   >(undefined);
   const [toast2, setToast2] = useState(false);
 
-  const checkOnlyNumbers = useCallback((string: string): string => {
-    return string.replace(/[^0-9]/g, '');
-  }, []);
   const mouseDownHandler = useCallback(
     (e: MouseEvent<HTMLButtonElement>) => e.preventDefault(),
     [],
@@ -58,10 +56,10 @@ const InputMobileVerification: React.FC<any> = ({
   );
   const onChange = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
-      setValue(checkOnlyNumbers(e.target.value).slice(0, 11));
+      setValue(restrictToNumbers(e.target.value).slice(0, 11));
       onFocus();
     },
-    [onFocus, setValue, checkOnlyNumbers],
+    [onFocus, setValue],
   );
   const remove = useCallback(() => setValue(''), [setValue]);
 
@@ -83,12 +81,9 @@ const InputMobileVerification: React.FC<any> = ({
     },
     [setFocus2],
   );
-  const onChange2 = useCallback(
-    (e: ChangeEvent<HTMLInputElement>) => {
-      setValue2(checkOnlyNumbers(e.target.value).slice(0, 6));
-    },
-    [checkOnlyNumbers],
-  );
+  const onChange2 = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setValue2(restrictToNumbers(e.target.value).slice(0, 6));
+  }, []);
   const remove2 = useCallback(() => {
     setValue2('');
   }, [setValue2]);
