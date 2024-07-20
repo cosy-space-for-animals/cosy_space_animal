@@ -1,4 +1,3 @@
-import Scrim from '@/components/atoms/Scrim';
 import MainButton from '@/components/atoms/buttons/MainButton';
 import InputDefaultItem from '@/components/atoms/input/InputDefaultItem';
 import InputMobileVerification from '@/components/atoms/input/InputMobileVerification';
@@ -242,26 +241,31 @@ const Step2 = ({ setStep }) => {
     </div>
   );
 };
-
-const SignUp = ({ render }: ISignUpProps) => {
-  const [step, setStep] = useState(1);
+const SignUp = ({ step = 1, setStep }) => {
   return (
-    <Scrim setScrim={render}>
-      <UserPopup
-        title={step === 1 ? '이용약관 동의' : '회원가입'}
-        render={render}
-      >
-        <div
-          css={css`
-            width: 400px;
-          `}
-        >
-          {step === 1 && <Step1 setStep={setStep} />}
-          {step === 2 && <Step2 setStep={setStep} />}
-        </div>
-      </UserPopup>
-    </Scrim>
+    <div
+      css={css`
+        width: 400px;
+      `}
+    >
+      {step === 1 && <Step1 setStep={setStep} />}
+      {step === 2 && <Step2 setStep={setStep} />}
+    </div>
   );
 };
 
-export default SignUp;
+const SignUpModal = ({ render }) => {
+  const [step, setStep] = useState(1);
+
+  return (
+    <UserPopup
+      title={step === 1 ? '이용약관 동의' : '회원가입'}
+      render={render}
+    >
+      <SignUp step={step} setStep={setStep} />
+    </UserPopup>
+  );
+};
+
+export { SignUp };
+export default SignUpModal;

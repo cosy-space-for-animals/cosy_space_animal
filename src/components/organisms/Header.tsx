@@ -5,7 +5,8 @@ import Link from 'next/link';
 import ProgressIndicatorDot from '@/components/atoms/ProgressIndicatorDot';
 import ProfileImage from '@/components/atoms/ProfileImage';
 import { useState } from 'react';
-import SignUp from '../templates/users/SignUp';
+import SignUpModal from '../templates/users/SignUp';
+import SignInModal from '../templates/users/SignIn';
 
 type PageType =
   | 'profile-edit'
@@ -337,6 +338,7 @@ const Login = <T extends PageType>({ type, color }: IHeaderProps<T>) => {
 
 const Logout = <T extends PageType>({ type, color }: IHeaderProps<T>) => {
   const [signUpModal, setSignUpModal] = useState(false);
+  const [signInModal, setSignInModal] = useState(false);
 
   return (
     <div
@@ -385,6 +387,7 @@ const Logout = <T extends PageType>({ type, color }: IHeaderProps<T>) => {
           color: ${styles[type][color]['color1']};
           padding: 12px 20px;
         `}
+        onClick={() => setSignInModal((prev) => !prev)}
       >
         로그인
       </Link>
@@ -399,7 +402,8 @@ const Logout = <T extends PageType>({ type, color }: IHeaderProps<T>) => {
       >
         회원가입
       </div>
-      {signUpModal && <SignUp render={setSignUpModal} />}
+      {signUpModal && <SignUpModal render={setSignUpModal} />}
+      {signInModal && <SignInModal render={setSignInModal} />}
     </div>
   );
 };
