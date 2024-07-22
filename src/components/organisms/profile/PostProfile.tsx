@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import React from 'react';
 import { defaultProfileData, profileDataAtom, profileImageAtom } from '@/recoil/store';
@@ -13,10 +13,23 @@ import ProfileSettingStep3 from '@/components/organisms/profile/ProfileSettingSt
 import ProfileSettingStep4 from '@/components/organisms/profile/ProfileSettingStep4';
 import { useRouter } from 'next/router';
 import { useSSRValue } from '@/lib/recoil/useSSR';
+import fetchWrapper from '@/utils/fetchWrapper';
+import { useMutation } from '@tanstack/react-query';
 
 type Props = {
   step: number;
 }
+
+const fetchProfileData = async (formData: FormData) => {
+
+  return await fetchWrapper('/api/pet/new', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+    body: formData,
+  });
+};
 
 const PostProfile = ({ step }: Props) => {
   const router = useRouter();
@@ -61,7 +74,6 @@ const PostProfile = ({ step }: Props) => {
       await router.push(`/profile/register/step?step=${step - 1}`);
     } else {
       if (step === maxStep) {
-        console.log(data, profileImage);
         if (
           data.birthDate.length > 0 &&
           data.petDesc.length > 0 &&
@@ -72,7 +84,25 @@ const PostProfile = ({ step }: Props) => {
           data.petProfileFrame.length > 0 &&
           profileImage !== null
         ) {
-          await router.push('/profile/register/complete');
+          const form = new FormData();
+          form.append('petRequestDto', JSON.stringify({
+              memberId: '20240712231515460869',
+              petName: data.petName,
+              petDesc: data.petDesc,
+              petSpecM: data.petSpecM,
+              petSpecS: data.petSpecS,
+              petProfileFrame: data.petProfileFrame,
+              petGender: data.petGender,
+              birthDate: data.birthDate,
+              deathDate: data.deathDate,
+              ...data.petFavs.reduce((acc, fav, index) => {
+                acc[`petFavs${index}`] = fav;
+                return acc;
+              }, {} as { [key: string]: string }),
+            },
+          ));
+          form.append('petImage', profileImage);
+          mutate(form);
         }
         return;
       } else {
@@ -80,6 +110,16 @@ const PostProfile = ({ step }: Props) => {
       }
     }
   };
+
+  const { mutate } = useMutation({
+    mutationFn: fetchProfileData,
+    onError: (error) => {
+      console.error(error);
+    },
+    onSuccess: (data) => {
+      router.push('/profile/register/complete');
+    },
+  });
 
   return (
     <div css={css`

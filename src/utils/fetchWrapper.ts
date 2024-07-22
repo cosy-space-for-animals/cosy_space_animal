@@ -18,18 +18,17 @@ const defaultOptions = {
   },
 };
 
-const isServer = typeof window === 'undefined';
-
 const rewrite = (url: string): string => {
   if (url.startsWith('/api')) {
-    return `${BASE_URL}${url.replace('/api', '')}`;
+    // return `${BASE_URL}${url.replace('/api', '/api')}`;
+    return url;
   }
 
   if (url.startsWith('/todos')) {
     return `${TEST_URL}${url}`;
   }
 
-  return `${BASE_URL}/${url}`;
+  return `${url}`;
 }
 
 
@@ -43,7 +42,7 @@ const rewrite = (url: string): string => {
  */
 export const fetchWrapper = async <T>(url: string, options?: RequestInit): Promise<TFetchResponse<T> | TFetchError> => {
   try {
-    const response = await fetch(isServer ? rewrite(url) : `${url}`, {
+    const response = await fetch(rewrite(url), {
       ...defaultOptions,
       headers: {
         ...(options?.headers || {}),
@@ -59,7 +58,6 @@ export const fetchWrapper = async <T>(url: string, options?: RequestInit): Promi
     // return await response.json();
     return await response.json();
   } catch (error) {
-    console.error('Fetch Wrapper Error:', error);
     throw error;
   }
 };
