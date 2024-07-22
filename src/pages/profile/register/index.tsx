@@ -5,7 +5,7 @@ import MainButton from '@/components/atoms/buttons/MainButton';
 import { useDevice } from '@/context/DeviceContext';
 import { useRouter } from 'next/router';
 
-export default function Home() {
+function Register() {
   const { isMobile } = useDevice();
   const router = useRouter();
 
@@ -61,8 +61,8 @@ export default function Home() {
           `}>
             <MainButton
               type={'filled'}
-              onClick={() => {
-                router.push('/profile/post');
+              onClick={async () => {
+                await router.push('/profile/register/step?step=1');
               }}
               style={css`
                 width: 100%;
@@ -108,8 +108,8 @@ export default function Home() {
             </div>
             <MainButton
               type={'filled'}
-              onClick={() => {
-                router.push('/profile/post');
+              onClick={async () => {
+                await router.push('/profile/register/step?step=1')
               }}
               style={css`
                 width: 320px;
@@ -129,5 +129,6 @@ export default function Home() {
       )}
     </>
   )
-    ;
 }
+
+export default Register

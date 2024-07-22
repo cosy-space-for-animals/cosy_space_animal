@@ -1,5 +1,14 @@
 import { Theme } from '@emotion/react';
 
+type RGB = `rgb(${number},${number},${number})`;
+type RGBA = `rgba(${number},${number},${number},${number})`;
+type HEX = `#${string}`;
+type HSL = `hsl(${number},${number}%,${number}%)`;
+type HSLA = `hsla(${number},${number}%,${number}%,${number})`;
+type VAR = `var(${string})`;
+
+export type TColor = RGB | RGBA | HEX | HSL | HSLA | VAR;
+
 export const theme: Theme = {
   colors: {
     primary: {
@@ -84,6 +93,10 @@ export const theme: Theme = {
     slideUp: {
       from: { height: '52px', overflow: 'hidden' },
       to: { height: 0, overflow: 'hidden' },
+    },
+    fadeDown: {
+      from: { opacity: 0, transform: 'translateY(-16px)' },
+      to: { opacity: 1, transform: 'translateY(0)' },
     },
   },
   device: {
