@@ -7,7 +7,7 @@ interface IMainButtonProps {
   disabled?: boolean;
   children: React.ReactNode;
   style?: SerializedStyles;
-  onClick: () => void | Promise<void>;
+  onClick?: () => void | Promise<void>;
 }
 
 const styles: { [key in Type]: SerializedStyles } = {

@@ -43,6 +43,10 @@ type TKeyframes = {
     from: { height: string | number; overflow: string },
     to: { height: string | number; overflow: string },
   },
+  fadeDown: {
+    from: { opacity: number; transform: string },
+    to: { opacity: number; transform: string },
+  },
 };
 
 declare module '@emotion/react' {

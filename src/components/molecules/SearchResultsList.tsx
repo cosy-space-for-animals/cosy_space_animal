@@ -48,6 +48,11 @@ const SearchResultsList = (
     }
   }, [searchText, searchResults]);
 
+  useEffect(() => {
+    setSearchText(value as string);
+  }, [value])
+
+
   return (
     <div css={css`
       position: relative;

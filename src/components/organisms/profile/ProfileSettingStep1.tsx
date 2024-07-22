@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { css } from '@emotion/react';
 import ThemedText from '@/components/atoms/ThemedText';
 import InputDefaultItem from '@/components/atoms/input/InputDefaultItem';
@@ -13,6 +13,7 @@ import CheckBoxWithLabel from '@/components/molecules/CheckBoxWithLabel';
 import { theme } from '@/types/theme';
 import { useDevice } from '@/context/DeviceContext';
 import { useSSR } from '@/lib/recoil/useSSR';
+import animals from '@/constants/animals.json';
 
 const petSpecs: Animals[] = [
   'dog2',
@@ -30,6 +31,7 @@ const ProfileSettingStep1 = () => {
     petSpecM: '',
     petSpecS: '',
   });
+  const [animalList, setAnimalList] = useState<string[]>([])
   const { debouncedValue } = useDebounce({ value: param.petName, delay: 500 });
   const { isMobile } = useDevice();
 
@@ -39,6 +41,10 @@ const ProfileSettingStep1 = () => {
       petName: str,
     });
   };
+
+  useEffect(() => {
+    setAnimalList(animals[param.petSpecM] || [])
+  }, [param.petSpecM]);
 
   const validatePetName = (str: string) => {
     // 한글 또는 영문 validate
@@ -103,7 +109,7 @@ const ProfileSettingStep1 = () => {
           ))}
         </div>
         <SearchResultsList
-          searchResults={['품종1', '품종2', '품종3']}
+          searchResults={animalList}
           value={param.petSpecS === '알수없음' ? '' : param.petSpecS}
           setValue={(str: string) => {
             setParam({

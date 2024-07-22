@@ -1,7 +1,7 @@
 import { css } from '@emotion/react';
 import Image from 'next/image';
 
-type Color = 'sky' | 'yellow' | 'green' | 'pink' | 'purple';
+export type Color = 'sky' | 'yellow' | 'green' | 'pink' | 'purple';
 
 interface IFavoriteTagProps {
   color: Color;
@@ -13,6 +13,7 @@ const FavoriteTag: React.FC<IFavoriteTagProps> = ({
   color,
   text,
   isMobile = false,
+  ...rest
 }) => {
   return (
     <div

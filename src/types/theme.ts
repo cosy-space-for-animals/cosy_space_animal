@@ -94,6 +94,10 @@ export const theme: Theme = {
       from: { height: '52px', overflow: 'hidden' },
       to: { height: 0, overflow: 'hidden' },
     },
+    fadeDown: {
+      from: { opacity: 0, transform: 'translateY(-16px)' },
+      to: { opacity: 1, transform: 'translateY(0)' },
+    },
   },
   device: {
     mobile: 'screen and (max-width: 768px)',

@@ -57,7 +57,7 @@ type Props = {
 };
 
 
-const MaskedImage = (
+const ImageMask = (
   {
     svgShape,
     renderedImage,
@@ -101,4 +101,4 @@ const MaskedImage = (
   );
 };
 
-export default MaskedImage;
+export default ImageMask;

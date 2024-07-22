@@ -12,7 +12,7 @@ import ProfileSettingStep2 from '@/components/organisms/profile/ProfileSettingSt
 import ProfileSettingStep3 from '@/components/organisms/profile/ProfileSettingStep3';
 import ProfileSettingStep4 from '@/components/organisms/profile/ProfileSettingStep4';
 import { useRouter } from 'next/router';
-import { useSSR, useSSRValue } from '@/lib/recoil/useSSR';
+import { useSSRValue } from '@/lib/recoil/useSSR';
 
 type Props = {
   step: number;
@@ -61,7 +61,6 @@ const PostProfile = ({ step }: Props) => {
       await router.push(`/profile/register/step?step=${step - 1}`);
     } else {
       if (step === maxStep) {
-        // API 호출
         console.log(data, profileImage);
         if (
           data.birthDate.length > 0 &&
