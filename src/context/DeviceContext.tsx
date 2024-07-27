@@ -41,6 +41,14 @@ export const DeviceProvider = ({ userAgent = '', children }: DeviceProviderProps
     }
   }, [userAgent]);
 
+  useEffect(() => {
+    const handleResize = () => {
+      setDevice(getDeviceType(navigator.userAgent));
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
     <DeviceContext.Provider value={device}>
       {children}

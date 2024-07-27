@@ -23,7 +23,7 @@ const ProfileImage: React.FC<ProfileImageProps> = ({
       css={css(
         useHover &&
           css`
-            padding: ${size >= 40 ? (is40 ? '4px' : '8px') : '0px'};
+            // padding: ${size >= 40 ? (is40 ? '4px' : '8px') : '0px'};
             width: fit-content;
             border-radius: 50%;
             &:hover {
@@ -34,7 +34,7 @@ const ProfileImage: React.FC<ProfileImageProps> = ({
           `,
         useActive &&
           css`
-            padding: ${size >= 40 ? (is40 ? '4px' : '8px') : '0px'};
+            // padding: ${size >= 40 ? (is40 ? '4px' : '8px') : '0px'};
             width: fit-content;
             border-radius: 50%;
             background: ${isDefault

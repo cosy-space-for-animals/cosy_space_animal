@@ -141,6 +141,7 @@ const ProfileSettingStep4 = () => {
               if (inputRef.current) inputRef.current.click();
             }}
             color={'red'}
+            filled={true}
           />
         </label>
       )}

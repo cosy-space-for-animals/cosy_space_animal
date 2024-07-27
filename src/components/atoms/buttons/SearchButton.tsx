@@ -1,14 +1,27 @@
-import { css } from '@emotion/react';
-import { useState } from 'react';
+import { css, useTheme } from '@emotion/react';
+import { useEffect, useState } from 'react';
+import ReadingGlassesIcon from '@/assets/icon/ReadingGlassesIcon';
+import { useDebounce } from '@/hooks/useDebounce';
 
 interface ISearchButtonProps {
   color: 'default' | 'white';
+  placeholder?: string;
+  onSubmit?: (e: string) => void;
+  onDebounceChange?: (e: string) => void;
 }
 
-const SearchButton: React.FC<ISearchButtonProps> = ({ color = 'default' }) => {
+const SearchButton: React.FC<ISearchButtonProps> = ({ color = 'default', placeholder = '사용자 또는 키워드를 검색해 보세요', onSubmit, onDebounceChange }) => {
   const isDefault = Boolean(color === 'default');
+  const theme = useTheme();
+  const [value, setValue] = useState<string>('');
   const [active, setActive] = useState(false);
 
+  const {debouncedValue} = useDebounce({value, delay: 500});
+
+
+  useEffect(() => {
+    onDebounceChange && onDebounceChange(debouncedValue);
+  }, [debouncedValue]);
   function click() {
     setActive((prev) => !prev);
   }
@@ -25,29 +38,17 @@ const SearchButton: React.FC<ISearchButtonProps> = ({ color = 'default' }) => {
             display: flex;
             align-items: center;
             justify-content: center;
+
             &:hover {
-              border: ${isDefault
-                ? '1px solid rgba(64, 64, 64, 0)'
-                : '1px solid var(--grey-0)'};
               background: rgba(23, 23, 23, 0.05);
             }
+
+            transition: all 0.1s;
           `}
         >
-          <svg
-            width='24'
-            height='24'
-            viewBox='0 0 24 24'
-            fill='none'
-            xmlns='http://www.w3.org/2000/svg'
-          >
-            <path
-              d='M17 17L22 22M19.5 10.75C19.5 15.5825 15.5825 19.5 10.75 19.5C5.91751 19.5 2 15.5825 2 10.75C2 5.91751 5.91751 2 10.75 2C15.5825 2 19.5 5.91751 19.5 10.75Z'
-              stroke={isDefault ? 'var(--grey-700)' : 'var(--grey-0)'}
-              strokeWidth='1.5'
-              strokeLinecap='round'
-              strokeLinejoin='round'
-            />
-          </svg>
+          <ReadingGlassesIcon
+            stroke={color === 'default' ? theme.colors.grey[700] : theme.colors.grey[0]}
+          />
         </div>
       ) : (
         <div
@@ -56,8 +57,10 @@ const SearchButton: React.FC<ISearchButtonProps> = ({ color = 'default' }) => {
           `}
         >
           <input
-            type='text'
-            placeholder='사용자 또는 키워드를 검색해 보세요'
+            type="text"
+            placeholder={placeholder}
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
             css={css`
               height: 40px;
               font-size: 1rem;
@@ -74,35 +77,57 @@ const SearchButton: React.FC<ISearchButtonProps> = ({ color = 'default' }) => {
               background: ${isDefault
                 ? 'var(--grey-0)'
                 : 'rgba(23, 23, 23, 0.5)'};
+
               &:focus {
                 outline: none;
               }
+
               &::placeholder {
                 color: var(--grey-400);
               }
+
+              @keyframes width {
+                from {
+                  width: 0;
+                  opacity: 0;
+                }
+                to {
+                  width: 300px;
+                  opacity: 1;
+                }
+              }
+              animation: width 0.2s ease-out forwards;
             `}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                onSubmit && onSubmit(value);
+              }
+            }}
           />
-          <svg
+          <div
             onClick={click}
-            width='24'
-            height='24'
-            viewBox='0 0 24 24'
-            fill='none'
-            xmlns='http://www.w3.org/2000/svg'
             css={css`
+              width: 40px;
+              height: 40px;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
               position: absolute;
-              top: 8px;
-              left: 16px;
+              top: 0;
+              left: .5rem;
+
+              &:hover {
+                background: rgba(23, 23, 23, 0.05);
+              }
+
+              transition: all 0.3s;
             `}
           >
-            <path
-              d='M17 17L22 22M19.5 10.75C19.5 15.5825 15.5825 19.5 10.75 19.5C5.91751 19.5 2 15.5825 2 10.75C2 5.91751 5.91751 2 10.75 2C15.5825 2 19.5 5.91751 19.5 10.75Z'
-              stroke={isDefault ? 'var(--grey-700)' : 'var(--grey-0)'}
-              strokeWidth='1.5'
-              strokeLinecap='round'
-              strokeLinejoin='round'
+            <ReadingGlassesIcon
+              stroke={color === 'default' ? theme.colors.grey[700] : theme.colors.grey[0]}
             />
-          </svg>
+          </div>
         </div>
       )}
     </>

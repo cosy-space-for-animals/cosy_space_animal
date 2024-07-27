@@ -1,6 +1,6 @@
 import { SerializedStyles, css } from '@emotion/react';
 
-type Type = 'filled' | 'outline' | 'white' | 'default';
+type Type = 'filled' | 'outline' | 'white' | 'outline_white' | 'filled_white' | 'default';
 
 interface IRoundButtonProps {
   type: Type;
@@ -43,6 +43,24 @@ const styles: { [key in Type]: SerializedStyles } = {
     }
     &:disabled {
       opacity: 50%;
+    }
+  `,
+  outline_white: css`
+    color: var(--grey-0);
+    border: 1px solid var(--grey-0);
+    &:hover:enabled {
+      background: rgba(255, 255, 255, 0.1);
+    }
+    &:disabled {
+      color: var(--grey-400);
+      border: 1px solid var(--grey-200);
+    }
+  `,
+  filled_white: css`
+    background: var(--grey-0);
+    color: var(--main-red-500);
+    &:hover:enabled {
+      filter: brightness(90%);
     }
   `,
   default: css`

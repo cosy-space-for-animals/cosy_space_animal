@@ -8,6 +8,8 @@ import MainLayout from '@/components/layout/MainLayout';
 import { theme } from '@/types/theme';
 import { DeviceProvider } from '@/context/DeviceContext';
 import RecoilContextProvider from '../lib/recoilContextProvider';
+import Header from '@/components/organisms/Header';
+import { useRouter } from 'next/router';
 
 
 const queryClient = new QueryClient({
@@ -28,6 +30,9 @@ export const getServerSideProps = async ({ req }) => {
 };
 
 export default function App({ Component, pageProps }: AppProps) {
+  const router = useRouter();
+
+  console.log(router);
 
   return (
     <RecoilContextProvider>
