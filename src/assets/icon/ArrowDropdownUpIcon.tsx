@@ -14,9 +14,9 @@ const ArrowDropdownUpIcon = ({ color, size = 24 }: IIconProps) => {
       <path
         d='M16 14L12 10L8 14'
         stroke={color || defaultColor}
-        stroke-width='1.5'
-        stroke-linecap='round'
-        stroke-linejoin='round'
+        strokeWidth='1.5'
+        strokeLinecap='round'
+        strokeLinejoin='round'
       />
     </svg>
   );

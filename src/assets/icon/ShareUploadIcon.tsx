@@ -14,16 +14,16 @@ const ShareUploadIcon = ({ color, size = 24 }: IIconProps) => {
       <path
         d='M4 13.5V18.75C4 19.7165 4.79594 20.5 5.77778 20.5H18.2222C19.2041 20.5 20 19.7165 20 18.75V13.5'
         stroke={color || defaultColor}
-        stroke-width='1.5'
-        stroke-linecap='round'
-        stroke-linejoin='round'
+        strokeWidth='1.5'
+        strokeLinecap='round'
+        strokeLinejoin='round'
       />
       <path
         d='M12 15.5V3.5M12 3.5L7.5 8.16668M12 3.5L16.5 8.16666'
         stroke={color || defaultColor}
-        stroke-width='1.5'
-        stroke-linecap='round'
-        stroke-linejoin='round'
+        strokeWidth='1.5'
+        strokeLinecap='round'
+        strokeLinejoin='round'
       />
     </svg>
   );

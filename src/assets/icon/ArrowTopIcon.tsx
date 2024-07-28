@@ -14,9 +14,9 @@ const ArrowTopIcon = ({ color, size = 24 }: IIconProps) => {
       <path
         d='M5.63623 18.364L18.3642 5.63599M18.3642 5.63599L8.46464 5.636M18.3642 5.63599V15.5355'
         stroke={color || defaultColor}
-        stroke-width='1.5'
-        stroke-linecap='round'
-        stroke-linejoin='round'
+        strokeWidth='1.5'
+        strokeLinecap='round'
+        strokeLinejoin='round'
       />
     </svg>
   );

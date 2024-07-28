@@ -24,7 +24,7 @@ function HeaderNavigation({
                           }: PropsWithChildren<Props>) {
   const theme = useTheme();
 
-  console.log(hasBGColor);
+
   return (
     <div
       css={css`

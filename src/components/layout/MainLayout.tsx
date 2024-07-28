@@ -17,13 +17,8 @@ const MainLayout = ({ children }: Props) => {
     <>
       <main
         css={css`
-          display: flex;
-          flex-direction: column;
+         position: relative;
           height: 100%;
-          position: relative;
-          @media ${theme.device.mobile} {
-            
-          }
         `}
       >
         {children}

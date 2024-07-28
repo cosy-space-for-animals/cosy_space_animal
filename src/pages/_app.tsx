@@ -1,4 +1,3 @@
-import '@/styles/globals.css';
 import baseStyle from '@/styles/reset';
 import type { AppProps } from 'next/app';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -8,7 +7,6 @@ import MainLayout from '@/components/layout/MainLayout';
 import { theme } from '@/types/theme';
 import { DeviceProvider } from '@/context/DeviceContext';
 import RecoilContextProvider from '../lib/recoilContextProvider';
-import Header from '@/components/organisms/Header';
 import { useRouter } from 'next/router';
 
 

@@ -14,9 +14,9 @@ const ArrowUpIcon = ({ color, size = 24 }: IIconProps) => {
       <path
         d='M12 21V3M12 3L5 10M12 3L19 10'
         stroke={color || defaultColor}
-        stroke-width='1.5'
-        stroke-linecap='round'
-        stroke-linejoin='round'
+        strokeWidth='1.5'
+        strokeLinecap='round'
+        strokeLinejoin='round'
       />
     </svg>
   );

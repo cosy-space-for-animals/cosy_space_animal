@@ -2,7 +2,7 @@ import React, { type ReactNode } from 'react';
 import { css, useTheme } from '@emotion/react';
 
 type Props = {
-  color: 'red' | 'white' | 'grey';
+  color: 'red' | 'white' | 'grey' | 'black';
   filled?: boolean;
   label: string;
   disabled?: boolean;
@@ -114,6 +114,38 @@ const FilledButtonWithIcon = ({
         }
       `,
     },
+    black: {
+      filled: css`
+        background: ${theme.colors.grey[700]};
+        color: ${theme.colors.grey[0]};
+
+        &:hover {
+          background: linear-gradient(0deg, #000000, #000000),
+          linear-gradient(0deg, rgba(23, 23, 23, 0.1), rgba(23, 23, 23, 0.1));
+          background-size: cover;
+          background-blend-mode: overlay;
+        }
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      `,
+      outlined: css`
+        border: 1px solid ${theme.colors.grey[700]};
+        color: ${theme.colors.grey[700]};
+        background: transparent;
+
+        &:hover {
+          background: ${theme.colors.grey[900]}1A;
+        }
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      `,
+    }
   };
 
   return (

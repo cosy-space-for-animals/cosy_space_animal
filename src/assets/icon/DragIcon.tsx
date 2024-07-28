@@ -14,9 +14,9 @@ const DragIcon = ({ color, size = 24 }: IIconProps) => {
       <path
         d='M15 19L12 22M12 22L9 19M12 22V8.5V2M15 5L12 2M12 2L9 5M5 9L2 12M2 12L5 15M2 12H15.5H22M19 9L22 12M22 12L19 15'
         stroke={color || defaultColor}
-        stroke-width='1.5'
-        stroke-linecap='round'
-        stroke-linejoin='round'
+        strokeWidth='1.5'
+        strokeLinecap='round'
+        strokeLinejoin='round'
       />
     </svg>
   );

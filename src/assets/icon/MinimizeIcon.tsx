@@ -15,17 +15,17 @@ const MinimizeIcon = ({ color, size = 24 }: IIconProps) => {
         d='M10.5 13.5L3 21M10.5 13.5V19.1M10.5 13.5H4.9'
         stroke={color || defaultColor}
         stroke-opacity='0.95'
-        stroke-width='1.5'
-        stroke-linecap='round'
-        stroke-linejoin='round'
+        strokeWidth='1.5'
+        strokeLinecap='round'
+        strokeLinejoin='round'
       />
       <path
         d='M13.5 10.5L21 3M13.5 10.5V4.84315M13.5 10.5H19.1568'
         stroke={color || defaultColor}
         stroke-opacity='0.95'
-        stroke-width='1.5'
-        stroke-linecap='round'
-        stroke-linejoin='round'
+        strokeWidth='1.5'
+        strokeLinecap='round'
+        strokeLinejoin='round'
       />
     </svg>
   );

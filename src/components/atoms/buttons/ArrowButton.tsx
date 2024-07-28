@@ -1,4 +1,5 @@
-import { SerializedStyles, css } from '@emotion/react';
+import { SerializedStyles, css, useTheme } from '@emotion/react';
+import ThemedText from '@/components/atoms/ThemedText';
 
 type Type =
   | 'borderlessGrey'
@@ -11,6 +12,7 @@ type Type =
 interface IArrowButtonProps {
   type: Type;
   disabled?: boolean;
+  onClick?: () => void;
   children: React.ReactNode;
 }
 
@@ -80,15 +82,18 @@ const styles: { [key in Type]: SerializedStyles } = {
 export default function ArrowButton({
   type = 'borderlessGrey',
   disabled = false,
+  onClick,
   children,
 }: IArrowButtonProps) {
+  const theme = useTheme();
+
   return (
     <button
       disabled={disabled}
       css={css(
         css`
           height: 40px;
-          padding: 8px 20px;
+          padding: 4px 20px;
           border-radius: 999px;
           border: none;
           outline: none;
@@ -102,6 +107,7 @@ export default function ArrowButton({
         `,
         styles[type],
       )}
+      onClick={onClick}
     >
       <svg
         width='24'
@@ -119,7 +125,9 @@ export default function ArrowButton({
           strokeLinejoin='round'
         />
       </svg>
-      <span>{children}</span>
+      <ThemedText type={'buttonMedium'}>
+        {children}
+      </ThemedText>
     </button>
   );
 }

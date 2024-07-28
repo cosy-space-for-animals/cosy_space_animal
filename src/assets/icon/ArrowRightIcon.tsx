@@ -14,9 +14,9 @@ const ArrowRightIcon = ({ color, size = 24 }: IIconProps) => {
       <path
         d='M3 12H21M21 12L14 5M21 12L14 19'
         stroke={color || defaultColor}
-        stroke-width='1.5'
-        stroke-linecap='round'
-        stroke-linejoin='round'
+        strokeWidth='1.5'
+        strokeLinecap='round'
+        strokeLinejoin='round'
       />
     </svg>
   );

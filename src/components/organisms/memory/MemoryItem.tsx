@@ -6,30 +6,33 @@ import MemoryThumbIcon from '@/components/molecules/memory/MemoryThumbIcon';
 import MemoryActionButton from '@/components/molecules/memory/MemoryActionButton';
 import ShareIcon from '@/assets/icon/ShareIcon';
 import ThumbMoreBadge from '@/components/atoms/ThumbMoreBadge';
+import ThemedText from '@/components/atoms/ThemedText';
 
 interface IProps {
   thumbImgs: string[];
   date: string;
   title: string;
   content: string;
-  flowerAmount: number;
-  commentAmount: number;
+  flowerAmount?: number;
+  likeAmount?: number;
+  commentAmount?: number;
   isProfile?: boolean;
   profileImg: string;
   name: string;
 }
 
 const MemoryItem = ({
-  thumbImgs,
-  date,
-  title,
-  content,
-  flowerAmount,
-  commentAmount,
-  isProfile,
-  profileImg,
-  name,
-}: IProps) => {
+                      thumbImgs,
+                      date,
+                      title,
+                      content,
+                      flowerAmount,
+                      likeAmount,
+                      commentAmount,
+                      isProfile,
+                      profileImg,
+                      name,
+                    }: IProps) => {
   const theme = useTheme();
   return (
     <div
@@ -42,16 +45,18 @@ const MemoryItem = ({
         display: flex;
         flex-direction: column;
         gap: 8px;
-        width: 360px;
+        max-width: 360px;
+
         &:hover {
           background: ${theme.colors.grey[100]};
         }
+
         @media ${theme.device.mobile} {
           width: 343px;
         }
       `}
     >
-      {isProfile ? (
+      {isProfile && (
         <div
           css={css`
             display: flex;
@@ -73,7 +78,7 @@ const MemoryItem = ({
             >
               <Image
                 src={sampleMemoryThumbnail}
-                alt='프로필 이미지'
+                alt="프로필 이미지"
                 width={32}
                 height={32}
                 css={css`
@@ -104,14 +109,14 @@ const MemoryItem = ({
             <MoreVerticalIcon color={theme.colors.grey[400]} />
           </button>
         </div>
-      ) : null}
+      )}
       <div
         css={css`
           width: fit-content;
           position: relative;
         `}
       >
-        {thumbImgs.length > 1 ? (
+        {thumbImgs.length > 1 && (
           <div
             css={css`
               z-index: 1;
@@ -122,7 +127,7 @@ const MemoryItem = ({
           >
             <ThumbMoreBadge moreNum={thumbImgs.length - 1} />
           </div>
-        ) : null}
+        )}
         <div
           css={css`
             display: flex;
@@ -130,7 +135,7 @@ const MemoryItem = ({
         >
           <Image
             src={sampleMemoryThumbnail}
-            alt='썸네일 이미지'
+            alt="썸네일 이미지"
             css={css`
               border-radius: 8px;
               border: 1px solid ${theme.colors.grey[700]};
@@ -178,19 +183,17 @@ const MemoryItem = ({
               }
             `}
           >
-            <MemoryThumbIcon type='flower' amount={flowerAmount} />
-            <MemoryThumbIcon type='comment' amount={commentAmount} />
+            {typeof likeAmount === 'number' && <MemoryThumbIcon type="like" amount={likeAmount} />}
+            {typeof flowerAmount === 'number' && <MemoryThumbIcon type="flower" amount={flowerAmount} />}
+            {typeof commentAmount === 'number' && <MemoryThumbIcon type="comment" amount={commentAmount} />}
           </div>
         </div>
-        <p
-          css={css`
-            font-weight: ${theme.fontWeights.medium};
-          `}
-        >
+        <ThemedText type={"labelLarge"}>
           {title}
-        </p>
-        <p
-          css={css`
+        </ThemedText>
+        <ThemedText
+          type={"bodySmall"}
+          cssStyle={css`
             display: none;
             font-size: ${theme.fontSizes.sm};
             color: ${theme.colors.grey[700]};
@@ -200,7 +203,7 @@ const MemoryItem = ({
           `}
         >
           {content}
-        </p>
+        </ThemedText>
       </div>
       <div
         css={css`
@@ -221,8 +224,9 @@ const MemoryItem = ({
             gap: 12px;
           `}
         >
-          <MemoryActionButton type='flower' amount={flowerAmount} />
-          <MemoryActionButton type='comment' amount={commentAmount} />
+          {typeof likeAmount === 'number' && <MemoryThumbIcon type="like" amount={likeAmount} />}
+          {typeof flowerAmount === 'number' && <MemoryThumbIcon type="flower" amount={flowerAmount} />}
+          {typeof commentAmount === 'number' && <MemoryThumbIcon type="comment" amount={commentAmount} />}
         </div>
         <button>
           <ShareIcon color={theme.colors.grey[700]} />

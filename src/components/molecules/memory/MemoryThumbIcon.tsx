@@ -5,6 +5,7 @@ import FilledLikeIcon from '@/assets/icon/FilledLikeIcon';
 import FlowerIcon from '@/assets/icon/FlowerIcon';
 import LikeIcon from '@/assets/icon/LikeIcon';
 import { css, useTheme } from '@emotion/react';
+import ThemedText from '@/components/atoms/ThemedText';
 
 interface IProps {
   type: 'flower' | 'like' | 'comment';
@@ -12,7 +13,7 @@ interface IProps {
   amount: number;
 }
 
-const MemoryThumbIcon = ({ type, state, amount }: IProps) => {
+const MemoryThumbIcon = ({ type, state = false, amount }: IProps) => {
   const theme = useTheme();
   return (
     <div
@@ -22,31 +23,43 @@ const MemoryThumbIcon = ({ type, state, amount }: IProps) => {
         gap: 2px;
       `}
     >
-      {type === 'flower' ? (
-        state ? (
-          <FilledFlowerIcon size={14} />
-        ) : (
-          <FlowerIcon color={theme.colors.grey[500]} size={14} />
-        )
-      ) : type === 'like' ? (
-        state ? (
-          <FilledLikeIcon size={14} />
-        ) : (
-          <LikeIcon color={theme.colors.grey[500]} size={14} />
-        )
-      ) : state ? (
-        <FilledCommentIcon size={14} />
-      ) : (
-        <CommentIcon color={theme.colors.grey[500]} size={14} />
-      )}
-      <span
+      <span css={css`
+        width: 1rem;
+        height: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      `}>
+        {type === 'flower' && (
+          state ? (
+            <FilledFlowerIcon size={14} />
+          ) : (
+            <FlowerIcon color={theme.colors.grey[500]} size={14} />
+          )
+        )}
+        {type === 'like' && (
+          state ? (
+            <FilledLikeIcon size={14} />
+          ) : (
+            <LikeIcon color={theme.colors.grey[500]} size={14} />
+          )
+        )}
+        {type === 'comment' && (
+          state ? (
+            <FilledCommentIcon size={14} />
+          ) : (
+            <CommentIcon color={theme.colors.grey[500]} size={14} />
+          )
+        )}
+      </span>
+      <ThemedText
+        type={'captionMedium'}
         css={css`
-          font-size: ${theme.fontSizes.xs};
           color: ${theme.colors.grey[500]};
         `}
       >
         {amount}
-      </span>
+      </ThemedText>
     </div>
   );
 };
