@@ -177,3 +177,26 @@ export function getKoreanSubjectMarker(word: string): '이' | '가' {
 export function getKoreanObjectParticle(word: string): '을' | '를' {
   return hasFinalConsonant(word) ? '을' : '를';
 }
+
+export function setItemWithExpireDate(
+  key: string,
+  value: string,
+  days: number = 30,
+) {
+  const obj = { value, expire: Date.now() + days * 86400000 };
+  const objString = JSON.stringify(obj);
+  localStorage.setItem(key, objString);
+}
+
+export function getItemWithExpireDate(key: string) {
+  const objString = window.localStorage.getItem(key);
+  if (!objString) return null;
+
+  const obj = JSON.parse(objString);
+
+  if (Date.now() > obj.expire) {
+    localStorage.removeItem(key);
+    return null;
+  }
+  return obj.value;
+}
