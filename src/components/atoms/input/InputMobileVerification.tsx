@@ -62,11 +62,15 @@ const InputMobileVerification: React.FC<any> = ({
 
   const onClick = useCallback(async () => {
     if (!verification) {
-      const { data } = await fetchWrapper(
-        `${process.env.NEXT_PUBLIC_API_URL}/send-sms?recipientPhone=${value}`,
-      );
-      setCode(data);
-      setVerification(true);
+      try {
+        const { data } = await fetchWrapper(
+          `${process.env.NEXT_PUBLIC_API_URL}/send-sms?recipientPhone=${value}`,
+        );
+        setCode(data);
+        setVerification(true);
+      } catch (error) {
+        console.error(error);
+      }
     } else {
       setVerification(false);
       setValue2(undefined);
