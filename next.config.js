@@ -20,6 +20,10 @@ module.exports = {
           source: '/todos/:path*',
           destination: `${TEST_URL}/todos/:path*`,
         },
+        {
+          source: `/login/oauth2/:path*`,
+          destination: `${API_URL}/login/oauth2/:path*`,
+        },
       ],
     };
   },
