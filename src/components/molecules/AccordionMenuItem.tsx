@@ -45,8 +45,6 @@ export default function AccordionMenuItem({
     setIsSelected(set.has(data.id));
   }, [data.id, selected]);
 
-  console.log(selected);
-
   return (
     <div
       css={css`
