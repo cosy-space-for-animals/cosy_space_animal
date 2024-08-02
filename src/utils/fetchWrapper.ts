@@ -1,3 +1,6 @@
+import { FetchServerResponseResult } from 'next/dist/client/components/router-reducer/fetch-server-response';
+import { NextResponse } from 'next/server';
+
 const FETCH_METHODS = {
   GET: 'GET',
   POST: 'POST',
@@ -14,6 +17,7 @@ const defaultOptions = {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*',
   },
+  credentials: 'include',
 };
 
 const isServer = typeof window === 'undefined';
@@ -28,8 +32,7 @@ const rewrite = (url: string): string => {
   }
 
   return `${BASE_URL}/${url}`;
-}
-
+};
 
 /**
  *
@@ -41,7 +44,8 @@ const rewrite = (url: string): string => {
  */
 export const fetchWrapper = async (url: string, options?: RequestInit) => {
   try {
-    const response = await fetch(isServer ? rewrite(url) : `${url}`, {
+    let response;
+    response = await fetch(isServer ? rewrite(url) : `${url}`, {
       ...defaultOptions,
       headers: {
         ...(options?.headers || {}),
@@ -53,12 +57,28 @@ export const fetchWrapper = async (url: string, options?: RequestInit) => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
+    if (url.startsWith('/api')) {
+      if (response.status === 202) {
+        response = await fetch(isServer ? rewrite(url) : `${url}`, {
+          ...defaultOptions,
+          headers: {
+            ...(options?.headers || {}),
+          },
+          ...options,
+        });
+      }
+    }
     // wrapping response.json() in await to catch json parsing errors
     // return await response.json();
     return await response.json();
   } catch (error) {
     console.error('Fetch Wrapper Error:', error);
-    throw error;
+    // throw error;
+    if (url.startsWith('/api')) {
+      if (error.status === 406) {
+        return location.replace('/');
+      }
+    }
   }
 };
 
