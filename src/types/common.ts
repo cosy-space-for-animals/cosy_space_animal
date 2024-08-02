@@ -19,10 +19,11 @@ export interface IInputItemProps2 {
   id: string;
   value: string;
   setValue: Dispatch<SetStateAction<string>> | ((e: string) => void);
-  validate: (arg: string) => boolean;
+  validate: (arg: string) => boolean | Promise<boolean>;
   errorMessage?: string;
   disabled?: boolean;
   placeholder?: string;
   onBlur?: () => void;
   submit?: () => void;
+  setError?: Dispatch<SetStateAction<{ [key: string]: boolean }>>;
 }

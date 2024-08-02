@@ -11,6 +11,7 @@ const InputPasswordItem: React.FC<IInputItemProps2> = ({
   errorMessage,
   disabled = false,
   placeholder,
+  setError: setErr,
 }) => {
   const [focus, setFocus] = useState(false);
   const [inputType, setInputType] = useState<'password' | 'text'>('password');
@@ -20,6 +21,10 @@ const InputPasswordItem: React.FC<IInputItemProps2> = ({
   const onBlur = (e: FocusEvent<HTMLInputElement>) => {
     setFocus(false);
     setError(!validate(e.target.value));
+    setErr &&
+      setErr((prev) => {
+        return { ...prev, [id]: !validate(e.target.value) };
+      });
   };
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);

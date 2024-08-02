@@ -16,14 +16,20 @@ const InputDefaultItem: React.FC<IInputItemProps2> = ({
   errorMessage,
   placeholder,
   disabled = false,
+  setError: setErr,
 }) => {
   const [focus, setFocus] = useState(false);
   const [error, setError] = useState(false);
 
   const onFocus = () => setFocus(true);
-  const onBlur = (e: FocusEvent<HTMLInputElement>) => {
+  const onBlur = async (e: FocusEvent<HTMLInputElement>) => {
     setFocus(false);
-    setError(!validate(e.target.value));
+    const bool = await validate(e.target.value);
+    setError(!bool);
+    setErr &&
+      setErr((prev) => {
+        return { ...prev, [id]: !bool };
+      });
   };
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);

@@ -1,4 +1,3 @@
-import { IInputItemProps2 } from '@/types/common';
 import { css, useTheme } from '@emotion/react';
 import Image from 'next/image';
 import {
@@ -13,27 +12,25 @@ import {
 import RoundButton from '../buttons/RoundButton';
 import Toast from '../Toast';
 import { restrictToNumbers } from '@/utils/common';
+import fetchWrapper from '@/utils/fetchWrapper';
 
 const InputMobileVerification: React.FC<any> = ({
   id,
   value,
   setValue,
-  // TODO: api 확인
-  // code,
-  // setCode,
-  errorMessage,
   disabled = false,
+  setVerificationResult,
 }) => {
   const theme = useTheme();
 
   const phoneNumberInputRef = useRef<HTMLInputElement>(null);
-  const verificationInputRef = useRef<HTMLInputElement>(null);
 
   const [focus, setFocus] = useState(false);
   const [error, setError] = useState(false);
   const [canRequest, setCanRequest] = useState(false);
   const [verification, setVerification] = useState(false);
 
+  const [code, setCode] = useState('');
   const [focus2, setFocus2] = useState(false);
   const [value2, setValue2] = useState<string | undefined>(undefined);
   const [error2, setError2] = useState(false);
@@ -63,16 +60,19 @@ const InputMobileVerification: React.FC<any> = ({
   );
   const remove = useCallback(() => setValue(''), [setValue]);
 
-  const onClick = useCallback(() => {
+  const onClick = useCallback(async () => {
     if (!verification) {
-      console.log('통신성공');
+      const { data } = await fetchWrapper(
+        `${process.env.NEXT_PUBLIC_API_URL}/send-sms?recipientPhone=${value}`,
+      );
+      setCode(data);
       setVerification(true);
     } else {
       setVerification(false);
       setValue2(undefined);
       setStatus2(undefined);
     }
-  }, [verification]);
+  }, [verification, value]);
 
   const onFocus2 = useCallback(() => setFocus2(true), []);
   const onBlur2 = useCallback(
@@ -113,23 +113,25 @@ const InputMobileVerification: React.FC<any> = ({
   useEffect(() => {
     if (value2 === undefined) {
       setStatus2(undefined);
+      setVerificationResult(false);
       return;
     }
     if (value2.length < 6) {
       setStatus2('invalid');
       setError2(true);
+      setVerificationResult(false);
     } else {
-      if (true) {
-        console.log('통신성공', value2);
+      if (code === value2) {
         setError2(false);
         setStatus2('success');
+        setVerificationResult(true);
       } else {
-        console.log('통신실패', value2);
         setError2(true);
         setStatus2('failure');
+        setVerificationResult(false);
       }
     }
-  }, [value2]);
+  }, [value2, code, setVerificationResult]);
 
   return (
     <>
