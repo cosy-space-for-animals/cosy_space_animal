@@ -4,7 +4,9 @@ import InputDefaultItem from '@/components/atoms/input/InputDefaultItem';
 import InputPasswordItem from '@/components/atoms/input/InputPasswordItem';
 import UserPopup from '@/components/molecules/users/userPopup';
 import {
+  getItemWithExpireDate,
   restrictToNumbers,
+  setItemWithExpireDate,
   validateEmail,
   validatePassword,
 } from '@/utils/common';
@@ -24,6 +26,9 @@ import { SignUp } from './SignUp';
 import Image from 'next/image';
 import RoundButton from '@/components/atoms/buttons/RoundButton';
 import Toast from '@/components/atoms/Toast';
+import fetchWrapper from '@/utils/fetchWrapper';
+import NaverLogin from '@/components/organisms/user/NaverLogin';
+import { useRouter } from 'next/router';
 
 interface ISignUpProps {
   render: Dispatch<SetStateAction<boolean>>;
@@ -704,11 +709,41 @@ const FindEmail = ({ setComponent }) => {
   );
 };
 const SignIn = ({ setComponent }) => {
-  const theme = useTheme();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const router = useRouter();
+  const localStorageEmail = getItemWithExpireDate('email');
 
-  const [check, setCheck] = useState(false);
+  const theme = useTheme();
+  const [email, setEmail] = useState(localStorageEmail || '');
+  const [password, setPassword] = useState('');
+  const [check, setCheck] = useState(Boolean(localStorageEmail));
+  const [error, setError] = useState({ email: true, password: true });
+
+  async function submit() {
+    const isDev = Boolean(process.env.NODE_ENV === 'development');
+
+    if (!isDev && !Object.values(error).every((v) => v === false)) return;
+
+    try {
+      await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/sign-in`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: isDev ? 'user3@gmail.com' : email,
+          password: isDev ? 'user12#$' : password,
+        }),
+      });
+      if (check) {
+        setItemWithExpireDate('email', email);
+      } else {
+        localStorage.removeItem('email');
+      }
+      router.reload();
+    } catch (error) {
+    } finally {
+    }
+  }
 
   return (
     <div
@@ -726,11 +761,12 @@ const SignIn = ({ setComponent }) => {
       >
         <div>
           <InputDefaultItem
-            id='id'
+            id='email'
             value={email}
             setValue={setEmail}
             placeholder='이메일 입력'
             validate={validateEmail}
+            setError={setError}
             errorMessage={
               email === ''
                 ? '이메일을 입력해주세요.'
@@ -746,6 +782,7 @@ const SignIn = ({ setComponent }) => {
             placeholder='비밀번호 입력'
             validate={() => Boolean(password)}
             errorMessage={'비밀번호를 입력해주세요.'}
+            setError={setError}
           />
         </div>
         <div
@@ -776,7 +813,7 @@ const SignIn = ({ setComponent }) => {
           gap: 12px;
         `}
       >
-        <MainButton type='filled' onClick={() => {}}>
+        <MainButton type='filled' onClick={submit}>
           로그인
         </MainButton>
         <div
@@ -826,16 +863,95 @@ const SignIn = ({ setComponent }) => {
     </div>
   );
 };
+const OAuth = ({ setComponent }) => {
+  const theme = useTheme();
+
+  return (
+    <div
+      css={css`
+        width: 320px;
+        margin-top: -16px;
+      `}
+    >
+      <div
+        css={css`
+          font-size: 16px;
+          font-weight: 400;
+          line-height: 24px;
+          letter-spacing: -0.5px;
+          color: ${theme.colors.grey[700]};
+          margin-bottom: 32px;
+        `}
+      >
+        간편하게 로그인하고 반려동물과의 소중한 추억을 기록하고 공유해보세요!
+      </div>
+      <div
+        css={css`
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        `}
+      >
+        <div
+          css={css`
+            border: 1px solid ${theme.colors.grey[200]};
+            border-radius: 8px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          `}
+        >
+          google button
+        </div>
+        <NaverLogin />
+      </div>
+      <div
+        css={css`
+          margin-top: 12px;
+          font-size: 14px;
+          font-weight: 600;
+          line-height: 14px;
+          letter-spacing: -0.25px;
+          line-height: 1em;
+          color: ${theme.colors.grey[500]};
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        `}
+      >
+        <span
+          onClick={() => setComponent('signIn')}
+          css={css`
+            padding: 12px;
+          `}
+        >
+          이메일로 로그인
+        </span>
+        <span>|</span>
+        <span
+          onClick={() => setComponent('signUp')}
+          css={css`
+            padding: 12px;
+          `}
+        >
+          회원가입
+        </span>
+      </div>
+    </div>
+  );
+};
 
 const SignInModal = ({ render }: ISignUpProps) => {
   const [component, setComponent] = useState<
+    | 'oauth'
     | 'signUp'
     | 'signIn'
     | 'findEmail'
     | 'findPassword'
     | 'updatePassword'
     | 'updateCompleted'
-  >('signIn');
+  >('oauth');
   const [step, setStep] = useState(1);
 
   function titleHandler(): string {
@@ -849,14 +965,19 @@ const SignInModal = ({ render }: ISignUpProps) => {
       return '비밀번호 찾기';
     } else if (component === 'updatePassword') {
       return '비밀번호 재설정';
+    } else if (component === 'oauth') {
+      return '시작하기';
     } else {
       return '';
     }
   }
   return (
     <UserPopup title={titleHandler()} render={render}>
+      {component === 'oauth' && <OAuth setComponent={setComponent} />}
       {component === 'signIn' && <SignIn setComponent={setComponent} />}
-      {component === 'signUp' && <SignUp step={step} setStep={setStep} />}
+      {component === 'signUp' && (
+        <SignUp step={step} setStep={setStep} render={render} />
+      )}
       {component === 'findEmail' && <FindEmail setComponent={setComponent} />}
       {component === 'findPassword' && (
         <FindPassword setComponent={setComponent} />
