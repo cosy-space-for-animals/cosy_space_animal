@@ -14,7 +14,14 @@ import {
 } from '@/utils/common';
 import fetchWrapper from '@/utils/fetchWrapper';
 import { css, useTheme } from '@emotion/react';
-import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from 'react';
+import SignInModal from './SignIn';
 
 interface ISignUpProps {
   render: Dispatch<SetStateAction<boolean>>;
@@ -67,21 +74,80 @@ const Step1 = ({ setStep }) => {
 };
 
 const Step2 = ({ setStep }) => {
-  const theme = useTheme();
-  const [canGoNext, setCanGoNext] = useState(true);
+  // const theme = useTheme();
+  const [canGoNext, setCanGoNext] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordCheck, setPasswordCheck] = useState('');
   const [name, setName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [verificationCode, setVerificationCode] = useState('');
+  const [verificationResult, setVerificationResult] = useState(false);
+  const [emailErrorMessage, setEmailErrorMessage] = useState('');
+  const [error, setError] = useState({
+    email: true,
+    password: true,
+    name: true,
+    // phoneNumber: true,
+  });
 
-  function validatePasswordCheck() {
+  const validatePasswordCheck = useCallback(() => {
     return Boolean(password === passwordCheck);
+  }, [password, passwordCheck]);
+
+  async function validate_email(value: string) {
+    if (!validateEmail(value)) {
+      setEmailErrorMessage('이메일을 정확히 입력해주세요.');
+      return false;
+    } else {
+      const data = await fetchWrapper(
+        `${process.env.NEXT_PUBLIC_API_URL}/sign-in/duplication-check?email=${value}`,
+      );
+      if (data.data.duplicationCheckResponse.dscCode === '0') {
+        setEmailErrorMessage('이미 가입한 계정입니다.');
+        return false;
+      } else {
+        setEmailErrorMessage('');
+        return true;
+      }
+    }
   }
-  function signUp() {
+
+  async function submit() {
     if (!canGoNext) return;
+
+    const response = await fetchWrapper(
+      `${process.env.NEXT_PUBLIC_API_URL}/sign-up`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: name,
+          email,
+          password,
+          phoneNum: phoneNumber,
+          roleDscCode: '1',
+        }),
+      },
+    );
+
+    if (response) {
+      setStep(3);
+    }
   }
+
+  useEffect(() => {
+    if (
+      Object.values(error).every((v) => v === false) &&
+      validatePasswordCheck() &&
+      verificationResult
+    ) {
+      setCanGoNext(true);
+    } else {
+      setCanGoNext(false);
+    }
+  }, [error, validatePasswordCheck, verificationResult]);
 
   return (
     <div>
@@ -114,9 +180,10 @@ const Step2 = ({ setStep }) => {
                 id='email'
                 value={email}
                 setValue={setEmail}
-                validate={validateEmail}
-                errorMessage='이메일을 정확히 입력해주세요.'
+                validate={validate_email}
+                errorMessage={emailErrorMessage}
                 placeholder='sample@email.com'
+                setError={setError}
               />
             </div>
           </label>
@@ -145,6 +212,7 @@ const Step2 = ({ setStep }) => {
                 validate={validatePassword}
                 errorMessage='영문, 숫자, 특수문자 혼합하여 8자 이상으로 설정해야 합니다.'
                 placeholder='영문, 숫자, 특수문자 혼합 8자 이상 입력'
+                setError={setError}
               />
             </div>
           </label>
@@ -201,6 +269,7 @@ const Step2 = ({ setStep }) => {
                 validate={validateUserName}
                 errorMessage='한글만 입력해주세요. (영문, 특수기호 입력 불가)'
                 placeholder='이름 입력'
+                setError={setError}
               />
             </div>
           </label>
@@ -227,21 +296,22 @@ const Step2 = ({ setStep }) => {
                 // 폰번호 필요, 코드 필요
                 value={phoneNumber}
                 setValue={setPhoneNumber}
-                code={verificationCode}
-                setCode={verificationCode}
+                setVerificationResult={setVerificationResult}
+                setError={setError}
               />
             </div>
           </label>
         </div>
         {/* verificationCode */}
       </div>
-      <MainButton disabled={!canGoNext} onClick={signUp}>
+      <MainButton disabled={!canGoNext} onClick={submit}>
         회원가입
       </MainButton>
     </div>
   );
 };
-const SignUp = ({ step = 1, setStep }) => {
+
+const SignUp = ({ step = 1, setStep, render }) => {
   return (
     <div
       css={css`
@@ -258,12 +328,18 @@ const SignUpModal = ({ render }) => {
   const [step, setStep] = useState(1);
 
   return (
-    <UserPopup
-      title={step === 1 ? '이용약관 동의' : '회원가입'}
-      render={render}
-    >
-      <SignUp step={step} setStep={setStep} />
-    </UserPopup>
+    <>
+      {step < 3 ? (
+        <UserPopup
+          title={step === 1 ? '이용약관 동의' : '회원가입'}
+          render={render}
+        >
+          <SignUp step={step} setStep={setStep} render={render} />
+        </UserPopup>
+      ) : (
+        <SignInModal render={render} />
+      )}
+    </>
   );
 };
 
