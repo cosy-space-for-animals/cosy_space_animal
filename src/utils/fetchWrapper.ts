@@ -17,7 +17,7 @@ const defaultOptions = {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*',
   },
-  credentials: 'include',
+  // credentials: 'include',
 };
 
 const isServer = typeof window === 'undefined';
