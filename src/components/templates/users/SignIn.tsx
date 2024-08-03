@@ -27,8 +27,14 @@ import Image from 'next/image';
 import RoundButton from '@/components/atoms/buttons/RoundButton';
 import Toast from '@/components/atoms/Toast';
 import fetchWrapper from '@/utils/fetchWrapper';
-import NaverLogin from '@/components/organisms/user/NaverLogin';
 import { useRouter } from 'next/router';
+import { useGoogleLogin } from '@react-oauth/google';
+
+declare global {
+  interface Window {
+    naver: any;
+  }
+}
 
 interface ISignUpProps {
   render: Dispatch<SetStateAction<boolean>>;
@@ -866,6 +872,45 @@ const SignIn = ({ setComponent }) => {
 const OAuth = ({ setComponent }) => {
   const theme = useTheme();
 
+  const googleLogin = useGoogleLogin({
+    // TODO: clientID받고, api 연결 필요
+    onSuccess: ({}) => {
+      console.log('loginSuccess');
+    },
+    onError: (error) => {
+      console.error('Login Failed:', error);
+    },
+  });
+
+  const naverLogin = () => {
+    const ele = document.getElementById('naverIdLogin')?.firstChild;
+    if (!ele) return;
+    const a = ele as HTMLAnchorElement;
+
+    a.click();
+  };
+
+  useEffect(() => {
+    // naver login
+    const { naver } = window;
+    if (!naver) return;
+
+    const naverLogin = new naver.LoginWithNaverId({
+      clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+      callbackUrl: 'http://localhost:3000/user/naver/callback',
+      isPopup: false,
+      loginButton: { color: 'green', type: 1, height: '40' }, // 로그인 버튼의 스타일
+    });
+
+    naverLogin.init();
+
+    // naverLogin.getLoginStatus((status: boolean) => {
+    //   if (status) {
+    //     console.log(naverLogin.user);
+    //   }
+    // });
+  }, []);
+
   return (
     <div
       css={css`
@@ -893,6 +938,7 @@ const OAuth = ({ setComponent }) => {
         `}
       >
         <div
+          onClick={() => googleLogin()}
           css={css`
             border: 1px solid ${theme.colors.grey[200]};
             border-radius: 8px;
@@ -900,11 +946,49 @@ const OAuth = ({ setComponent }) => {
             display: flex;
             align-items: center;
             justify-content: center;
+            color: ${theme.colors.grey[900]};
           `}
         >
-          google button
+          <Image
+            src='/web_light_sq_go.svg'
+            width={40}
+            height={40}
+            alt='google logo'
+          />
+          Google 계정으로 로그인
         </div>
-        <NaverLogin />
+        <>
+          <div
+            id='naverIdLogin'
+            css={css`
+              display: none;
+            `}
+          />
+          <div
+            onClick={naverLogin}
+            css={css`
+              border-radius: 8px;
+              height: 52px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              background: #03c75a;
+              font-size: 16px;
+              font-weight: 600;
+              line-height: 1em;
+              letter-spacing: -0.25px;
+              color: ${theme.colors.grey[0]};
+            `}
+          >
+            <Image
+              src='/web_light_sq_na.svg'
+              width={40}
+              height={40}
+              alt='naver logo'
+            />
+            네이버 계정으로 로그인
+          </div>
+        </>
       </div>
       <div
         css={css`

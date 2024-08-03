@@ -8,7 +8,7 @@ import { Global, ThemeProvider } from '@emotion/react';
 import MainLayout from '@/components/layout/MainLayout';
 import { theme } from '@/types/theme';
 import { DeviceProvider, useDevice } from '@/context/DeviceContext';
-
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -28,22 +28,23 @@ export const getServerSideProps = async ({ req }) => {
 };
 
 export default function App({ Component, pageProps }: AppProps) {
-
   return (
     <>
-      <RecoilRoot>
-        <QueryClientProvider client={queryClient}>
-          <ThemeProvider theme={theme}>
-            <Global styles={baseStyle} />
-            <DeviceProvider userAgent={pageProps.userAgent}>
-              <MainLayout>
-                <Component {...pageProps} />
-              </MainLayout>
-            </DeviceProvider>
-          </ThemeProvider>
-          <ReactQueryDevtools initialIsOpen={false} />
-        </QueryClientProvider>
-      </RecoilRoot>
+      <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
+        <RecoilRoot>
+          <QueryClientProvider client={queryClient}>
+            <ThemeProvider theme={theme}>
+              <Global styles={baseStyle} />
+              <DeviceProvider userAgent={pageProps.userAgent}>
+                <MainLayout>
+                  <Component {...pageProps} />
+                </MainLayout>
+              </DeviceProvider>
+            </ThemeProvider>
+            <ReactQueryDevtools initialIsOpen={false} />
+          </QueryClientProvider>
+        </RecoilRoot>
+      </GoogleOAuthProvider>
     </>
   );
 }
