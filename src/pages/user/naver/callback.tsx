@@ -1,10 +1,12 @@
+import { setCookie } from '@/utils/common';
 import fetchWrapper from '@/utils/fetchWrapper';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 
 const NaverCallback: React.FC = () => {
   const router = useRouter();
-  useEffect(() => {
+
+  const login = async () => {
     const hash = window.location.hash;
     const params = new URLSearchParams(hash.substring(1)); // '#' 제거
     const access_token = params.get('access_token');
@@ -14,7 +16,7 @@ const NaverCallback: React.FC = () => {
 
     if (params) {
       try {
-        fetchWrapper(
+        const response = await fetchWrapper(
           `${process.env.NEXT_PUBLIC_API_URL}/login/oauth2/code/naver`,
           {
             method: 'POST',
@@ -29,14 +31,19 @@ const NaverCallback: React.FC = () => {
             }),
           },
         );
-        // TODO: 쿠키설정
+        const accessToken = response.data.loginResponseDto.accessToken;
+        setCookie('accessToken', accessToken, 30);
         router.push('/');
       } catch (error) {
         router.back();
         // console.error(error);
       }
     }
-  }, []);
+  };
+
+  useEffect(() => {
+    login();
+  }, [router]);
 
   return <div>로딩중입니다...(추후 로딩스피너로 변경 예정)</div>;
 };

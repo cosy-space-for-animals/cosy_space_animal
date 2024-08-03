@@ -6,6 +6,7 @@ import UserPopup from '@/components/molecules/users/userPopup';
 import {
   getItemWithExpireDate,
   restrictToNumbers,
+  setCookie,
   setItemWithExpireDate,
   validateEmail,
   validatePassword,
@@ -730,21 +731,26 @@ const SignIn = ({ setComponent }) => {
     if (!isDev && !Object.values(error).every((v) => v === false)) return;
 
     try {
-      await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/sign-in`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetchWrapper(
+        `${process.env.NEXT_PUBLIC_API_URL}/sign-in`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: isDev ? 'user3@gmail.com' : email,
+            password: isDev ? 'user12#$' : password,
+          }),
         },
-        body: JSON.stringify({
-          email: isDev ? 'user3@gmail.com' : email,
-          password: isDev ? 'user12#$' : password,
-        }),
-      });
+      );
       if (check) {
         setItemWithExpireDate('email', email);
       } else {
         localStorage.removeItem('email');
       }
+      const accessToken = response.data.loginInfo.accessToken;
+      setCookie('accessToken', accessToken, 30);
       router.reload();
     } catch (error) {
     } finally {
@@ -947,6 +953,7 @@ const OAuth = ({ setComponent }) => {
             align-items: center;
             justify-content: center;
             color: ${theme.colors.grey[900]};
+            cursor: pointer;
           `}
         >
           <Image
@@ -978,6 +985,7 @@ const OAuth = ({ setComponent }) => {
               line-height: 1em;
               letter-spacing: -0.25px;
               color: ${theme.colors.grey[0]};
+              cursor: pointer;
             `}
           >
             <Image

@@ -1,5 +1,6 @@
 import { FetchServerResponseResult } from 'next/dist/client/components/router-reducer/fetch-server-response';
 import { NextResponse } from 'next/server';
+import { getCookie, setCookie } from './common';
 
 const FETCH_METHODS = {
   GET: 'GET',
@@ -57,16 +58,18 @@ export const fetchWrapper = async (url: string, options?: RequestInit) => {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    if (url.startsWith('/api')) {
-      if (response.status === 202) {
-        response = await fetch(isServer ? rewrite(url) : `${url}`, {
-          ...defaultOptions,
-          headers: {
-            ...(options?.headers || {}),
-          },
-          ...options,
-        });
-      }
+    if (response.status === 202) {
+      // TODO: 들어오는 형식 확인
+      const accessToken_new = response.data.loginInfo.accessToken;
+      setCookie('accessToken', accessToken_new);
+
+      response.response = await fetch(isServer ? rewrite(url) : `${url}`, {
+        ...defaultOptions,
+        headers: {
+          ...(options?.headers || {}),
+        },
+        ...options,
+      });
     }
     // wrapping response.json() in await to catch json parsing errors
     // return await response.json();
