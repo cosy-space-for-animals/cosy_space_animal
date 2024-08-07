@@ -25,7 +25,7 @@ const CommentActionButton = ({ actions }: IProps) => {
             css={css`
               padding: 2px 8px;
               font-weight: ${theme.fontWeights.medium};
-              font-size: ${theme.fontSizes.sm};
+              font-size: ${theme.fontSizes.sm}px;
             `}
           >
             {v.name}

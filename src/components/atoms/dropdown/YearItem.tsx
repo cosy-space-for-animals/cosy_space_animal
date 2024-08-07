@@ -11,7 +11,7 @@ const YearItem = ({ year, state = 'enabled' }: IProps) => {
     <span
       css={css`
         font-weight: ${theme.fontWeights.bold};
-        font-size: ${theme.fontSizes.xl};
+        font-size: ${theme.fontSizes.xl}px;
         color: ${state === 'selected'
           ? theme.colors.primary[500]
           : state === 'disabled'
@@ -22,7 +22,7 @@ const YearItem = ({ year, state = 'enabled' }: IProps) => {
         }
         @media ${theme.device.mobile} {
           font-weight: ${theme.fontWeights.semibold};
-          font-size: ${theme.fontSizes.lg};
+          font-size: ${theme.fontSizes.lg}px;
         }
       `}
     >
