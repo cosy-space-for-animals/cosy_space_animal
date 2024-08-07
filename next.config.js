@@ -10,7 +10,7 @@ module.exports = {
       beforeFiles: [
         {
           source: '/api/:path*',
-          destination: `${API_URL}/:path*`,
+          destination: `${API_URL}/api/:path*`,
         },
         {
           source: '/todos/:path*',

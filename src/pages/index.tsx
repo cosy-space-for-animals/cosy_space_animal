@@ -2,17 +2,12 @@ import { css } from '@emotion/react';
 import ThemedText from '@/components/atoms/ThemedText';
 import RollingScrollBanner from '@/components/organisms/RollingScrollBanner';
 import MainButton from '@/components/atoms/buttons/MainButton';
+import { useDevice } from '@/context/DeviceContext';
+import { useRouter } from 'next/router';
 
-export const getServerSideProps = async ({ req }) => {
-  const userAgent = req.headers['user-agent'];
-
-  return {
-    props: { userAgent },
-  };
-};
-
-export default function Home({ userAgent }) {
-  const isMobile = /Mobile/.test(userAgent);
+export default function Home() {
+  const { isMobile } = useDevice();
+  const router = useRouter();
 
   return (
     <>
@@ -69,17 +64,17 @@ export default function Home({ userAgent }) {
               position: fixed;
               bottom: 0;
               padding: 40px 20px;
+              width: 100%;
             `}
           >
             <MainButton
               type={'filled'}
-              onClick={() => {}}
-              // onClick={() => {
-              //   console.log('프로필 만들기 버튼 클릭');
-              // }}
-              // css={css`
-              //   width: 320px;
-              // `}
+              onClick={() => {
+                router.push('/profile/post');
+              }}
+              style={css`
+                width: 100%;
+              `}
             >
               프로필 만들기
             </MainButton>
@@ -127,13 +122,12 @@ export default function Home({ userAgent }) {
             </div>
             <MainButton
               type={'filled'}
-              onClick={() => {}}
-              // onClick={() => {
-              //   console.log('프로필 만들기 버튼 클릭');
-              // }}
-              // css={css`
-              //   width: 320px;
-              // `}
+              onClick={() => {
+                router.push('/profile/post');
+              }}
+              style={css`
+                width: 320px;
+              `}
             >
               프로필 만들기
             </MainButton>
