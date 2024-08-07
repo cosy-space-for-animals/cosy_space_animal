@@ -21,6 +21,7 @@ const ProfileLikeButton: React.FC<IProfileLikeButtonProps> = ({
       css={css`
         outline: none;
         display: flex;
+        justify-content: center;
         align-items: center;
         gap: 8px;
         padding: ${isMobile ? '6px 16px' : '8px 24px'};

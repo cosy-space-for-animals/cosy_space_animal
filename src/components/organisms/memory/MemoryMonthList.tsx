@@ -1,13 +1,15 @@
 import Ticker from '@/components/atoms/dropdown/Ticker';
-import { css } from '@emotion/react';
+import { css, useTheme } from '@emotion/react';
 
 const MemoryMonthList = () => {
+  const theme = useTheme();
   return (
     <div
       css={css`
         position: relative;
         height: 680px;
         overflow-y: auto;
+        border-right: 1px solid ${theme.colors.grey[300]};
       `}
       className='hide-scrollbar'
     >

@@ -4,6 +4,7 @@ import CommentPopup from '@/components/templates/template/CommentPopup';
 import MemoryArea from '@/components/templates/template/MemoryArea';
 import MemoryPopup from '@/components/templates/template/MemoryPopup';
 import ProfileBanner from '@/components/templates/template/ProfileBanner';
+import { useDevice } from '@/context/DeviceContext';
 import { css, useTheme } from '@emotion/react';
 import { useState } from 'react';
 
@@ -11,6 +12,7 @@ export type TTemaplatePopup = 'comment' | 'memory';
 
 const TemplatePage = () => {
   const theme = useTheme();
+  const { isMobile } = useDevice();
 
   const [popup, setPopup] = useState<'' | TTemaplatePopup>('');
 
@@ -33,6 +35,10 @@ const TemplatePage = () => {
           width: 100%;
           height: 360px;
           background-color: #3a55ad;
+          @media ${theme.device.mobile} {
+            position: static;
+            height: 120px;
+          }
         `}
       ></div>
       <div
@@ -42,22 +48,26 @@ const TemplatePage = () => {
           display: flex;
           flex-direction: column;
           gap: 96px;
+          @media ${theme.device.mobile} {
+            width: 100%;
+            gap: 0;
+          }
         `}
       >
-        <Header type='home-login' color='default' />
+        {!isMobile ? <Header type='home-login' color='default' /> : null}
         <div>
           <ProfileBanner />
-          <CommentArea handleOpenPopup={handleOpenPopUp} />
+          {/* <CommentArea handleOpenPopup={handleOpenPopUp} /> */}
         </div>
-        <div
+        {/* <div
           css={css`
             width: 100%;
             height: 1px;
             background-color: ${theme.colors.grey[900]};
             opacity: 0.1;
           `}
-        ></div>
-        <MemoryArea handleOpenPopup={handleOpenPopUp} />
+        ></div> */}
+        {/* <MemoryArea handleOpenPopup={handleOpenPopUp} /> */}
       </div>
     </div>
   );

@@ -1,12 +1,72 @@
+import ShareUploadIcon from '@/assets/icon/ShareUploadIcon';
 import FavoriteTag from '@/components/atoms/FavoriteTag';
 import MainUserProfile from '@/components/atoms/MainUserProfile';
+import IconButton from '@/components/atoms/buttons/IconButton';
 import ProfileLikeButton from '@/components/atoms/buttons/ProfileLikeButton';
 import ProfileMoreButton from '@/components/molecules/profile/ProfileMoreButton';
+import { useDevice } from '@/context/DeviceContext';
 import { css, useTheme } from '@emotion/react';
 
 const ProfileBanner = () => {
   const theme = useTheme();
-  return (
+  const { isMobile } = useDevice();
+
+  return isMobile ? (
+    <div
+      css={css`
+        position: relative;
+        background: ${theme.colors.grey[0]};
+        padding: 16px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      `}
+    >
+      <div>
+        <p
+          css={css`
+            font-size: ${theme.fontSizes['2xl']}px;
+            font-weight: ${theme.fontWeights.semibold};
+          `}
+        >
+          코코
+        </p>
+        <div
+          css={css`
+            font-size: ${theme.fontSizes.md}px;
+            color: ${theme.colors.grey[500]};
+          `}
+        >
+          <p>웰시코기 | 남</p>
+          <p>2007. 03. 24. -</p>
+        </div>
+      </div>
+      <div
+        css={css`
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          & > button:first-of-type {
+            width: 100%;
+          }
+        `}
+      >
+        <ProfileLikeButton type='like' number={123} />
+        <IconButton>
+          <ShareUploadIcon />
+        </IconButton>
+      </div>
+      <div
+        css={css`
+          position: absolute;
+          top: -80px;
+          right: 0;
+        `}
+      >
+        <MainUserProfile shape='blob1' size='sm' isMobile />
+      </div>
+    </div>
+  ) : (
     <div
       css={css`
         position: relative;
