@@ -30,9 +30,16 @@ export default function ProfileTabItem({
     <div
       onClick={select}
       css={css([
-        css`
-          /* width: fit-content; */
+        `
+          padding: 11px 0;
           border-bottom: 2px solid var(--grey-900);
+          display: flex;
+          align-items: center;
+          gap: 2px;
+          letter-spacing: -0.25px;
+          display: flex;
+          justify-content: center;
+          height: 40px;
         `,
         !isSelected &&
           css`
@@ -40,31 +47,30 @@ export default function ProfileTabItem({
           `,
       ])}
     >
-      <div
+      <span
         css={css([
-          `
-          padding: 11px 0;
-          // border-bottom: 2px solid var(--grey-900);
-          display: flex;
-          align-items: center;
-          gap: 2px;
-          letter-spacing: -0.25px;
-          display: flex;
-          justify-content: center;
-        `,
+          css`
+            font-weight: 600;
+            font-size: 1rem;
+            line-height: 1rem;
+            color: var(--grey-900);
+          `,
           !isSelected &&
             css`
-              /* border-bottom: 1px solid var(--grey-400); */
+              color: var(--grey-400);
             `,
         ])}
       >
+        {data.name}
+      </span>
+      {data.amount ? (
         <span
           css={css([
             css`
-              font-weight: 600;
-              font-size: 1rem;
-              line-height: 1rem;
-              color: var(--grey-900);
+              font-weight: 500;
+              font-size: 12px;
+              line-height: 18px;
+              color: var(--main-red-500);
             `,
             !isSelected &&
               css`
@@ -72,27 +78,9 @@ export default function ProfileTabItem({
               `,
           ])}
         >
-          {data.name}
+          {data.amount}
         </span>
-        {data.amount ? (
-          <span
-            css={css([
-              css`
-                font-weight: 500;
-                font-size: 12px;
-                line-height: 18px;
-                color: var(--main-red-500);
-              `,
-              !isSelected &&
-                css`
-                  color: var(--grey-400);
-                `,
-            ])}
-          >
-            {data.amount}
-          </span>
-        ) : null}
-      </div>
+      ) : null}
     </div>
   );
 }
