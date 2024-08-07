@@ -25,7 +25,6 @@ const MemoryCommentItem = ({
       css={css`
         display: flex;
         justify-content: space-between;
-        align-items: center;
         gap: 4px;
         padding: ${type === 'reply'
           ? '8px 0 8px 16px'
@@ -47,7 +46,6 @@ const MemoryCommentItem = ({
       <div
         css={css`
           display: flex;
-          align-items: center;
           gap: 8px;
         `}
       >
@@ -86,14 +84,14 @@ const MemoryCommentItem = ({
             <span
               css={css`
                 font-weight: ${theme.fontWeights.semibold};
-                font-size: ${theme.fontSizes.sm};
+                font-size: ${theme.fontSizes.md}px;
               `}
             >
               {name}
             </span>
             <span
               css={css`
-                font-size: ${theme.fontSizes.xs};
+                font-size: ${theme.fontSizes.sm}px;
                 color: ${theme.colors.grey[500]};
               `}
             >
@@ -102,7 +100,7 @@ const MemoryCommentItem = ({
           </div>
           <p
             css={css`
-              font-size: ${theme.fontSizes.sm};
+              font-size: ${theme.fontSizes.md}px;
             `}
           >
             {comment}

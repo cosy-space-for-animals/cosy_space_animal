@@ -5,7 +5,7 @@ import { css } from '@emotion/react';
 export type ProfileTabItemData = {
   id: number;
   name: string;
-  amount: number;
+  amount?: number;
   [key: string]: any;
 };
 
@@ -31,8 +31,8 @@ export default function ProfileTabItem({
       onClick={select}
       css={css([
         css`
-          width: fit-content;
-          border-bottom: 1px solid var(--grey-900);
+          /* width: fit-content; */
+          border-bottom: 2px solid var(--grey-900);
         `,
         !isSelected &&
           css`
@@ -44,15 +44,17 @@ export default function ProfileTabItem({
         css={css([
           `
           padding: 11px 0;
-          border-bottom: 1px solid var(--grey-900);
+          // border-bottom: 2px solid var(--grey-900);
           display: flex;
           align-items: center;
           gap: 2px;
           letter-spacing: -0.25px;
+          display: flex;
+          justify-content: center;
         `,
           !isSelected &&
             css`
-              border-bottom: 1px solid var(--grey-400);
+              /* border-bottom: 1px solid var(--grey-400); */
             `,
         ])}
       >
@@ -72,22 +74,24 @@ export default function ProfileTabItem({
         >
           {data.name}
         </span>
-        <span
-          css={css([
-            css`
-              font-weight: 500;
-              font-size: 12px;
-              line-height: 18px;
-              color: var(--main-red-500);
-            `,
-            !isSelected &&
+        {data.amount ? (
+          <span
+            css={css([
               css`
-                color: var(--grey-400);
+                font-weight: 500;
+                font-size: 12px;
+                line-height: 18px;
+                color: var(--main-red-500);
               `,
-          ])}
-        >
-          {data.amount}
-        </span>
+              !isSelected &&
+                css`
+                  color: var(--grey-400);
+                `,
+            ])}
+          >
+            {data.amount}
+          </span>
+        ) : null}
       </div>
     </div>
   );

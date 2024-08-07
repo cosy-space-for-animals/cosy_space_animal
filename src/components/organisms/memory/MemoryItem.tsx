@@ -138,8 +138,8 @@ const MemoryItem = ({
               width: 100%;
               /* height: 100%; */
               @media ${theme.device.mobile} {
-                width: 327px;
-                height: 280px;
+                /* width: 327px;
+                height: 280px; */
               }
             `}
           />

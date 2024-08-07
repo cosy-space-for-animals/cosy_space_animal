@@ -1,6 +1,7 @@
 import Timeline from '@/components/atoms/dropdown/Timeline';
 import MemoryItem from '@/components/organisms/memory/MemoryItem';
 import MemoryMonthList from '@/components/organisms/memory/MemoryMonthList';
+import { useDevice } from '@/context/DeviceContext';
 import { TTemaplatePopup } from '@/pages/template';
 import { css, useTheme } from '@emotion/react';
 
@@ -10,7 +11,42 @@ interface IProps {
 
 const MemoryArea = ({ handleOpenPopup }: IProps) => {
   const theme = useTheme();
-  return (
+  const { isMobile } = useDevice();
+
+  return isMobile ? (
+    <div
+      css={css`
+        padding: 32px 16px;
+      `}
+    >
+      <ul
+        css={css`
+          display: flex;
+          flex-direction: column;
+          gap: 32px;
+        `}
+      >
+        <li onClick={() => handleOpenPopup('memory')}>
+          <MemoryItem
+            thumbImgs={['', '', '']}
+            date='2023. 05. 24.'
+            title='입만 웃는 기묘한 녀석'
+            flowerAmount={45}
+            commentAmount={8}
+          />
+        </li>
+        <li onClick={() => handleOpenPopup('memory')}>
+          <MemoryItem
+            thumbImgs={['', '', '']}
+            date='2023. 05. 24.'
+            title='입만 웃는 기묘한 녀석'
+            flowerAmount={45}
+            commentAmount={8}
+          />
+        </li>
+      </ul>
+    </div>
+  ) : (
     <div
       css={css`
         padding: 0 16px;
@@ -59,6 +95,15 @@ const MemoryArea = ({ handleOpenPopup }: IProps) => {
             min-height: 680px;
           `}
         >
+          <li onClick={() => handleOpenPopup('memory')}>
+            <MemoryItem
+              thumbImgs={['', '', '']}
+              date='2023. 05. 24.'
+              title='입만 웃는 기묘한 녀석'
+              flowerAmount={45}
+              commentAmount={8}
+            />
+          </li>
           <li onClick={() => handleOpenPopup('memory')}>
             <MemoryItem
               thumbImgs={['', '', '']}
