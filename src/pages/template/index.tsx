@@ -1,9 +1,9 @@
 import Header from '@/components/organisms/Header';
+import MemoryPopup from '@/components/templates/memory/MemoryPopup';
 import CommentArea from '@/components/templates/template/CommentArea';
 import CommentPopup from '@/components/templates/template/CommentPopup';
 import IntroArea from '@/components/templates/template/IntroArea';
 import MemoryArea from '@/components/templates/template/MemoryArea';
-import MemoryPopup from '@/components/templates/template/MemoryPopup';
 import ProfileBanner from '@/components/templates/template/ProfileBanner';
 import TemplateTabMemu from '@/components/templates/template/TemplateTabMemu';
 import { useDevice } from '@/context/DeviceContext';
@@ -54,7 +54,16 @@ const TemplatePage = () => {
       `}
     >
       <CommentPopup open={popup === 'comment'} onClose={handleClosePopup} />
-      <MemoryPopup open={popup === 'memory'} onClose={handleClosePopup} />
+      <MemoryPopup
+        open={popup === 'memory'}
+        onClose={handleClosePopup}
+        thumbImgs={['', '', '']}
+        date='2023. 05. 24.'
+        title='입만 웃는 기묘한 뇨속..'
+        content={`어제 복실이랑 또아 인증샷 찍는데 끼어든 ’입만 웃는 그놈‘ 그리고 끝까지 카메라에 나오려고 애쓰는 짱플루언서…\n“그 애는 항상 웃고 있었어요, 근데 눈은 웃질 않았죠… 기묘한 아이였어요…🙂”`}
+        flowerAmount={123}
+        commentAmount={123}
+      />
       <div
         css={css`
           position: absolute;

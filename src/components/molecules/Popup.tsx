@@ -47,8 +47,8 @@ const Popup = ({ children, open, onClose }: IProps) => {
             justify-content: center;
             align-items: center;
             position: absolute;
-            top: 20px;
-            right: 20px;
+            top: 16px;
+            right: 16px;
           `}
           onClick={onClose}
         >

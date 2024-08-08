@@ -4,12 +4,14 @@ import MemoryMonthList from '@/components/organisms/memory/MemoryMonthList';
 import { useDevice } from '@/context/DeviceContext';
 import { TTemaplatePopup } from '@/pages/template';
 import { css, useTheme } from '@emotion/react';
+import { useRouter } from 'next/router';
 
 interface IProps {
   handleOpenPopup: (type: TTemaplatePopup) => void;
 }
 
 const MemoryArea = ({ handleOpenPopup }: IProps) => {
+  const router = useRouter();
   const theme = useTheme();
   const { isMobile } = useDevice();
 
@@ -26,7 +28,7 @@ const MemoryArea = ({ handleOpenPopup }: IProps) => {
           gap: 32px;
         `}
       >
-        <li onClick={() => handleOpenPopup('memory')}>
+        <li onClick={() => router.push(`/memory/detail/1`)}>
           <MemoryItem
             thumbImgs={['', '', '']}
             date='2023. 05. 24.'
@@ -35,7 +37,7 @@ const MemoryArea = ({ handleOpenPopup }: IProps) => {
             commentAmount={8}
           />
         </li>
-        <li onClick={() => handleOpenPopup('memory')}>
+        <li onClick={() => router.push(`/memory/detail/1`)}>
           <MemoryItem
             thumbImgs={['', '', '']}
             date='2023. 05. 24.'

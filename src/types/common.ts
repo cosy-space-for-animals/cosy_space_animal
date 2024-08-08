@@ -11,7 +11,7 @@ export interface IIconProps {
 export interface IInputItemProps {
   value: string | number;
   setValue: Dispatch<SetStateAction<string>> | ((e: string) => void);
-  validate: boolean;
+  validate?: boolean;
   errorMessage?: string;
   disabled?: boolean;
   placeholder?: string;
