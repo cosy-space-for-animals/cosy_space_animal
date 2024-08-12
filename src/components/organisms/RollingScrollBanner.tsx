@@ -27,7 +27,7 @@ const RollingScrollBanner = ({ children, isMobile, ...rest }: RollingScrollBanne
 
     imageContents.forEach((el) => {
       el.style.width = `${imageWidth}px`;
-    })
+    });
 
     const duration = 10;
 
@@ -78,43 +78,43 @@ const RollingScrollBanner = ({ children, isMobile, ...rest }: RollingScrollBanne
           flex-wrap: nowrap;
         `}
       >
-        {
-          Array.from({ length: 2 }).map((_, index) => (
-            <div
+        {Array.from({ length: 2 }).map((_, index) => (
+          <div
+            css={css`
+              position: relative;
+              flex-shrink: 0;
+              height: 100%;
+            `}
+            key={index}
+            ref={(el) => {
+              if (el) {
+                imageContentsRef.current.push(el);
+              }
+            }}
+          >
+            <Image
               css={css`
-                position: relative;
-                flex-shrink: 0;
                 height: 100%;
+                width: auto;
+                position: absolute;
               `}
-              key={index}
-              ref={(el) => {
-                if (el) {
-                  imageContentsRef.current.push(el);
-                }
-              }}
-            >
-              <Image
-                css={css`
-                  height: 100%;
-                  width: auto;
-                  position: absolute;
-                `}
-                src={isHover ? BannerImage2 : BannerImage}
-                ref={imageRef}
-                alt="banner"
-              />
-              <Image
-                css={css`
-                  height: 100%;
-                  width: auto;
-                  position: absolute;
-                `}
-                src={BannerTags}
-                alt="banner"
-              />
-            </div>
-          ))
-        }
+              src={isHover ? BannerImage2 : BannerImage}
+              ref={imageRef}
+              alt="banner"
+              priority={true}
+            />
+            <Image
+              css={css`
+                height: 100%;
+                width: auto;
+                position: absolute;
+              `}
+              src={BannerTags}
+              alt="banner"
+              priority={true}
+            />
+          </div>
+        ))}
       </div>
     </div>
   );

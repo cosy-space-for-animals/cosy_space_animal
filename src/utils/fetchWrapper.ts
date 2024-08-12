@@ -1,6 +1,7 @@
 import { FetchServerResponseResult } from 'next/dist/client/components/router-reducer/fetch-server-response';
 import { NextResponse } from 'next/server';
 import { getCookie, setCookie } from './common';
+import { TFetchError, TFetchResponse } from '@/types/common';
 
 const FETCH_METHODS = {
   GET: 'GET',
@@ -20,19 +21,20 @@ const defaultOptions = {
   },
 };
 
-const isServer = typeof window === 'undefined';
-
 const rewrite = (url: string): string => {
   if (url.startsWith('/api')) {
-    return `${BASE_URL}${url.replace('/api', '')}`;
+    // return `${BASE_URL}${url.replace('/api', '/api')}`;
+    return url;
   }
 
   if (url.startsWith('/todos')) {
     return `${TEST_URL}${url}`;
   }
 
-  return `${BASE_URL}/${url}`;
-};
+
+  return `${url}`;
+}
+
 
 /**
  *
@@ -42,12 +44,12 @@ const rewrite = (url: string): string => {
  * @example await fetchWrapper(url, options);
  *
  */
-export const fetchWrapper = async (url: string, options?: RequestInit) => {
-  const accessToken = getCookie('accessToken');
 
+export const fetchWrapper = async <T>(url: string, options?: RequestInit): Promise<TFetchResponse<T> | TFetchError> => {
+  const accessToken = getCookie('accessToken');
+      
   try {
-    let response;
-    response = await fetch(isServer ? rewrite(url) : `${url}`, {
+    const response = await fetch(rewrite(url), {
       ...defaultOptions,
       headers: {
         Authorization: `Bearer ${accessToken}`,

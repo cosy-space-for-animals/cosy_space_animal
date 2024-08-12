@@ -2,39 +2,33 @@ import { css } from '@emotion/react';
 import ThemedText from '@/components/atoms/ThemedText';
 import RollingScrollBanner from '@/components/organisms/RollingScrollBanner';
 import MainButton from '@/components/atoms/buttons/MainButton';
-import Header from '@/components/organisms/Header';
 import { useDevice } from '@/context/DeviceContext';
 import { useRouter } from 'next/router';
 
-export default function Home() {
+function Register() {
   const { isMobile } = useDevice();
   const router = useRouter();
 
   return (
     <>
-      <Header type='home-logout' color='default' />
       {isMobile ? (
         <>
-          <section
-            css={css`
+          <section css={css`
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            padding: 84px 20px 0;
+            margin: 0 auto;
+          `}>
+            <div css={css`
               display: flex;
               flex-direction: column;
               justify-content: center;
               align-items: center;
-              gap: 40px;
-              padding: 84px 20px 0;
-              margin: 0 auto;
-            `}
-          >
-            <div
-              css={css`
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                gap: 32px;
-              `}
-            >
+              gap: 32px;
+            `}>
               <ThemedText type={'headlineSmall'}>환영합니다</ThemedText>
               <ThemedText
                 css={css`
@@ -47,12 +41,10 @@ export default function Home() {
               </ThemedText>
             </div>
           </section>
-          <section
-            css={css`
-              display: flex;
-              height: 100%;
-            `}
-          >
+          <section css={css`
+            display: flex;
+            height: 100%;
+          `}>
             <RollingScrollBanner
               isMobile={isMobile}
               css={css`
@@ -69,8 +61,8 @@ export default function Home() {
           `}>
             <MainButton
               type={'filled'}
-              onClick={() => {
-                router.push('/profile/post');
+              onClick={async () => {
+                await router.push('/profile/register/step?step=1');
               }}
               style={css`
                 width: 100%;
@@ -81,34 +73,28 @@ export default function Home() {
           </div>
         </>
       ) : (
-        <div
-          css={css`
+        <div css={css`
+          display: flex;
+          flex-direction: column;
+          height: 100%;
+          gap: 120px;
+          padding-top: 120px;
+        `}>
+          <section css={css`
             display: flex;
             flex-direction: column;
-            height: 100%;
-            gap: 120px;
-            padding-top: 120px;
-          `}
-        >
-          <section
-            css={css`
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            margin: 0 auto;
+          `}>
+            <div css={css`
               display: flex;
               flex-direction: column;
               justify-content: center;
               align-items: center;
-              gap: 40px;
-              margin: 0 auto;
-            `}
-          >
-            <div
-              css={css`
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-                gap: 32px;
-              `}
-            >
+              gap: 32px;
+            `}>
               <ThemedText type={'displaySmall'}>환영합니다.</ThemedText>
               <ThemedText
                 css={css`
@@ -122,8 +108,8 @@ export default function Home() {
             </div>
             <MainButton
               type={'filled'}
-              onClick={() => {
-                router.push('/profile/post');
+              onClick={async () => {
+                await router.push('/profile/register/step?step=1')
               }}
               style={css`
                 width: 320px;
@@ -142,5 +128,7 @@ export default function Home() {
         </div>
       )}
     </>
-  );
+  )
 }
+
+export default Register

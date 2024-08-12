@@ -2,13 +2,14 @@ import '@/styles/globals.css';
 import baseStyle from '@/styles/reset';
 import type { AppProps } from 'next/app';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { RecoilRoot } from 'recoil';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Global, ThemeProvider } from '@emotion/react';
 import MainLayout from '@/components/layout/MainLayout';
 import { theme } from '@/types/theme';
-import { DeviceProvider, useDevice } from '@/context/DeviceContext';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import { DeviceProvider } from '@/context/DeviceContext';
+import RecoilContextProvider from '../lib/recoilContextProvider';
+
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -29,22 +30,20 @@ export const getServerSideProps = async ({ req }) => {
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <>
-      <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
-        <RecoilRoot>
-          <QueryClientProvider client={queryClient}>
-            <ThemeProvider theme={theme}>
-              <Global styles={baseStyle} />
-              <DeviceProvider userAgent={pageProps.userAgent}>
-                <MainLayout>
-                  <Component {...pageProps} />
-                </MainLayout>
-              </DeviceProvider>
-            </ThemeProvider>
-            <ReactQueryDevtools initialIsOpen={false} />
-          </QueryClientProvider>
-        </RecoilRoot>
-      </GoogleOAuthProvider>
-    </>
+   <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
+    <RecoilContextProvider>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider theme={theme}>
+          <Global styles={baseStyle} />
+          <DeviceProvider userAgent={pageProps.userAgent}>
+            <MainLayout>
+              <Component {...pageProps} />
+            </MainLayout>
+          </DeviceProvider>
+        </ThemeProvider>
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+    </RecoilContextProvider>
+   </GoogleOAuthProvider>
   );
 }

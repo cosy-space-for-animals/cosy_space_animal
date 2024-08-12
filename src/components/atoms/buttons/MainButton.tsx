@@ -6,8 +6,8 @@ interface IMainButtonProps {
   type?: Type;
   disabled?: boolean;
   children: React.ReactNode;
-  css?: SerializedStyles;
-  onClick: () => void;
+  style?: SerializedStyles;
+  onClick?: () => void | Promise<void>;
 }
 
 const styles: { [key in Type]: SerializedStyles } = {
@@ -39,12 +39,14 @@ const styles: { [key in Type]: SerializedStyles } = {
   `,
 };
 
-export default function MainButton({
-  type = 'filled',
-  disabled = false,
-  children,
-  onClick,
-}: IMainButtonProps) {
+export default function MainButton(
+  {
+    type = 'filled',
+    disabled = false,
+    children,
+    onClick,
+    style,
+  }: IMainButtonProps) {
   return (
     <button
       disabled={disabled}
@@ -64,6 +66,7 @@ export default function MainButton({
           }
         `,
         styles[type],
+        style,
       )}
       onClick={onClick}
     >
