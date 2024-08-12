@@ -8,6 +8,23 @@ const Toast: React.FC<IToastProps> = ({ text }) => {
   return (
     <div
       css={css`
+        @keyframes Animation {
+          0% {
+            transform: scaleX(0);
+            opacity: 0;
+          }
+          20% {
+            transform: scaleX(100%);
+            opacity: 100;
+          }
+          80% {
+            transform: scaleX(100%);
+            opacity: 100;
+          }
+        }
+        transform: scaleX(0);
+        transform-origin: right center;
+        animation: Animation 1.5s;
         font-size: 14px;
         font-weight: 400;
         line-height: 21px;

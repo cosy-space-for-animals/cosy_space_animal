@@ -6,6 +6,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Global, ThemeProvider } from '@emotion/react';
 import MainLayout from '@/components/layout/MainLayout';
 import { theme } from '@/types/theme';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import { DeviceProvider } from '@/context/DeviceContext';
 import RecoilContextProvider from '../lib/recoilContextProvider';
 
@@ -28,8 +29,8 @@ export const getServerSideProps = async ({ req }) => {
 };
 
 export default function App({ Component, pageProps }: AppProps) {
-
   return (
+   <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
     <RecoilContextProvider>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={theme}>
@@ -43,5 +44,6 @@ export default function App({ Component, pageProps }: AppProps) {
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </RecoilContextProvider>
+   </GoogleOAuthProvider>
   );
 }
