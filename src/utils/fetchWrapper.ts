@@ -18,7 +18,6 @@ const defaultOptions = {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*',
   },
-  // credentials: 'include',
 };
 
 const isServer = typeof window === 'undefined';
@@ -44,11 +43,14 @@ const rewrite = (url: string): string => {
  *
  */
 export const fetchWrapper = async (url: string, options?: RequestInit) => {
+  const accessToken = getCookie('accessToken');
+
   try {
     let response;
     response = await fetch(isServer ? rewrite(url) : `${url}`, {
       ...defaultOptions,
       headers: {
+        Authorization: `Bearer ${accessToken}`,
         ...(options?.headers || {}),
       },
       ...options,
@@ -66,6 +68,7 @@ export const fetchWrapper = async (url: string, options?: RequestInit) => {
       response.response = await fetch(isServer ? rewrite(url) : `${url}`, {
         ...defaultOptions,
         headers: {
+          Authorization: `Bearer ${accessToken_new}`,
           ...(options?.headers || {}),
         },
         ...options,
