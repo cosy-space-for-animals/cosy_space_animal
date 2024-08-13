@@ -14,6 +14,18 @@ export const validatePassword = (password: string): boolean => {
   return passwordRegex.test(password);
 };
 
+export const validateUserName = (name: string): boolean => {
+  // 한글만 입력 가능 (영어, 특수문자 포함 불가)
+  const nameRegex: RegExp = /^[가-힣]+$/;
+
+  return nameRegex.test(name);
+};
+
+export const restrictToNumbers = (string: string): string => {
+  // 숫자만 입력 가능
+  return string.replace(/[^0-9]/g, '');
+};
+
 /**
  * @description 객체를 깊은 복사합니다.
  * @param arg 복사할 객체
@@ -166,6 +178,53 @@ export function getKoreanObjectParticle(word: string): '을' | '를' {
   return hasFinalConsonant(word) ? '을' : '를';
 }
 
+export function setItemWithExpireDate(
+  key: string,
+  value: string,
+  days: number = 30,
+) {
+  const obj = { value, expire: Date.now() + days * 86400000 };
+  const objString = JSON.stringify(obj);
+  localStorage.setItem(key, objString);
+}
+
+export function getItemWithExpireDate(key: string) {
+  const objString = window.localStorage.getItem(key);
+  if (!objString) return null;
+
+  const obj = JSON.parse(objString);
+
+  if (Date.now() > obj.expire) {
+    localStorage.removeItem(key);
+    return null;
+  }
+  return obj.value;
+}
+
+export const setCookie = (name: string, value: string, days?: number): void => {
+  let expires = '';
+  if (days) {
+    const date = new Date();
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+    expires = `; expires=${date.toUTCString()}`;
+  }
+  document.cookie = `${name}=${value || ''}${expires};`;
+};
+
+export const getCookie = (name: string): string | null => {
+  const nameEQ = `${name}=`;
+  const cookies = document.cookie.split(';').map((cookie) => cookie.trim());
+
+  for (const cookie of cookies) {
+    if (cookie.startsWith(nameEQ)) {
+      return cookie.substring(nameEQ.length);
+    }
+  }
+
+  return null;
+};
+
+type DateFormat = 'YYYY-MM-DD' | 'YYYY-MM-DD hh:mm:ss' | 'YY-MM-DD' | 'YY-MM-DD hh:mm:ss' | 'MM-DD' | 'MM-DD hh:mm:ss' | string;
 type DateFormat = 'YYYY-MM-DD' | 'YYYY-MM-DD hh:mm:ss' | 'YY-MM-DD' | 'YY-MM-DD hh:mm:ss' | 'MM-DD' | 'MM-DD hh:mm:ss' | 'kr';
 
 /**

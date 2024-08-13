@@ -1,25 +1,41 @@
-import { IInputItemProps } from '@/types/common';
+import { IInputItemProps2 } from '@/types/common';
 import { css } from '@emotion/react';
 import Image from 'next/image';
-import { type MouseEvent, type ChangeEvent, useEffect, useState } from 'react';
+import {
+  type MouseEvent,
+  type ChangeEvent,
+  useState,
+  type FocusEvent,
+} from 'react';
 
-const InputDefaultItem: React.FC<IInputItemProps> = ({
+const InputDefaultItem: React.FC<IInputItemProps2> = ({
+  id,
   value,
   setValue,
   validate,
   errorMessage,
-  disabled = false,
   placeholder,
+  disabled = false,
+  setError: setErr,
 }) => {
   const [focus, setFocus] = useState(false);
-  const [errorState, setErrorState] = useState(false);
+  const [error, setError] = useState(false);
 
   const onFocus = () => setFocus(true);
-  const onBlur = () => setFocus(false);
+  const onBlur = async (e: FocusEvent<HTMLInputElement>) => {
+    setFocus(false);
+    const bool = await validate(e.target.value);
+    setError(!bool);
+    setErr &&
+      setErr((prev) => {
+        return { ...prev, [id]: !bool };
+      });
+  };
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
     onFocus();
   };
+  const remove = () => setValue('');
   const mouseDownHandler = (e: MouseEvent<HTMLButtonElement>) =>
     e.preventDefault();
 
@@ -32,6 +48,7 @@ const InputDefaultItem: React.FC<IInputItemProps> = ({
         `}
       >
         <input
+          id={id}
           disabled={disabled}
           placeholder={placeholder}
           onFocus={onFocus}
@@ -50,7 +67,9 @@ const InputDefaultItem: React.FC<IInputItemProps> = ({
             padding: 14px 12px;
             padding-right: ${focus ? '46px' : '12px'};
             border: 1px solid
-              ${!validate && errorMessage ? 'var(--main-red-500)' : 'var(--grey-700)'};
+              ${error && errorMessage
+                ? 'var(--main-red-500)'
+                : 'var(--grey-700)'};
             border-radius: 6px;
             &:focus {
               border: 1px solid var(--main-red-500);
@@ -68,10 +87,7 @@ const InputDefaultItem: React.FC<IInputItemProps> = ({
           <button
             type='button'
             onMouseDown={mouseDownHandler}
-            onClick={() => {
-              setValue('');
-              onBlur();
-            }}
+            onClick={remove}
             css={css`
               position: absolute;
               top: 14px;
@@ -87,7 +103,7 @@ const InputDefaultItem: React.FC<IInputItemProps> = ({
           </button>
         )}
       </div>
-      {!validate && errorMessage && (
+      {error && errorMessage && (
         <div
           css={css`
             margin-top: 4px;

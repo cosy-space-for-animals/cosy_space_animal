@@ -1,3 +1,6 @@
+import { FetchServerResponseResult } from 'next/dist/client/components/router-reducer/fetch-server-response';
+import { NextResponse } from 'next/server';
+import { getCookie, setCookie } from './common';
 import { TFetchError, TFetchResponse } from '@/types/common';
 
 const FETCH_METHODS = {
@@ -28,6 +31,7 @@ const rewrite = (url: string): string => {
     return `${TEST_URL}${url}`;
   }
 
+
   return `${url}`;
 }
 
@@ -40,11 +44,15 @@ const rewrite = (url: string): string => {
  * @example await fetchWrapper(url, options);
  *
  */
+
 export const fetchWrapper = async <T>(url: string, options?: RequestInit): Promise<TFetchResponse<T> | TFetchError> => {
+  const accessToken = getCookie('accessToken');
+      
   try {
     const response = await fetch(rewrite(url), {
       ...defaultOptions,
       headers: {
+        Authorization: `Bearer ${accessToken}`,
         ...(options?.headers || {}),
       },
       ...options,
@@ -54,11 +62,31 @@ export const fetchWrapper = async <T>(url: string, options?: RequestInit): Promi
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
+    if (response.status === 202) {
+      // TODO: 들어오는 형식 확인
+      const accessToken_new = response.data.loginInfo.accessToken;
+      setCookie('accessToken', accessToken_new);
+
+      response.response = await fetch(isServer ? rewrite(url) : `${url}`, {
+        ...defaultOptions,
+        headers: {
+          Authorization: `Bearer ${accessToken_new}`,
+          ...(options?.headers || {}),
+        },
+        ...options,
+      });
+    }
     // wrapping response.json() in await to catch json parsing errors
     // return await response.json();
     return await response.json();
   } catch (error) {
-    throw error;
+    console.error('Fetch Wrapper Error:', error);
+    // throw error;
+    if (url.startsWith('/api')) {
+      if (error.status === 406) {
+        return location.replace('/');
+      }
+    }
   }
 };
 
