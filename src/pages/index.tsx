@@ -17,7 +17,7 @@ export default function Home() {
 
   return (
     <>
-      <Header />
+      <Header hasBG={true} />
       {isMobile ? (
         <>
           <section css={css`
@@ -83,15 +83,17 @@ export default function Home() {
               </div>
             </div>
           </section>
-          <section css={css`
-            min-height: 100vh;
-            padding: 160px 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 4rem;
-          `}>
+          <section
+            css={css`
+              min-height: 100vh;
+              padding: 160px 0;
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              align-items: center;
+              gap: 4rem;
+            `}
+          >
             <ThemedText type={'titleMedium'}>
               내 친구들은 어떤 추억을 공유했을까요?
             </ThemedText>
@@ -129,7 +131,7 @@ export default function Home() {
                 justify-content: center;
                 align-items: center;
                 gap: 1rem;
-            `}
+              `}
             >
               <div
                 css={css`

@@ -147,7 +147,7 @@ const ProfileSettingStep4 = () => {
       )}
       <input
         type="file"
-        accept=".jpg, .jpeg, .png"
+        accept=".jpg, .jpeg, .png, .webp"
         id={'image-upload'}
         ref={inputRef}
         onChange={handleImageUpload}

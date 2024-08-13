@@ -34,6 +34,7 @@ const SearchButton: React.FC<ISearchButtonProps> = ({ color = 'default', placeho
           css={css`
             width: 40px;
             height: 40px;
+            margin: 0 8px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -83,7 +84,7 @@ const SearchButton: React.FC<ISearchButtonProps> = ({ color = 'default', placeho
               }
 
               &::placeholder {
-                color: var(--grey-400);
+                color: ${theme.colors.grey[400]};
               }
 
               @keyframes width {

@@ -166,7 +166,7 @@ export function getKoreanObjectParticle(word: string): '을' | '를' {
   return hasFinalConsonant(word) ? '을' : '를';
 }
 
-type DateFormat = 'YYYY-MM-DD' | 'YYYY-MM-DD hh:mm:ss' | 'YY-MM-DD' | 'YY-MM-DD hh:mm:ss' | 'MM-DD' | 'MM-DD hh:mm:ss' | string;
+type DateFormat = 'YYYY-MM-DD' | 'YYYY-MM-DD hh:mm:ss' | 'YY-MM-DD' | 'YY-MM-DD hh:mm:ss' | 'MM-DD' | 'MM-DD hh:mm:ss' | 'kr';
 
 /**
  * @description 날짜를 포맷에 맞게 변환합니다.
