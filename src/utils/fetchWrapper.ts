@@ -48,7 +48,9 @@ export const fetchWrapper = async <T>(
   const accessToken = getCookie('accessToken');
 
   try {
-    const response = await fetch(rewrite(url), {
+    let response;
+
+    response = await fetch(rewrite(url), {
       ...defaultOptions,
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -68,8 +70,7 @@ export const fetchWrapper = async <T>(
     }
 
     if (response.status === 202) {
-      // TODO: 들어오는 형식 확인
-      const accessToken_new = response.data.loginInfo.accessToken;
+      const accessToken_new = response.token;
       setCookie('accessToken', accessToken_new);
 
       response.response = await fetch(isServer ? rewrite(url) : `${url}`, {
