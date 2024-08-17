@@ -3,10 +3,11 @@
 import { PropsWithChildren } from 'react';
 import { css, useTheme } from '@emotion/react';
 import SearchButton from '@/components/atoms/buttons/SearchButton';
-import fetchWrapper from '@/utils/fetchWrapper';
+import { fetchWrapper } from '@/utils/fetch/fetchWrapper';
 import UnauthenticatedHeader from '@/components/molecules/header/UnauthenticatedHeader';
 import AuthenticatedEditHeader from '@/components/molecules/header/AuthenticatedEditHeader';
 import AuthenticatedDefaultHeader from '@/components/molecules/header/AuthenticatedDefaultHeader';
+import { useQuery } from '@tanstack/react-query';
 
 type Props = {
   isLogin: boolean;
@@ -38,6 +39,17 @@ function HeaderNavigation(
   }: PropsWithChildren<Props>) {
   const theme = useTheme();
 
+  // const {data, isSuccess} = useQuery({
+  //   queryKey: ['notifications'],
+  //   queryFn: async () => {
+  //     try {
+  //       return await fetchNotifications(2);
+  //     } catch (error) {
+  //       throw error;
+  //     }
+  //   },
+  // })
+
 
   return (
     <div
@@ -60,9 +72,6 @@ function HeaderNavigation(
             onDebounceChange && onDebounceChange(e);
           }}
         />
-      )}
-      {!isLogin && (
-        <UnauthenticatedHeader />
       )}
       {(isLogin && type !== 'edit') && (
         <AuthenticatedDefaultHeader mode={mode} />

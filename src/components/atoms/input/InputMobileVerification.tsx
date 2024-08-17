@@ -12,7 +12,7 @@ import {
 import RoundButton from '../buttons/RoundButton';
 import Toast from '../Toast';
 import { restrictToNumbers } from '@/utils/common';
-import fetchWrapper from '@/utils/fetchWrapper';
+import fetchWrapper from '@/utils/fetch/fetchWrapper';
 
 const InputMobileVerification: React.FC<any> = ({
   id,

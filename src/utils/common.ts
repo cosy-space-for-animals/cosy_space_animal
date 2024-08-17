@@ -224,7 +224,10 @@ export const getCookie = (name: string): string | null => {
   return null;
 };
 
-type DateFormat = 'YYYY-MM-DD' | 'YYYY-MM-DD hh:mm:ss' | 'YY-MM-DD' | 'YY-MM-DD hh:mm:ss' | 'MM-DD' | 'MM-DD hh:mm:ss' | string;
+export const removeCookie = (name: string): void => {
+  document.cookie = `${name}=; Max-Age=-99999999;`;
+}
+
 type DateFormat = 'YYYY-MM-DD' | 'YYYY-MM-DD hh:mm:ss' | 'YY-MM-DD' | 'YY-MM-DD hh:mm:ss' | 'MM-DD' | 'MM-DD hh:mm:ss' | 'kr';
 
 /**

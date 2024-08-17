@@ -10,18 +10,24 @@ interface ISearchButtonProps {
   onDebounceChange?: (e: string) => void;
 }
 
-const SearchButton: React.FC<ISearchButtonProps> = ({ color = 'default', placeholder = '사용자 또는 키워드를 검색해 보세요', onSubmit, onDebounceChange }) => {
+const SearchButton: React.FC<ISearchButtonProps> = ({
+                                                      color = 'default',
+                                                      placeholder = '사용자 또는 키워드를 검색해 보세요',
+                                                      onSubmit,
+                                                      onDebounceChange,
+                                                    }) => {
   const isDefault = Boolean(color === 'default');
   const theme = useTheme();
   const [value, setValue] = useState<string>('');
   const [active, setActive] = useState(false);
 
-  const {debouncedValue} = useDebounce({value, delay: 500});
+  const { debouncedValue } = useDebounce({ value, delay: 500 });
 
 
   useEffect(() => {
     onDebounceChange && onDebounceChange(debouncedValue);
   }, [debouncedValue]);
+
   function click() {
     setActive((prev) => !prev);
   }

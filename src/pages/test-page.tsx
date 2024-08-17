@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react';
 import { convertUnit, copyToClipboard, validatePassword } from '@/utils/common';
-import fetchWrapper from '@/utils/fetchWrapper';
+import fetchWrapper from '@/utils/fetch/fetchWrapper';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { css } from '@emotion/react';
 import Observer from '@/components/Observer';

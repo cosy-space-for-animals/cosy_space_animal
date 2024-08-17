@@ -1,5 +1,5 @@
 import { setCookie } from '@/utils/common';
-import fetchWrapper from '@/utils/fetchWrapper';
+import fetchWrapper from '@/utils/fetch/fetchWrapper';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 

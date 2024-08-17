@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { defaultProfileData, profileDataAtom, profileImageAtom } from '@/recoil/store';
+import { defaultProfileData, profileDataAtom, profileImageAtom, userAtom } from '@/recoil/store';
 import ProgressIndicatorDot from '@/components/atoms/ProgressIndicatorDot';
 import ProfileMoveButton from '@/components/atoms/buttons/ProfileMoveButton';
 import { css } from '@emotion/react';
@@ -13,8 +13,9 @@ import ProfileSettingStep3 from '@/components/organisms/profile/ProfileSettingSt
 import ProfileSettingStep4 from '@/components/organisms/profile/ProfileSettingStep4';
 import { useRouter } from 'next/router';
 import { useSSRValue } from '@/lib/recoil/useSSR';
-import fetchWrapper from '@/utils/fetchWrapper';
+import { fetchWrapper } from '@/utils/fetch/fetchWrapper';
 import { useMutation } from '@tanstack/react-query';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 type Props = {
   step: number;
@@ -35,6 +36,7 @@ const PostProfile = ({ step }: Props) => {
   const router = useRouter();
   const data = useSSRValue(profileDataAtom, defaultProfileData);
   const profileImage = useSSRValue(profileImageAtom, null);
+  const userData = useRecoilValue(userAtom)
   const maxStep = 4;
 
   const buttonDisabled = (type: 'prev' | 'next') => {
@@ -85,8 +87,22 @@ const PostProfile = ({ step }: Props) => {
           profileImage !== null
         ) {
           const form = new FormData();
+          console.log({
+            memberId: userData.memberId,
+            petName: data.petName,
+            petDesc: data.petDesc,
+            petSpecM: data.petSpecM,
+            petSpecS: data.petSpecS,
+            petProfileFrame: data.petProfileFrame,
+            petGender: data.petGender,
+            birthDate: data.birthDate,
+            deathDate: data.deathDate,
+            petFavs: data.petFavs[0] || '',
+            petFavs2: data.petFavs[1] || '',
+            petFavs3: data.petFavs[2] || '',
+          });
           form.append('petRequestDto', JSON.stringify({
-              memberId: '20240712231515460869',
+              memberId: userData.memberId,
               petName: data.petName,
               petDesc: data.petDesc,
               petSpecM: data.petSpecM,
@@ -95,13 +111,12 @@ const PostProfile = ({ step }: Props) => {
               petGender: data.petGender,
               birthDate: data.birthDate,
               deathDate: data.deathDate,
-              ...data.petFavs.reduce((acc, fav, index) => {
-                acc[`petFavs${index}`] = fav;
-                return acc;
-              }, {} as { [key: string]: string }),
+              petFavs: data.petFavs[0] || '',
+              petFavs2: data.petFavs[1] || '',
+              petFavs3: data.petFavs[2] || '',
             },
           ));
-          form.append('petImage', profileImage);
+          form.append('petProfileImg', profileImage);
           mutate(form);
         }
         return;

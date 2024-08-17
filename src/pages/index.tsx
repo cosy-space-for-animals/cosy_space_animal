@@ -9,15 +9,52 @@ import MemoryGrid from '@/components/templates/memory/MemoryGrid';
 import ArrowButton from '@/components/atoms/buttons/ArrowButton';
 import FilledButtonWithIcon from '@/components/atoms/buttons/FilledButtonWithIcon';
 import MemoIcon from '@/assets/icon/MemoIcon';
+import { useQuery } from '@tanstack/react-query';
+import { fetchWrapper, SuccessResponse } from '@/utils/fetch';
+import { getCookie } from '@/utils/common';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { authenticatedAtom } from '@/recoil/store';
+import { useEffect } from 'react';
+
+type RecentMemoryInfo = {
+  currentPage: number;
+  dataCounts: number;
+  memoryResponseDto: [];
+  totalPage: number;
+}
+
+type ResponseMemoryInfo = {
+  recentMemoryInfoResponse: RecentMemoryInfo;
+}
 
 export default function Home() {
   const theme = useTheme();
   const { isMobile } = useDevice();
   const router = useRouter();
+  const [isAuthenticated, setIsAuthenticated] = useRecoilState(authenticatedAtom);
+
+  const { data: recentMemory, isSuccess } = useQuery({
+    queryKey: ['recentMemory'],
+    queryFn: async () => {
+      try {
+        const { data } = await fetchWrapper<SuccessResponse<ResponseMemoryInfo>>('/api/recent-memories?petId=2&currentPage=1&dataCounts=20');
+        return data;
+      } catch (error) {
+        throw error;
+      }
+    },
+  });
+
+  useEffect(() => {
+    const accessToken = getCookie('accessToken');
+    if (accessToken) {
+      setIsAuthenticated(true);
+    }
+  }, []);
 
   return (
     <>
-      <Header hasBG={true} />
+      <Header type={isAuthenticated ? 'home-login' : 'home-logout'} color={'default'} />
       {isMobile ? (
         <>
           <section css={css`
@@ -28,7 +65,7 @@ export default function Home() {
             flex-direction: column;
           `}>
             <ThemedText
-              css={css`
+              cssStyle={css`
                 font-size: 24px;
                 font-weight: 700;
                 margin-bottom: 20px;
@@ -83,32 +120,34 @@ export default function Home() {
               </div>
             </div>
           </section>
-          <section
-            css={css`
-              min-height: 100vh;
-              padding: 160px 0;
-              display: flex;
-              flex-direction: column;
-              justify-content: center;
-              align-items: center;
-              gap: 4rem;
-            `}
-          >
-            <ThemedText type={'titleMedium'}>
-              내 친구들은 어떤 추억을 공유했을까요?
-            </ThemedText>
-
-            <MemoryGrid />
-
-            <ArrowButton
-              type={'outline'}
-              onClick={() => {
-                console.log('더보기 버튼 클릭');
-              }}
+          {(isSuccess && recentMemory?.recentMemoryInfoResponse.dataCounts > 0) && (
+            <section
+              css={css`
+                min-height: 100vh;
+                padding: 160px 0;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 4rem;
+              `}
             >
-              더보기
-            </ArrowButton>
-          </section>
+              <ThemedText type={'titleMedium'}>
+                내 친구들은 어떤 추억을 공유했을까요?
+              </ThemedText>
+
+              <MemoryGrid memoryItems={data?.recentMemoryInfoResponse.memoryResponseDto} />
+
+              <ArrowButton
+                type={'outline'}
+                onClick={() => {
+                  console.log('더보기 버튼 클릭');
+                }}
+              >
+                더보기
+              </ArrowButton>
+            </section>
+          )}
           <section css={css`
             padding: 160px 0;
             background-color: ${theme.colors.grey[700]};

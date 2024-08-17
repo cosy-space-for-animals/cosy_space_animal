@@ -7,6 +7,7 @@ export default function Document() {
         <script
           type='text/javascript'
           src='https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.2.js'
+          async={true}
         ></script>
       </Head>
       <body>

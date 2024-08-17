@@ -1,22 +1,16 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { css } from '@emotion/react';
 import Masonry from 'react-masonry-css';
-import fetchWrapper from '@/utils/fetchWrapper';
 import MemoryItem from '@/components/organisms/memory/MemoryItem';
 
-async function fetchMemories() {
-  try {
-    const res = fetchWrapper('/api/recent-memories?petId=2&currentPage=1&dataCounts=20');
-
-    return res;
-  } catch (error) {
-    console.error(error);
-  }
+type MemoryGridProps = {
+  memoryItems: []
 }
 
-function MemoryGrid() {
+function MemoryGrid({ memoryItems }: MemoryGridProps) {
+
 
   return (
     <div
@@ -31,7 +25,7 @@ function MemoryGrid() {
         className="my-masonry-grid"
         columnClassName="my-masonry-grid_column"
       >
-        {Array.from({ length: 20 }).map((_, i) => (
+        {memoryItems.map((_, i) => (
           <MemoryItem
             key={i}
             title="제목"

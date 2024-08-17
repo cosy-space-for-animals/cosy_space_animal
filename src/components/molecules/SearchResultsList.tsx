@@ -37,7 +37,7 @@ const SearchResultsList = (
   }, [searchText, value, debouncedValue, firstRender]);
 
   useEffect(() => {
-    if (searchText.length === 0) {
+    if (searchText?.length === 0) {
       setFilteredList(searchResults);
     } else {
       setFilteredList(
@@ -50,7 +50,7 @@ const SearchResultsList = (
 
   useEffect(() => {
     setSearchText(value as string);
-  }, [value])
+  }, [value]);
 
 
   return (

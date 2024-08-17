@@ -12,8 +12,8 @@ import {
   validatePassword,
   validateUserName,
 } from '@/utils/common';
-import fetchWrapper from '@/utils/fetchWrapper';
-import { css, useTheme } from '@emotion/react';
+import { fetchWrapper } from '@/utils/fetch/fetchWrapper';
+import { css } from '@emotion/react';
 import {
   useCallback,
   useEffect,
@@ -37,12 +37,12 @@ const Step1 = ({ setStep }) => {
     setStep(2);
   }
 
-  async function fetchData() {
-    const data = await fetchWrapper(`/data/signup/agree.json`);
-    setData(data);
-  }
-
   useEffect(() => {
+    async function fetchData() {
+      const data = await fetchWrapper(`/data/signup/agree.json`);
+      setData(data);
+    }
+
     fetchData();
   }, []);
 

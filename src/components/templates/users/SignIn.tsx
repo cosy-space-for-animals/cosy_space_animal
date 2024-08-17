@@ -27,9 +27,12 @@ import { SignUp } from './SignUp';
 import Image from 'next/image';
 import RoundButton from '@/components/atoms/buttons/RoundButton';
 import Toast from '@/components/atoms/Toast';
-import fetchWrapper from '@/utils/fetchWrapper';
+import { fetchWrapper } from '@/utils/fetch/fetchWrapper';
 import { useRouter } from 'next/router';
 import { useGoogleLogin } from '@react-oauth/google';
+import { useRecoilState } from 'recoil';
+import { authenticatedAtom, userAtom } from '@/recoil/store';
+import { useSSR } from '@/lib/recoil/useSSR';
 
 declare global {
   interface Window {
@@ -725,6 +728,18 @@ const SignIn = ({ setComponent }) => {
   const [check, setCheck] = useState(Boolean(localStorageEmail));
   const [error, setError] = useState({ email: true, password: true });
 
+  // recoil
+  const [isAuthenticated, setIsAuthenticated] = useRecoilState(authenticatedAtom);
+  const [user, setUser] = useSSR(userAtom, {
+    username: '',
+    userStatus: '',
+    phoneNumYn: 'N',
+    userRole: '',
+    loginFailCount: 0,
+    accessToken: '',
+    memberId: 0,
+  });
+
   async function submit() {
     const isDev = Boolean(process.env.NODE_ENV === 'development');
 
@@ -746,13 +761,17 @@ const SignIn = ({ setComponent }) => {
       );
       if (check) {
         setItemWithExpireDate('email', email);
+        setIsAuthenticated(true);
+        setUser(response.data.loginInfo);
+        console.log('response.data.loginInfo', response.data.loginInfo);
       } else {
         localStorage.removeItem('email');
+        setIsAuthenticated(false);
       }
       const accessToken = response.data.loginInfo.accessToken;
       setCookie('accessToken', accessToken, 30);
-      router.reload();
     } catch (error) {
+      setIsAuthenticated(false);
     } finally {
     }
   }
@@ -902,7 +921,7 @@ const OAuth = ({ setComponent }) => {
     if (!naver) return;
 
     const naverLogin = new naver.LoginWithNaverId({
-      clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+      client_Id: process.env.NEXT_PUBLIC_CLIENT_ID,
       callbackUrl: 'http://localhost:3000/user/naver/callback',
       isPopup: false,
       loginButton: { color: 'green', type: 1, height: '40' }, // 로그인 버튼의 스타일
@@ -1063,6 +1082,8 @@ const SignInModal = ({ render }: ISignUpProps) => {
       return '';
     }
   }
+
+
   return (
     <UserPopup title={titleHandler()} render={render}>
       {component === 'oauth' && <OAuth setComponent={setComponent} />}

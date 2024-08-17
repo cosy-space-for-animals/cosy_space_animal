@@ -76,7 +76,7 @@ const ProfileSettingStep1 = () => {
           value={param.petName}
           setValue={setPetName}
           errorMessage={'한글 또는 영문만 입력할 수 있어요.'}
-          validate={validatePetName(debouncedValue)}
+          validate={() => validatePetName(param.petName)}
           placeholder={'이름을 입력해주세요'}
         />
       </div>

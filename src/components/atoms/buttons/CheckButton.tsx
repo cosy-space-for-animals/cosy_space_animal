@@ -1,9 +1,8 @@
-import { css } from '@emotion/react';
-import { Dispatch, SetStateAction, useState } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 
 interface ICheckButtonProps {
   checked: boolean;
-  setChecked: Dispatch<SetStateAction<boolean>>;
+  setChecked?: Dispatch<SetStateAction<boolean>>;
   disabled?: boolean;
 }
 
@@ -12,8 +11,9 @@ export default function CheckButton({
   setChecked,
   disabled = false,
 }: ICheckButtonProps) {
+
   function click() {
-    setChecked((prev) => !prev);
+    setChecked && setChecked((prev) => !prev);
   }
 
   return (

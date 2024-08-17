@@ -2,6 +2,23 @@ import { atom, AtomEffect, RecoilState, selector } from 'recoil';
 import { Nullable } from '@/types/global';
 import { TFrameShape } from '@/components/organisms/profile/ProfileSettingStep4';
 
+export type TAuthenticated = boolean
+
+export const authenticatedAtom: RecoilState<TAuthenticated> = atom({
+  key: 'authenticated',
+  default: false,
+});
+
+export type TUser = {
+  username: string;
+  userStatus: string;
+  phoneNumYn: "Y" | "N";
+  userRole: string;
+  loginFailCount: number;
+  accessToken: string;
+  memberId: number;
+}
+
 export type TProfileData = {
   email: string;
   petName: string;
@@ -27,6 +44,22 @@ const localStorageEffect = <T>(key: string): AtomEffect<T> => ({ setSelf, onSet 
     localStorage.setItem(key, JSON.stringify(newValue));
   });
 };
+
+export const userAtom:RecoilState<TUser> = atom({
+  key: 'user',
+  default: {
+    username: '',
+    userStatus: '',
+    phoneNumYn: 'N',
+    userRole: '',
+    loginFailCount: 0,
+    accessToken: '',
+    memberId: 0,
+  },
+  effects_UNSTABLE: [
+    localStorageEffect('user'),
+  ],
+});
 
 export const defaultProfileData: TProfileData = {
   email: '',
