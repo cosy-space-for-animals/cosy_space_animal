@@ -572,7 +572,6 @@ const FindEmail = ({ setComponent }) => {
       setStep(2);
     }
   }, [userData]);
-  console.log(userData);
 
   return (
     <div
