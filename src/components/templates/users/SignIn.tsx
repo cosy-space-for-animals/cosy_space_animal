@@ -30,6 +30,7 @@ import Toast from '@/components/atoms/Toast';
 import fetchWrapper from '@/utils/fetchWrapper';
 import { useRouter } from 'next/router';
 import { useGoogleLogin } from '@react-oauth/google';
+import { Nullable } from '@/types/global';
 
 declare global {
   interface Window {
@@ -529,8 +530,50 @@ const FindEmail = ({ setComponent }) => {
   const [name, setName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [step, setStep] = useState(1);
+  const [userData, setUserData] = useState<
+    Nullable<{
+      dscCode: string;
+      email: string;
+      socialLoginProvider: string;
+    }>
+  >(null);
 
   const disabled = !(name && phoneNumber);
+
+  async function submit() {
+    if (!name || !phoneNumber) return;
+
+    try {
+      const response = await fetchWrapper(
+        `${process.env.NEXT_PUBLIC_API_URL}/sign-in/my-id`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            username: name,
+            phoneNum: phoneNumber,
+          }),
+        },
+      );
+
+      setUserData(response.data.findMyIdResponse);
+    } catch (error) {
+      // console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    if (!userData) return;
+
+    const { dscCode } = userData;
+    if (dscCode !== '0') {
+      setStep(2);
+    }
+  }, [userData]);
+  console.log(userData);
+
   return (
     <div
       css={css`
@@ -561,7 +604,7 @@ const FindEmail = ({ setComponent }) => {
                 `}
               >
                 <InputDefaultItem
-                  id='email'
+                  id='name'
                   value={name}
                   setValue={setName}
                   validate={() => true}
@@ -602,23 +645,25 @@ const FindEmail = ({ setComponent }) => {
             </label>
           </div>
           <div>
-            <div
-              css={css`
-                font-size: 13px;
-                font-weight: 400;
-                line-height: 19.5px;
-                letter-spacing: -0.25px;
-                text-align: center;
-                margin-bottom: 16px;
-                padding: 8px 12px;
-                background: #e433330d;
-                color: ${theme.statusColors.danger};
-                border-radius: 6px;
-              `}
-            >
-              입력하신 정보로 가입한 계정을 찾을 수 없습니다.
-            </div>
-            <MainButton disabled={disabled} onClick={() => setStep(2)}>
+            {userData?.dscCode === '0' && (
+              <div
+                css={css`
+                  font-size: 13px;
+                  font-weight: 400;
+                  line-height: 19.5px;
+                  letter-spacing: -0.25px;
+                  text-align: center;
+                  margin-bottom: 16px;
+                  padding: 8px 12px;
+                  background: #e433330d;
+                  color: ${theme.statusColors.danger};
+                  border-radius: 6px;
+                `}
+              >
+                입력하신 정보로 가입한 계정을 찾을 수 없습니다.
+              </div>
+            )}
+            <MainButton disabled={disabled} onClick={submit}>
               이메일 찾기
             </MainButton>
           </div>
@@ -640,10 +685,9 @@ const FindEmail = ({ setComponent }) => {
           </div>
           <div
             css={css`
-              border: 1px solid ${theme.colors.grey[700]};
+              border: 1px solid #40404080;
               padding: 14px 12px;
               border-radius: 6px;
-              opacity: 0.5;
               font-size: 16px;
               font-weight: 400;
               line-height: 24px;
@@ -655,60 +699,75 @@ const FindEmail = ({ setComponent }) => {
               margin-bottom: 16px;
             `}
           >
+            {/* logo */}
+            {userData?.socialLoginProvider === 'naver' && (
+              <Image
+                src={`/naver-24px.svg`}
+                width={24}
+                height={24}
+                alt='naver logo'
+              />
+            )}
+            {userData?.socialLoginProvider === 'google' && (
+              <Image
+                src={`/google-24px.svg`}
+                width={24}
+                height={24}
+                alt='naver logo'
+              />
+            )}
             <span
               css={css`
-                width: 24px;
-                height: 24px;
-
-                border-radius: 4px;
-                border: 1px solid ${theme.colors.grey[700]};
-              `}
-            >
-              {/* logo */}
-            </span>
-            <span>memopet1@gmail.com</span>
-          </div>
-          <div
-            css={css`
-              line-height: 21px;
-              letter-spacing: -0.5px;
-              font-size: 14px;
-              font-weight: 400;
-              margin-bottom: 16px;
-              padding: 0px 12px;
-              height: 34px;
-              background: ${theme.colors.grey[100]};
-              color: ${theme.colors.grey[900]};
-              border-radius: 6px;
-              display: flex;
-              align-items: center;
-              gap: 8px;
-              justify-content: center;
-              margin-bottom: 32px;
-            `}
-          >
-            <span>비밀번호가 생각나지 않나요?</span>
-            <span
-              css={css`
-                font-size: 14px;
-                font-weight: 600;
-                line-height: 14px;
-                letter-spacing: -0.25px;
                 color: ${theme.colors.grey[500]};
-                padding: 8px;
-                cursor: pointer;
               `}
-              onClick={() => setComponent('findPassword')}
             >
-              비밀번호 찾기
+              {userData?.email}
             </span>
           </div>
+          {userData?.dscCode === '1' && (
+            <div
+              css={css`
+                line-height: 21px;
+                letter-spacing: -0.5px;
+                font-size: 14px;
+                font-weight: 400;
+                margin-bottom: 16px;
+                padding: 0px 12px;
+                height: 34px;
+                background: ${theme.colors.grey[100]};
+                color: ${theme.colors.grey[900]};
+                border-radius: 6px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                justify-content: center;
+                margin-bottom: 32px;
+              `}
+            >
+              <span>비밀번호가 생각나지 않나요?</span>
+              <span
+                css={css`
+                  font-size: 14px;
+                  font-weight: 600;
+                  line-height: 14px;
+                  letter-spacing: -0.25px;
+                  color: ${theme.colors.grey[500]};
+                  padding: 8px;
+                  cursor: pointer;
+                `}
+                onClick={() => setComponent('findPassword')}
+              >
+                비밀번호 찾기
+              </span>
+            </div>
+          )}
           <MainButton
             onClick={() => {
-              setComponent('signIn');
+              setComponent(userData?.dscCode === '1' ? 'signIn' : 'oauth');
             }}
           >
-            {'로그인하기' || '소셜 로그인하기'}
+            {userData?.dscCode === '1' && '로그인하기'}
+            {userData?.dscCode === '2' && '소셜 로그인하기'}
           </MainButton>
         </div>
       )}
