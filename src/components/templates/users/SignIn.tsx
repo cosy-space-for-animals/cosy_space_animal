@@ -42,7 +42,14 @@ interface ISignUpProps {
   render: Dispatch<SetStateAction<boolean>>;
 }
 
-const UpdatePassword = ({ render, setComponent, component }) => {
+const UpdatePassword = ({
+  render,
+  setComponent,
+  component,
+  param,
+  setParam,
+}) => {
+  const { email } = param;
   const theme = useTheme();
   const [password, setPassword] = useState('');
   const [passwordCheck, setPasswordCheck] = useState('');
@@ -55,11 +62,38 @@ const UpdatePassword = ({ render, setComponent, component }) => {
     return !(validatePassword(password) && validatePasswordCheck());
   }
 
-  function submit() {
-    setComponent('updateCompleted');
+  async function submit() {
+    // email
+    try {
+      const response = await fetchWrapper(
+        `${process.env.NEXT_PUBLIC_API_URL}/sign-in/my-password`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email,
+            password,
+          }),
+        },
+      );
+      if (response.data.changeMyPasswordResponse.dscCode === '1') {
+        setComponent('updateCompleted');
+      }
+    } catch (error) {
+      // console.log(error)
+    }
   }
 
+  useEffect(() => {
+    return () => {
+      setParam({});
+    };
+  }, [setParam]);
+
   const isCompleted = Boolean(component === 'updateCompleted');
+
   if (isCompleted) {
     return (
       <div
@@ -185,7 +219,7 @@ const UpdatePassword = ({ render, setComponent, component }) => {
   );
 };
 
-const FindPassword = ({ setComponent }) => {
+const FindPassword = ({ setComponent, setParam }) => {
   const theme = useTheme();
   const [value, setValue] = useState('');
   const phoneNumberInputRef = useRef<HTMLInputElement>(null);
@@ -194,6 +228,8 @@ const FindPassword = ({ setComponent }) => {
   const [error, setError] = useState(false);
   const [canRequest, setCanRequest] = useState(false);
   const [verification, setVerification] = useState(false);
+  const [errorMessage, setErrorMessge] = useState(false);
+  const [authCode, setAuthCode] = useState('');
 
   const [focus2, setFocus2] = useState(false);
   const [value2, setValue2] = useState<string | undefined>(undefined);
@@ -202,6 +238,7 @@ const FindPassword = ({ setComponent }) => {
     'success' | 'failure' | 'invalid' | undefined
   >(undefined);
   const [toast2, setToast2] = useState(false);
+  const [canGoNext, setCanGoNext] = useState(false);
 
   const mouseDownHandler = useCallback(
     (e: MouseEvent<HTMLButtonElement>) => e.preventDefault(),
@@ -224,18 +261,48 @@ const FindPassword = ({ setComponent }) => {
   );
   const remove = useCallback(() => setValue(''), [setValue]);
 
-  const onClick = useCallback(() => {
+  const onClick = useCallback(async () => {
     if (!verification) {
-      console.log('통신성공');
-      // TODO: 통신 실패시, errorMessage1, setVerification(false) 필요
-
-      setVerification(true);
+      // 중복체크
+      try {
+        const data = await fetchWrapper(
+          `${process.env.NEXT_PUBLIC_API_URL}/sign-in/duplication-check?email=${value}`,
+        );
+        if (data.data.duplicationCheckResponse.dscCode === '1') {
+          // dscCode === "1" : 이메일 존재 X
+          setErrorMessge(true);
+          setVerification(false);
+        } else {
+          // dscCode === "0" : 이메일 존재 O
+          setErrorMessge(false);
+          setVerification(true);
+          try {
+            const response = await fetchWrapper(
+              `${process.env.NEXT_PUBLIC_API_URL}/sign-in/verification`,
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  email: value,
+                }),
+              },
+            );
+            setAuthCode(response.data.response.authCode);
+          } catch (error) {
+            // console.log(error)
+          }
+        }
+      } catch (error) {
+        // console.log(error)
+      }
     } else {
       setVerification(false);
       setValue2(undefined);
       setStatus2(undefined);
     }
-  }, [verification]);
+  }, [verification, value]);
 
   const onFocus2 = useCallback(() => setFocus2(true), []);
   const onBlur2 = useCallback(
@@ -245,15 +312,32 @@ const FindPassword = ({ setComponent }) => {
     [setFocus2],
   );
   const onChange2 = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setValue2(restrictToNumbers(e.target.value).slice(0, 6));
+    setValue2(e.target.value.trim().slice(0, 8));
   }, []);
   const remove2 = useCallback(() => {
     setValue2('');
   }, [setValue2]);
 
   const onClick2 = useCallback(() => {
-    setToast2(true);
-  }, []);
+    if (value2 === undefined) {
+      setStatus2(undefined);
+      return;
+    }
+
+    if (value2.length < 6) {
+      setStatus2('invalid');
+      setError2(true);
+    } else {
+      if (authCode === value2) {
+        setError2(false);
+        setStatus2('success');
+        setCanGoNext(true);
+      } else {
+        setError2(true);
+        setStatus2('failure');
+      }
+    }
+  }, [authCode, value2]);
 
   useEffect(() => {
     if (toast2) {
@@ -272,28 +356,6 @@ const FindPassword = ({ setComponent }) => {
       setCanRequest(false);
     }
   }, [value]);
-
-  useEffect(() => {
-    if (value2 === undefined) {
-      setStatus2(undefined);
-      return;
-    }
-    // if (value2.length < 6) {
-    //   setStatus2('invalid');
-    //   setError2(true);
-    // } else {
-    if (true) {
-      console.log('통신성공', value2);
-      setError2(false);
-      setStatus2('success');
-    }
-    //  else {
-    //   console.log('통신실패', value2);
-    //   setError2(true);
-    //   setStatus2('failure');
-    // }
-    // }
-  }, [value2]);
 
   return (
     <div
@@ -370,15 +432,74 @@ const FindPassword = ({ setComponent }) => {
             `}
           >
             <RoundButton
-              disabled={!canRequest}
+              disabled={!canRequest || canGoNext}
               type={verification ? 'outline' : 'filled'}
               onClick={onClick}
             >
-              {/* TODO: 확인submit2 success일 경우 인증 완료*/}
-              {'인증 요청' || '인증 완료'}
+              {canGoNext ? '인증 완료' : '인증 요청'}
             </RoundButton>
           </label>
         </div>
+        {errorMessage && (
+          <>
+            <div
+              css={css`
+                margin-top: 4px;
+                display: flex;
+                gap: 4px;
+                align-items: center;
+                color: var(--danger);
+                font-size: 13px;
+                font-weight: 400;
+                line-height: 19.5px;
+                letter-spacing: -0.25px;
+              `}
+            >
+              <Image
+                src='/icon-error.svg'
+                width={16}
+                height={16}
+                alt='icon-error'
+              />
+              해당 이메일로 가입한 계정을 찾을 수 없습니다.
+            </div>
+            <div
+              css={css`
+                margin-top: 16px;
+                line-height: 21px;
+                letter-spacing: -0.5px;
+                font-size: 14px;
+                font-weight: 400;
+                padding: 0px 12px;
+                height: 34px;
+                background: ${theme.colors.grey[100]};
+                color: ${theme.colors.grey[900]};
+                border-radius: 6px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                justify-content: center;
+                margin-bottom: 32px;
+              `}
+            >
+              <span>가입한 이메일이 생각나지 않나요?</span>
+              <span
+                css={css`
+                  font-size: 14px;
+                  font-weight: 600;
+                  line-height: 14px;
+                  letter-spacing: -0.25px;
+                  color: ${theme.colors.grey[500]};
+                  padding: 8px;
+                  cursor: pointer;
+                `}
+                onClick={() => setComponent('findEmail')}
+              >
+                이메일 찾기
+              </span>
+            </div>
+          </>
+        )}
       </div>
       {/* verification code */}
       {verification && (
@@ -408,7 +529,7 @@ const FindPassword = ({ setComponent }) => {
               <input
                 id={'email' + ' verificationCode'}
                 disabled={Boolean(status2 === 'success')}
-                placeholder='인증번호 6자리 입력'
+                placeholder='인증번호 8자리 입력'
                 onFocus={onFocus2}
                 onBlur={onBlur2}
                 onChange={onChange2}
@@ -471,7 +592,11 @@ const FindPassword = ({ setComponent }) => {
                 {toast2 && <Toast text='인증코드를 다시 보냈어요' />}
                 {
                   //submit2가 성공할 경우 노출
-                  <RoundButton disabled={true} type='filled' onClick={onClick2}>
+                  <RoundButton
+                    disabled={canGoNext}
+                    type='filled'
+                    onClick={onClick2}
+                  >
                     확인
                   </RoundButton>
                 }
@@ -501,8 +626,8 @@ const FindPassword = ({ setComponent }) => {
                 alt='icon-error'
               />
               {status2 === 'success' && '이메일이 인증되었습니다.'}
-              {/* {status2 === 'failure' && '인증번호가 일치하지 않습니다.'} */}
-              {/* {status2 === 'invalid' && '인증번호 6자리를 입력해주세요.'} */}
+              {status2 === 'failure' && '인증번호가 일치하지 않습니다.'}
+              {status2 === 'invalid' && '인증번호 8자리를 입력해주세요.'}
             </div>
           )}
         </div>
@@ -513,9 +638,11 @@ const FindPassword = ({ setComponent }) => {
         `}
       >
         <MainButton
-          disabled={false}
+          disabled={!canGoNext}
           onClick={() => {
+            if (!canGoNext) return;
             setComponent('updatePassword');
+            setParam({ email: value });
           }}
         >
           비밀번호 재설정하기
@@ -1103,6 +1230,7 @@ const SignInModal = ({ render }: ISignUpProps) => {
     | 'updateCompleted'
   >('oauth');
   const [step, setStep] = useState(1);
+  const [param, setParam] = useState({});
 
   function titleHandler(): string {
     if (component === 'signUp') {
@@ -1121,6 +1249,7 @@ const SignInModal = ({ render }: ISignUpProps) => {
       return '';
     }
   }
+
   return (
     <UserPopup title={titleHandler()} render={render}>
       {component === 'oauth' && <OAuth setComponent={setComponent} />}
@@ -1130,13 +1259,15 @@ const SignInModal = ({ render }: ISignUpProps) => {
       )}
       {component === 'findEmail' && <FindEmail setComponent={setComponent} />}
       {component === 'findPassword' && (
-        <FindPassword setComponent={setComponent} />
+        <FindPassword setComponent={setComponent} setParam={setParam} />
       )}
       {(component === 'updatePassword' || component === 'updateCompleted') && (
         <UpdatePassword
           render={render}
           component={component}
           setComponent={setComponent}
+          param={param}
+          setParam={setParam}
         />
       )}
     </UserPopup>
