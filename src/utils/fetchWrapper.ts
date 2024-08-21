@@ -1,5 +1,3 @@
-import { FetchServerResponseResult } from 'next/dist/client/components/router-reducer/fetch-server-response';
-import { NextResponse } from 'next/server';
 import { getCookie, setCookie } from './common';
 import { TFetchError, TFetchResponse } from '@/types/common';
 
@@ -31,10 +29,8 @@ const rewrite = (url: string): string => {
     return `${TEST_URL}${url}`;
   }
 
-
   return `${url}`;
-}
-
+};
 
 /**
  *
@@ -45,9 +41,12 @@ const rewrite = (url: string): string => {
  *
  */
 
-export const fetchWrapper = async <T>(url: string, options?: RequestInit): Promise<TFetchResponse<T> | TFetchError> => {
+export const fetchWrapper = async <T>(
+  url: string,
+  options?: RequestInit,
+): Promise<TFetchResponse<T> | TFetchError> => {
   const accessToken = getCookie('accessToken');
-      
+
   try {
     const response = await fetch(rewrite(url), {
       ...defaultOptions,
@@ -59,7 +58,13 @@ export const fetchWrapper = async <T>(url: string, options?: RequestInit): Promi
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const error: TFetchError = {
+        message: `HTTP error! status: ${response.status}`,
+        status: response.status,
+        response: await response.json(),
+      };
+
+      throw error;
     }
 
     if (response.status === 202) {
@@ -76,17 +81,13 @@ export const fetchWrapper = async <T>(url: string, options?: RequestInit): Promi
         ...options,
       });
     }
-    // wrapping response.json() in await to catch json parsing errors
-    // return await response.json();
     return await response.json();
   } catch (error) {
-    console.error('Fetch Wrapper Error:', error);
-    // throw error;
-    if (url.startsWith('/api')) {
-      if (error.status === 406) {
-        return location.replace('/');
-      }
+    if (url.startsWith('/api') && error.status === 406) {
+      location.replace('/');
     }
+
+    throw error;
   }
 };
 
