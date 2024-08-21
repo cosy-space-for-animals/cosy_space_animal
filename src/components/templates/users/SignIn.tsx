@@ -903,17 +903,26 @@ const FindEmail = ({ setComponent }) => {
 const SignIn = ({ setComponent }) => {
   const router = useRouter();
   const localStorageEmail = getItemWithExpireDate('email');
+  const isDev = Boolean(process.env.NODE_ENV === 'development');
 
   const theme = useTheme();
   const [email, setEmail] = useState(localStorageEmail || '');
   const [password, setPassword] = useState('');
   const [check, setCheck] = useState(Boolean(localStorageEmail));
-  const [error, setError] = useState({ email: true, password: true });
+  const [error, setError] = useState({
+    email: !isDev ? !Boolean(localStorageEmail) : false,
+    password: !isDev,
+  });
+  const [loginCount, setLoginCount] = useState(0);
+  const [errorCode, setErrorCode] =
+    useState<
+      Nullable<
+        'UsernameNotFoundException' | 'Bad_Credentials_request' | 'bad_request'
+      >
+    >(null);
 
   async function submit() {
-    const isDev = Boolean(process.env.NODE_ENV === 'development');
-
-    if (!isDev && !Object.values(error).every((v) => v === false)) return;
+    if (!Object.values(error).every((v) => v === false)) return;
 
     try {
       const response = await fetchWrapper(
@@ -924,23 +933,50 @@ const SignIn = ({ setComponent }) => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            email: isDev ? 'user3@gmail.com' : email,
-            password: isDev ? 'user12#$' : password,
+            email,
+            password,
+            // email: isDev ? process.env.NEXT_PUBLIC_LOGIN_ID : email,
+            // password: isDev ? process.env.NEXT_PUBLIC_LOGIN_PW : password,
           }),
         },
       );
+
+      // 이메일 기억하기
       if (check) {
         setItemWithExpireDate('email', email);
       } else {
         localStorage.removeItem('email');
       }
+
+      // accessToken 저장
+      // TODO: 만료일 수정
       const accessToken = response.data.loginInfo.accessToken;
       setCookie('accessToken', accessToken, 30);
+      setErrorCode(null);
+
       router.reload();
     } catch (error) {
-    } finally {
+      if (error.status === 400) {
+        if (error.response.code === 'UsernameNotFoundException') {
+          console.log('아이디가 없음');
+        }
+        if (error.response.code === 'Bad_Credentials_request') {
+          setLoginCount(+error.response.loginCount);
+          console.log('비밀번호가 틀림');
+        }
+        if (error.response.code === 'bad_request') {
+          console.log('5회 넘음');
+        }
+        setErrorCode(error.response.code);
+      }
     }
   }
+
+  useEffect(() => {
+    if (errorCode === 'bad_request') {
+      setComponent('loginFailure');
+    }
+  }, [errorCode, setComponent]);
 
   return (
     <div
@@ -962,7 +998,8 @@ const SignIn = ({ setComponent }) => {
             value={email}
             setValue={setEmail}
             placeholder='이메일 입력'
-            validate={validateEmail}
+            validate={isDev ? () => true : validateEmail}
+            // validate={validateEmail}
             setError={setError}
             errorMessage={
               email === ''
@@ -977,11 +1014,32 @@ const SignIn = ({ setComponent }) => {
             value={password}
             setValue={setPassword}
             placeholder='비밀번호 입력'
-            validate={() => Boolean(password)}
+            validate={() => (isDev ? true : Boolean(password))}
+            // validate={() => Boolean(password)}
             errorMessage={'비밀번호를 입력해주세요.'}
             setError={setError}
           />
         </div>
+        {errorCode && (
+          <div
+            css={css`
+              font-size: 13px;
+              font-weight: 400;
+              line-height: 19.5px;
+              letter-spacing: -0.25px;
+              text-align: center;
+              padding: 8px 12px;
+              background: #e433330d;
+              color: ${theme.statusColors.danger};
+              border-radius: 6px;
+            `}
+          >
+            {errorCode === 'UsernameNotFoundException' &&
+              `등록되지 않은 이메일입니다.`}
+            {errorCode === 'Bad_Credentials_request' &&
+              `이메일 또는 비밀번호를 잘못 입력했습니다. (${loginCount}/5)`}
+          </div>
+        )}
         <div
           css={css`
             display: flex;
@@ -1060,6 +1118,235 @@ const SignIn = ({ setComponent }) => {
     </div>
   );
 };
+
+const LoginFailure = ({ setComponent, render }) => {
+  const theme = useTheme();
+  const [email, setEmail] = useState('');
+  const [canGoNext, setCanGoNext] = useState(false);
+  const [status, setStauts] = useState<Nullable<'error' | 'success'>>(null);
+  const [isCompleted, setIsCompleted] = useState(false);
+
+  async function submit() {
+    if (!canGoNext) return;
+
+    try {
+      await fetchWrapper(
+        `${process.env.NEXT_PUBLIC_API_URL}/sign-in/password-reset`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email,
+          }),
+        },
+      );
+      setStauts('success');
+    } catch (error) {
+      if (
+        error.status === 400 &&
+        error.response.code === 'UsernameNotFoundException'
+      ) {
+        setStauts('error');
+      }
+    }
+  }
+
+  useEffect(() => {
+    if (status === 'success') {
+      setIsCompleted(true);
+    }
+  }, [status]);
+
+  useEffect(() => {
+    // validateEmail할거면, error message 보여줘야 함
+    setCanGoNext(Boolean(email));
+  }, [email]);
+
+  if (isCompleted) {
+    return (
+      <div
+        css={css`
+          width: 280px;
+        `}
+      >
+        <div
+          css={css`
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 20.8px;
+            letter-spacing: -0.5px;
+            margin-bottom: 16px;
+            color: ${theme.colors.grey[700]};
+            white-space: pre-wrap;
+          `}
+        >
+          {`재설정한 비밀번호로\n로그인 해주세요.`}
+        </div>
+        <div
+          css={css`
+            display: flex;
+            justify-content: right;
+            align-items: center;
+            gap: 4px;
+          `}
+        >
+          <RoundButton
+            onClick={() => {
+              render((prev) => !prev);
+            }}
+            type='outline'
+          >
+            닫기
+          </RoundButton>
+          <RoundButton
+            onClick={() => {
+              setComponent('singIn');
+            }}
+            type='filled'
+          >
+            로그인 하기
+          </RoundButton>
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div
+      css={css`
+        width: 320px;
+      `}
+    >
+      <div
+        css={css`
+          white-space: pre-wrap;
+          font-size: 1rem;
+          font-weight: 400;
+          line-height: 24px;
+          letter-spacing: -0.5px;
+          color: ${theme.colors.grey[700]};
+        `}
+      >
+        <b
+          css={css`
+            color: ${theme.colors.primary[500]};
+          `}
+        >
+          5회 이상
+        </b>{' '}
+        {`로그인 실패하여\n보안을 위해 로그인을 제한합니다.\n이메일 계정을 입력하시면 로그인 할 수 있는\n`}
+        <b
+          css={css`
+            color: ${theme.colors.primary[500]};
+          `}
+        >
+          새로운 비밀번호
+        </b>
+        를 받을 수 있습니다.
+      </div>
+      <div
+        css={css`
+          margin-top: 32px;
+        `}
+      >
+        <label
+          htmlFor='email'
+          css={css`
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 21px;
+            letter-spacing: -0.25px;
+          `}
+        >
+          이메일
+          <div
+            css={css`
+              margin-top: 4px;
+            `}
+          >
+            <InputDefaultItem
+              id='email'
+              value={email}
+              setValue={setEmail}
+              validate={() => true}
+            />
+          </div>
+        </label>
+        {status === 'error' && (
+          <>
+            <div
+              css={css`
+                margin-top: 4px;
+                display: flex;
+                gap: 4px;
+                align-items: center;
+                color: var(--danger);
+                font-size: 13px;
+                font-weight: 400;
+                line-height: 19.5px;
+                letter-spacing: -0.25px;
+              `}
+            >
+              <Image
+                src='/icon-error.svg'
+                width={16}
+                height={16}
+                alt='icon-error'
+              />
+              해당 이메일로 가입한 계정을 찾을 수 없습니다.
+            </div>
+            <div
+              css={css`
+                margin-top: 16px;
+                line-height: 21px;
+                letter-spacing: -0.5px;
+                font-size: 14px;
+                font-weight: 400;
+                padding: 0px 12px;
+                height: 34px;
+                background: ${theme.colors.grey[100]};
+                color: ${theme.colors.grey[900]};
+                border-radius: 6px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                justify-content: center;
+                margin-bottom: 32px;
+              `}
+            >
+              <span>가입한 이메일이 생각나지 않나요?</span>
+              <span
+                css={css`
+                  font-size: 14px;
+                  font-weight: 600;
+                  line-height: 14px;
+                  letter-spacing: -0.25px;
+                  color: ${theme.colors.grey[500]};
+                  padding: 8px;
+                  cursor: pointer;
+                `}
+                onClick={() => setComponent('findEmail')}
+              >
+                이메일 찾기
+              </span>
+            </div>
+          </>
+        )}
+      </div>
+      <div
+        css={css`
+          margin-top: 32px;
+        `}
+      >
+        <MainButton disabled={!canGoNext} onClick={submit}>
+          새로운 비밀번호 받기
+        </MainButton>
+      </div>
+    </div>
+  );
+};
+
 const OAuth = ({ setComponent }) => {
   const theme = useTheme();
 
@@ -1087,7 +1374,7 @@ const OAuth = ({ setComponent }) => {
     if (!naver) return;
 
     const naverLogin = new naver.LoginWithNaverId({
-      clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+      clientId: process.env.NEXT_PUBLIC_NAVER_CLIENT_ID,
       callbackUrl: 'http://localhost:3000/user/naver/callback',
       isPopup: false,
       loginButton: { color: 'green', type: 1, height: '40' }, // 로그인 버튼의 스타일
@@ -1228,7 +1515,9 @@ const SignInModal = ({ render }: ISignUpProps) => {
     | 'findPassword'
     | 'updatePassword'
     | 'updateCompleted'
+    | 'loginFailure'
   >('oauth');
+
   const [step, setStep] = useState(1);
   const [param, setParam] = useState({});
 
@@ -1245,6 +1534,8 @@ const SignInModal = ({ render }: ISignUpProps) => {
       return '비밀번호 재설정';
     } else if (component === 'oauth') {
       return '시작하기';
+    } else if (component === 'loginFailure') {
+      return '로그인 실패';
     } else {
       return '';
     }
@@ -1269,6 +1560,9 @@ const SignInModal = ({ render }: ISignUpProps) => {
           param={param}
           setParam={setParam}
         />
+      )}
+      {component === 'loginFailure' && (
+        <LoginFailure setComponent={setComponent} render={render} />
       )}
     </UserPopup>
   );
