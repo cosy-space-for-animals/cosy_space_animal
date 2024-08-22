@@ -29,8 +29,9 @@ import RoundButton from '@/components/atoms/buttons/RoundButton';
 import Toast from '@/components/atoms/Toast';
 import fetchWrapper from '@/utils/fetchWrapper';
 import { useRouter } from 'next/router';
-import { useGoogleLogin } from '@react-oauth/google';
+import { TokenResponse, useGoogleLogin } from '@react-oauth/google';
 import { Nullable } from '@/types/global';
+import InputMobileVerification from '@/components/atoms/input/InputMobileVerification';
 
 declare global {
   interface Window {
@@ -78,6 +79,7 @@ const UpdatePassword = ({
           }),
         },
       );
+
       if (response.data.changeMyPasswordResponse.dscCode === '1') {
         setComponent('updateCompleted');
       }
@@ -1347,13 +1349,92 @@ const LoginFailure = ({ setComponent, render }) => {
   );
 };
 
-const OAuth = ({ setComponent }) => {
+const CheckPhoneNumber = ({ setComponent }) => {
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [verificationResult, setVerificationResult] = useState(false);
+
+  function submit() {
+    console.log('api 연결 예정');
+    // TODO: {{baseURL}}/api/member-info api 연결 -> 폰번호 수정
+  }
+
+  return (
+    <div
+      css={css`
+        width: 400px;
+      `}
+    >
+      <div
+        css={css`
+          font-size: 1rem;
+          font-weight: 400;
+          line-height: 24px;
+          letter-spacing: -0.5px;
+        `}
+      >
+        안전한 로그인을 위해 딱 한 번만 인증해주세요.
+      </div>
+      <div
+        css={css`
+          margin-top: 32px;
+        `}
+      >
+        <InputMobileVerification
+          id='phonenumber'
+          value={phoneNumber}
+          setValue={setPhoneNumber}
+          setVerificationResult={setVerificationResult}
+        />
+      </div>
+      <div
+        css={css`
+          margin-top: 32px;
+        `}
+      >
+        <MainButton disabled={!verificationResult} onClick={submit}>
+          인증 완료
+        </MainButton>
+      </div>
+    </div>
+  );
+};
+
+const OAuth = ({ setComponent, render }) => {
   const theme = useTheme();
 
   const googleLogin = useGoogleLogin({
-    // TODO: clientID받고, api 연결 필요
-    onSuccess: ({}) => {
-      console.log('loginSuccess');
+    onSuccess: (response) => {
+      (async function (response: TokenResponse) {
+        try {
+          const data = await fetchWrapper(
+            `${process.env.NEXT_PUBLIC_API_URL}/login/oauth2/code/google`,
+            {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                access_token: response.access_token,
+                state: '',
+                token_type: response.token_type,
+                expires_in: response.expires_in + '',
+              }),
+            },
+          );
+          console.log(data);
+
+          setCookie('accessToken', data.data.loginResponseDto.accessToken);
+
+          if (data.data.loginResponseDto.phoneNumYn === 'N') {
+            // TODO: 번호등록 모달로 이동
+            setComponent('checkPhoneNumber');
+          } else {
+            render(false);
+          }
+        } catch (error) {
+          // console.log(error)
+        }
+      })(response);
     },
     onError: (error) => {
       console.error('Login Failed:', error);
@@ -1381,12 +1462,6 @@ const OAuth = ({ setComponent }) => {
     });
 
     naverLogin.init();
-
-    // naverLogin.getLoginStatus((status: boolean) => {
-    //   if (status) {
-    //     console.log(naverLogin.user);
-    //   }
-    // });
   }, []);
 
   return (
@@ -1516,6 +1591,7 @@ const SignInModal = ({ render }: ISignUpProps) => {
     | 'updatePassword'
     | 'updateCompleted'
     | 'loginFailure'
+    | 'checkPhoneNumber'
   >('oauth');
 
   const [step, setStep] = useState(1);
@@ -1536,6 +1612,8 @@ const SignInModal = ({ render }: ISignUpProps) => {
       return '시작하기';
     } else if (component === 'loginFailure') {
       return '로그인 실패';
+    } else if (component === 'checkPhoneNumber') {
+      return '휴대폰 인증';
     } else {
       return '';
     }
@@ -1543,7 +1621,9 @@ const SignInModal = ({ render }: ISignUpProps) => {
 
   return (
     <UserPopup title={titleHandler()} render={render}>
-      {component === 'oauth' && <OAuth setComponent={setComponent} />}
+      {component === 'oauth' && (
+        <OAuth setComponent={setComponent} render={render} />
+      )}
       {component === 'signIn' && <SignIn setComponent={setComponent} />}
       {component === 'signUp' && (
         <SignUp step={step} setStep={setStep} render={render} />
@@ -1563,6 +1643,9 @@ const SignInModal = ({ render }: ISignUpProps) => {
       )}
       {component === 'loginFailure' && (
         <LoginFailure setComponent={setComponent} render={render} />
+      )}
+      {component === 'checkPhoneNumber' && (
+        <CheckPhoneNumber setComponent={setComponent} />
       )}
     </UserPopup>
   );
