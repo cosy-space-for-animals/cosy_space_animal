@@ -88,7 +88,7 @@ const MemoryThumbItem = ({ thumbImg, type, state, amount }: IProps) => {
             <CameraIcon color={theme.colors.primary[500]} />
             <span
               css={css`
-                font-size: ${theme.fontSizes.sm};
+                font-size: ${theme.fontSizes.sm}px;
                 color: ${theme.colors.grey[600]};
               `}
             >
@@ -114,7 +114,7 @@ const MemoryThumbItem = ({ thumbImg, type, state, amount }: IProps) => {
               background: ${theme.colors.grey[0]};
               padding: 2.5px 6px;
               font-weight: ${theme.fontWeights.semibold};
-              font-size: ${theme.fontSizes.xs};
+              font-size: ${theme.fontSizes.xs}px;
               color: ${theme.colors.primary[500]};
             `}
           >

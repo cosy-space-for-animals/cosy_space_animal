@@ -1,4 +1,5 @@
 import RoundButton from '@/components/atoms/buttons/RoundButton';
+import InputDefaultItem from '@/components/atoms/input/InputDefaultItem';
 import { css } from '@emotion/react';
 import { ChangeEvent, useState } from 'react';
 
@@ -26,10 +27,10 @@ const InputComment = ({ placeHolder }: IProps) => {
         gap: 8px;
       `}
     >
-      <input
+      <InputDefaultItem
         placeholder={placeHolder}
         value={inputValue}
-        onChange={handleChangeInputValue}
+        setValue={setInputValue}
       />
       <div
         css={css`

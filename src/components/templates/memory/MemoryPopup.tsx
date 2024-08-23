@@ -8,21 +8,25 @@ import MoreVerticalIcon from '@/assets/icon/MoreVerticalIcon';
 import { useState } from 'react';
 import InputComment from '@/components/organisms/comment/InputComment';
 import MemoryPhoto from '@/components/molecules/memory/MemoryPhoto';
+import { IPopupProps } from '@/types/common';
+import MemoryCommentItem from '@/components/organisms/memory/MemoryCommentItem';
 
 interface IProps {
-  thumbImg: string;
+  thumbImgs: string[];
   date: string;
   title: string;
   content: string;
   flowerAmount: number;
   commentAmount: number;
   isProfile?: boolean;
-  profileImg: string;
-  name: string;
+  profileImg?: string;
+  name?: string;
 }
 
 const MemoryPopup = ({
-  thumbImg,
+  open,
+  onClose,
+  thumbImgs,
   date,
   title,
   content,
@@ -31,7 +35,7 @@ const MemoryPopup = ({
   isProfile,
   profileImg,
   name,
-}: IProps) => {
+}: IProps & IPopupProps) => {
   const theme = useTheme();
 
   const [isOpenComment, setIsOpenComment] = useState(false);
@@ -41,7 +45,7 @@ const MemoryPopup = ({
   };
 
   return (
-    <Popup onClose={() => {}}>
+    <Popup open={open} onClose={onClose}>
       <div
         css={css`
           display: flex;
@@ -77,7 +81,7 @@ const MemoryPopup = ({
             <span
               css={css`
                 font-weight: ${theme.fontWeights.medium};
-                font-size: ${theme.fontSizes.sm};
+                font-size: ${theme.fontSizes.sm}px;
               `}
             >
               {name}
@@ -90,7 +94,7 @@ const MemoryPopup = ({
             gap: 24px;
           `}
         >
-          <MemoryPhoto thumbImgs={[]} />
+          <MemoryPhoto thumbImgs={thumbImgs} />
           <div
             css={css`
               display: flex;
@@ -105,6 +109,7 @@ const MemoryPopup = ({
                 display: flex;
                 flex-direction: column;
                 gap: 16px;
+                padding: 16px 0;
               `}
             >
               <div
@@ -135,11 +140,15 @@ const MemoryPopup = ({
             </div>
             <div
               css={css`
+                height: 1px;
+                background: ${theme.colors.grey[200]};
+              `}
+            ></div>
+            <div
+              css={css`
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                padding-top: 8px;
-                border-top: 1px solid ${theme.colors.grey[200]};
               `}
             >
               <div
@@ -172,7 +181,14 @@ const MemoryPopup = ({
               </button>
             </div>
             {isOpenComment ? (
-              <>
+              <div
+                css={css`
+                  display: flex;
+                  flex-direction: column;
+                  flex-wrap: nowrap;
+                  gap: 8px;
+                `}
+              >
                 <ul
                   css={css`
                     border-radius: 6px;
@@ -182,12 +198,73 @@ const MemoryPopup = ({
                     flex-direction: column;
                     gap: 16px;
                     background: ${theme.colors.grey[50]};
-                    height: 100%;
+                    height: 360px;
                     overflow-y: auto;
                   `}
-                ></ul>
-                <InputComment placeHolder='답글을 작성해 주세요' />
-              </>
+                >
+                  <MemoryCommentItem
+                    profileImg=''
+                    name='몽구'
+                    time='10분 전'
+                    comment='저희 강아지도 올해 봄에 강아지별로 떠나갔어요. 마음 잘 추스리시길 바랍니다.. 위로의 말씀 전해요..'
+                  />
+                  {/* <MemoryCommentItem
+                    profileImg=''
+                    name='몽구'
+                    time='10분 전'
+                    comment='코코 목줄 정보 알 수 있을까요?'
+                  />
+                  <MemoryCommentItem
+                    profileImg=''
+                    name='몽구'
+                    time='10분 전'
+                    comment='코코 목줄 정보 알 수 있을까요?'
+                  />
+                  <MemoryCommentItem
+                    profileImg=''
+                    name='몽구'
+                    time='10분 전'
+                    comment='코코 목줄 정보 알 수 있을까요?'
+                  />
+                  <MemoryCommentItem
+                    profileImg=''
+                    name='몽구'
+                    time='10분 전'
+                    comment='코코 목줄 정보 알 수 있을까요?'
+                  />
+                  <MemoryCommentItem
+                    profileImg=''
+                    name='몽구'
+                    time='10분 전'
+                    comment='코코 목줄 정보 알 수 있을까요?'
+                  />
+                  <MemoryCommentItem
+                    profileImg=''
+                    name='몽구'
+                    time='10분 전'
+                    comment='코코 목줄 정보 알 수 있을까요?'
+                  />
+                  <MemoryCommentItem
+                    profileImg=''
+                    name='몽구'
+                    time='10분 전'
+                    comment='코코 목줄 정보 알 수 있을까요?'
+                  />
+                  <MemoryCommentItem
+                    profileImg=''
+                    name='몽구'
+                    time='10분 전'
+                    comment='저희 강아지도 올해 봄에 강아지별로 떠나갔어요. 마음 잘 추스리시길 바랍니다.. 위로의 말씀 전해요..'
+                  />
+                  <MemoryCommentItem
+                    profileImg=''
+                    name='몽구'
+                    time='10분 전'
+                    comment='저희 강아지도 올해 봄에 강아지별로 떠나갔어요. 마음 잘 추스리시길 바랍니다.. 위로의 말씀 전해요..'
+                  /> */}
+                </ul>
+                <InputComment placeHolder='댓글을 작성해 주세요' />
+              </div>
             ) : null}
           </div>
         </div>

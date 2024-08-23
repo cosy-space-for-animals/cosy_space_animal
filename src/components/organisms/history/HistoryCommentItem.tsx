@@ -52,7 +52,7 @@ const HistoryCommentItem = ({ profileImg, name, comment }: IProps) => {
         <div
           css={css`
             font-weight: ${theme.fontWeights.medium};
-            font-size: ${theme.fontSizes.xs};
+            font-size: ${theme.fontSizes.xs}px;
           `}
         >
           <span
@@ -66,7 +66,7 @@ const HistoryCommentItem = ({ profileImg, name, comment }: IProps) => {
         </div>
         <p
           css={css`
-            font-size: ${theme.fontSizes.sm};
+            font-size: ${theme.fontSizes.sm}px;
           `}
         >
           {comment}

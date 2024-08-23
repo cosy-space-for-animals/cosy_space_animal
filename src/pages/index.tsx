@@ -61,12 +61,14 @@ export default function Home() {
               `}
             />
           </section>
-          <div css={css`
-            position: fixed;
-            bottom: 0;
-            padding: 40px 20px;
-            width: 100%;
-          `}>
+          <div
+            css={css`
+              position: fixed;
+              bottom: 0;
+              padding: 40px 20px;
+              width: 100%;
+            `}
+          >
             <MainButton
               type={'filled'}
               onClick={() => {

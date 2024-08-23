@@ -12,6 +12,7 @@ interface IArrowButtonProps {
   type: Type;
   disabled?: boolean;
   children: React.ReactNode;
+  onClick?: () => void;
 }
 
 const styles: { [key in Type]: SerializedStyles } = {
@@ -81,6 +82,7 @@ export default function ArrowButton({
   type = 'borderlessGrey',
   disabled = false,
   children,
+  onClick,
 }: IArrowButtonProps) {
   return (
     <button
@@ -102,6 +104,7 @@ export default function ArrowButton({
         `,
         styles[type],
       )}
+      onClick={onClick}
     >
       <svg
         width='24'

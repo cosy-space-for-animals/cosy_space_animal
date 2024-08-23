@@ -12,10 +12,15 @@ export interface IInputItemProps {
   id?: string;
   value: string;
   setValue: Dispatch<SetStateAction<string>> | ((e: string) => void);
-  validate: boolean;
+  validate?: boolean;
   errorMessage?: string;
   disabled?: boolean;
   placeholder?: string;
+}
+
+export interface IPopupProps {
+  open: boolean;
+  onClose: () => void;
 }
 
 export interface IInputItemProps2 {

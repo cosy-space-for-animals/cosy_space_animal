@@ -98,14 +98,14 @@ const UserItem = ({
             <span
               css={css`
                 font-weight: ${theme.fontWeights.semibold};
-                font-size: ${theme.fontSizes.sm};
+                font-size: ${theme.fontSizes.sm}px;
               `}
             >
               {name}
             </span>
             <p
               css={css`
-                font-size: ${theme.fontSizes.xs};
+                font-size: ${theme.fontSizes.xs}px;
                 color: ${theme.colors.grey[400]};
                 ${toEllipsisStyle(1)}
               `}
