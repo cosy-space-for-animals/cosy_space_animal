@@ -9,7 +9,8 @@ export interface IIconProps {
 }
 
 export interface IInputItemProps {
-  value: string | number;
+  id?: string;
+  value: string;
   setValue: Dispatch<SetStateAction<string>> | ((e: string) => void);
   validate?: boolean;
   errorMessage?: string;
@@ -22,23 +23,30 @@ export interface IPopupProps {
   onClose: () => void;
 }
 
-export type TInputDateProps = TOverride<
-  IInputItemProps,
-  {
-    value: string;
-    deleteBtn?: boolean;
-    min?: string | Date;
-    max?: string | Date;
-  }
->;
+export interface IInputItemProps2 {
+  id: string;
+  value: string;
+  setValue: Dispatch<SetStateAction<string>> | ((e: string) => void);
+  validate: (arg: string) => boolean | Promise<boolean>;
+  errorMessage?: string;
+  disabled?: boolean;
+  placeholder?: string;
+  onBlur?: () => void;
+  submit?: () => void;
+  setError?: Dispatch<SetStateAction<{ [key: string]: boolean }>>;
+}
 
-export type TTextareaProps = TOverride<
-  IInputItemProps,
-  {
-    value: string;
-    maxLength: number;
-  }
->;
+export type TInputDateProps = TOverride<IInputItemProps, {
+  value: string;
+  deleteBtn?: boolean;
+  min?: string | Date;
+  max?: string | Date;
+}>;
+
+export type TTextareaProps = TOverride<IInputItemProps, {
+  value: string;
+  maxLength: number;
+}>;
 
 export type TUploadImageResponse = {
   url: string;

@@ -2,6 +2,7 @@ import { css } from '@emotion/react';
 import ThemedText from '@/components/atoms/ThemedText';
 import RollingScrollBanner from '@/components/organisms/RollingScrollBanner';
 import MainButton from '@/components/atoms/buttons/MainButton';
+import Header from '@/components/organisms/Header';
 import { useDevice } from '@/context/DeviceContext';
 import { useRouter } from 'next/router';
 
@@ -11,6 +12,7 @@ export default function Home() {
 
   return (
     <>
+      <Header type='home-logout' color='default' />
       {isMobile ? (
         <>
           <section
