@@ -24,21 +24,18 @@ const NaverCallback: React.FC = () => {
               };
             };
           };
-          const data = await fetchWrapper<Data>(
-            `${process.env.NEXT_PUBLIC_API_URL}/login/oauth2/code/naver`,
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                access_token,
-                state,
-                token_type,
-                expires_in,
-              }),
+          const data = await fetchWrapper<Data>(`/login/oauth2/code/naver`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
             },
-          );
+            body: JSON.stringify({
+              access_token,
+              state,
+              token_type,
+              expires_in,
+            }),
+          });
           const accessToken = data.data.loginResponseDto.accessToken;
           setCookie('accessToken', accessToken, 3);
 

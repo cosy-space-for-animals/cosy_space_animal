@@ -1,90 +1,77 @@
 import { getCookie, setCookie } from './common';
-import { TFetchError, TFetchResponse } from '@/types/common';
 
-const FETCH_METHODS = {
-  GET: 'GET',
-  POST: 'POST',
-  PUT: 'PUT',
-  DELETE: 'DELETE',
-};
+interface IRequestInit extends RequestInit {
+  method?: 'GET' | 'POST' | 'DELETE' | 'PATCH';
+}
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-const TEST_URL = 'https://jsonplaceholder.typicode.com';
+const TEST_URL = 'https://jsonplaceholder.typicode.com'; // ?
 
 const defaultOptions = {
-  method: FETCH_METHODS.GET,
   headers: {
     'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
+    // 'Access-Control-Allow-Origin': '*', // ?
   },
 };
 
 const rewrite = (url: string): string => {
-  if (url.startsWith('/api')) {
-    // return `${BASE_URL}${url.replace('/api', '/api')}`;
-    return url;
-  }
-
   if (url.startsWith('/todos')) {
     return `${TEST_URL}${url}`;
   }
-
-  return `${url}`;
+  return `${BASE_URL}${url}`;
 };
 
 /**
- *
- * @param url
- * @param options
- *
  * @example await fetchWrapper(url, options);
- *
  */
 
 export const fetchWrapper = async <T>(
   url: string,
-  options?: RequestInit,
-): Promise<TFetchResponse<T> | TFetchError> => {
+  options?: IRequestInit,
+): Promise<T> => {
   const accessToken = getCookie('accessToken');
+  const mergedOptions = Object.assign({}, defaultOptions, options);
 
   try {
-    let response;
-
-    response = await fetch(rewrite(url), {
-      ...defaultOptions,
+    const response = await fetch(rewrite(url), {
+      ...mergedOptions,
       headers: {
         Authorization: `Bearer ${accessToken}`,
-        ...(options?.headers || {}),
+        ...mergedOptions?.headers,
       },
-      ...options,
     });
 
     if (!response.ok) {
-      const error: TFetchError = {
+      const error = {
         message: `HTTP error! status: ${response.status}`,
         status: response.status,
         response: await response.json(),
       };
-
       throw error;
     }
 
-    if (response.status === 202) {
-      const accessToken_new = response.token;
-      setCookie('accessToken', accessToken_new);
+    const data = await response.json();
 
-      response.response = await fetch(isServer ? rewrite(url) : `${url}`, {
-        ...defaultOptions,
+    if (response.status === 202) {
+      const token = data.token;
+      setCookie('accessToken', token, 3);
+
+      const opt = {
+        ...mergedOptions,
         headers: {
-          Authorization: `Bearer ${accessToken_new}`,
-          ...(options?.headers || {}),
+          Authorization: `Bearer ${token}`,
+          ...mergedOptions?.headers,
         },
-        ...options,
-      });
+      };
+
+      const retry = await fetch(rewrite(url), opt);
+      return await retry.json();
     }
-    return await response.json();
+
+    return data;
   } catch (error) {
     if (url.startsWith('/api') && error.status === 406) {
+      // TODO: 로그인 모달로 이동
       location.replace('/');
     }
 

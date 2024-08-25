@@ -117,7 +117,7 @@ const Step2 = ({ setStep }) => {
       };
 
       const data = await fetchWrapper<Data>(
-        `${process.env.NEXT_PUBLIC_API_URL}/sign-in/duplication-check?email=${value}`,
+        `/sign-in/duplication-check?email=${value}`,
       );
       if (data.data.duplicationCheckResponse.dscCode === '0') {
         setEmailErrorMessage('이미 가입한 계정입니다.');
@@ -132,22 +132,19 @@ const Step2 = ({ setStep }) => {
   async function submit() {
     if (!canGoNext) return;
 
-    const response = await fetchWrapper(
-      `${process.env.NEXT_PUBLIC_API_URL}/sign-up`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: name,
-          email,
-          password,
-          phoneNum: phoneNumber,
-          roleDscCode: '1',
-        }),
+    const response = await fetchWrapper(`/sign-up`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-    );
+      body: JSON.stringify({
+        username: name,
+        email,
+        password,
+        phoneNum: phoneNumber,
+        roleDscCode: '1',
+      }),
+    });
 
     if (response) {
       setStep(3);

@@ -70,19 +70,16 @@ const UpdatePassword = ({
         data: { changeMyPasswordResponse: { dscCode: string } };
       };
 
-      const data = await fetchWrapper<Data>(
-        `${process.env.NEXT_PUBLIC_API_URL}/sign-in/my-password`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email,
-            password,
-          }),
+      const data = await fetchWrapper<Data>(`/sign-in/my-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
 
       if (data.data.changeMyPasswordResponse.dscCode === '1') {
         setComponent('updateCompleted');
@@ -276,7 +273,7 @@ const FindPassword = ({ setComponent, setParam }) => {
         };
 
         const data = await fetchWrapper<Data>(
-          `${process.env.NEXT_PUBLIC_API_URL}/sign-in/duplication-check?email=${value}`,
+          `/sign-in/duplication-check?email=${value}`,
         );
         if (data.data.duplicationCheckResponse.dscCode === '1') {
           // dscCode === "1" : 이메일 존재 X
@@ -290,18 +287,15 @@ const FindPassword = ({ setComponent, setParam }) => {
             type Data2 = {
               data: { response: { authCode: string } };
             };
-            const data = await fetchWrapper<Data2>(
-              `${process.env.NEXT_PUBLIC_API_URL}/sign-in/verification`,
-              {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  email: value,
-                }),
+            const data = await fetchWrapper<Data2>(`/sign-in/verification`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
               },
-            );
+              body: JSON.stringify({
+                email: value,
+              }),
+            });
             setAuthCode(data.data.response.authCode);
           } catch (error) {
             // console.log(error)
@@ -693,19 +687,16 @@ const FindEmail = ({ setComponent }) => {
           };
         };
       };
-      const data = await fetchWrapper<Data>(
-        `${process.env.NEXT_PUBLIC_API_URL}/sign-in/my-id`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            username: name,
-            phoneNum: phoneNumber,
-          }),
+      const data = await fetchWrapper<Data>(`/sign-in/my-id`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
+        body: JSON.stringify({
+          username: name,
+          phoneNum: phoneNumber,
+        }),
+      });
 
       setUserData(data.data.findMyIdResponse);
     } catch (error) {
@@ -960,21 +951,18 @@ const SignIn = ({ setComponent }) => {
       };
     };
     try {
-      const data = await fetchWrapper<Data>(
-        `${process.env.NEXT_PUBLIC_API_URL}/sign-in`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            // email,
-            // password,
-            email: isDev ? process.env.NEXT_PUBLIC_LOGIN_ID : email,
-            password: isDev ? process.env.NEXT_PUBLIC_LOGIN_PW : password,
-          }),
+      const data = await fetchWrapper<Data>(`/sign-in`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
+        body: JSON.stringify({
+          // email,
+          // password,
+          email: isDev ? process.env.NEXT_PUBLIC_LOGIN_ID : email,
+          password: isDev ? process.env.NEXT_PUBLIC_LOGIN_PW : password,
+        }),
+      });
 
       // 이메일 기억하기
       if (check) {
@@ -1165,18 +1153,15 @@ const LoginFailure = ({ setComponent, render }) => {
     if (!canGoNext) return;
 
     try {
-      await fetchWrapper(
-        `${process.env.NEXT_PUBLIC_API_URL}/sign-in/password-reset`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email,
-          }),
+      await fetchWrapper(`/sign-in/password-reset`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
-      );
+        body: JSON.stringify({
+          email,
+        }),
+      });
       setStauts('success');
     } catch (error) {
       if (
@@ -1452,21 +1437,18 @@ const OAuth = ({ setComponent, render }) => {
               };
             };
           };
-          const data = await fetchWrapper<Data>(
-            `${process.env.NEXT_PUBLIC_API_URL}/login/oauth2/code/google`,
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                access_token: response.access_token,
-                state: '',
-                token_type: response.token_type,
-                expires_in: response.expires_in + '',
-              }),
+          const data = await fetchWrapper<Data>(`/login/oauth2/code/google`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
             },
-          );
+            body: JSON.stringify({
+              access_token: response.access_token,
+              state: '',
+              token_type: response.token_type,
+              expires_in: response.expires_in + '',
+            }),
+          });
 
           setCookie('accessToken', data.data.loginResponseDto.accessToken, 3);
 
