@@ -28,6 +28,9 @@ interface ISignUpProps {
   render: Dispatch<SetStateAction<boolean>>;
 }
 
+type Component = 'signup' | 'signin';
+type SetComponent = Dispatch<SetStateAction<Component>>;
+
 const Step1 = ({ setStep }) => {
   const theme = useTheme();
   const [canGoNext, setCanGoNext] = useState(false);
@@ -115,8 +118,7 @@ const Step1 = ({ setStep }) => {
   );
 };
 
-const Step2 = ({ setStep }) => {
-  // const theme = useTheme();
+const Step2 = ({ setComponent }: { setComponent: SetComponent }) => {
   const [canGoNext, setCanGoNext] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -129,6 +131,7 @@ const Step2 = ({ setStep }) => {
     email: true,
     password: true,
     name: true,
+    // TODO: check phoneNumber
     // phoneNumber: true,
   });
 
@@ -181,7 +184,7 @@ const Step2 = ({ setStep }) => {
     });
 
     if (response) {
-      setStep(3);
+      setComponent('signin');
     }
   }
 
@@ -359,7 +362,7 @@ const Step2 = ({ setStep }) => {
   );
 };
 
-const SignUp = ({ step = 1, setStep, render }) => {
+const SignUp = ({ step = 1, setStep, setComponent }) => {
   return (
     <div
       css={css`
@@ -367,26 +370,25 @@ const SignUp = ({ step = 1, setStep, render }) => {
       `}
     >
       {step === 1 && <Step1 setStep={setStep} />}
-      {step === 2 && <Step2 setStep={setStep} />}
+      {step === 2 && <Step2 setComponent={setComponent} />}
     </div>
   );
 };
 
-const SignUpModal = ({ render }) => {
+const SignUpModal = ({ render }: ISignUpProps) => {
   const [step, setStep] = useState(1);
-
+  const [component, setComponent] = useState<Component>('signup');
   return (
     <>
-      {step < 3 ? (
+      {component === 'signup' && (
         <UserPopup
           title={step === 1 ? '이용약관 동의' : '회원가입'}
           render={render}
         >
-          <SignUp step={step} setStep={setStep} render={render} />
+          <SignUp step={step} setStep={setStep} setComponent={setComponent} />
         </UserPopup>
-      ) : (
-        <SignInModal render={render} />
       )}
+      {component === 'signin' && <SignInModal render={render} />}
     </>
   );
 };
