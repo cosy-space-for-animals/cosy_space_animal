@@ -3,7 +3,7 @@ import { Dispatch, SetStateAction, useState } from 'react';
 
 interface ICheckButtonProps {
   checked: boolean;
-  setChecked: Dispatch<SetStateAction<boolean>>;
+  setChecked?: Dispatch<SetStateAction<boolean>>;
   disabled?: boolean;
 }
 
@@ -13,7 +13,7 @@ export default function CheckButton({
   disabled = false,
 }: ICheckButtonProps) {
   function click() {
-    setChecked((prev) => !prev);
+    if (setChecked) setChecked((prev) => !prev);
   }
 
   return (

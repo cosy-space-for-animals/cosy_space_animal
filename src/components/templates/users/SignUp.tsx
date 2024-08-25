@@ -22,15 +22,18 @@ import {
   type SetStateAction,
 } from 'react';
 import SignInModal from './SignIn';
+import CheckBoxWithLabel from '@/components/molecules/CheckBoxWithLabel';
 
 interface ISignUpProps {
   render: Dispatch<SetStateAction<boolean>>;
 }
 
 const Step1 = ({ setStep }) => {
+  const theme = useTheme();
   const [canGoNext, setCanGoNext] = useState(false);
   const [selected, setSelected] = useState<Set<number>>(new Set([]));
   const [data, setData] = useState<Nullable<Array<TAccordionMenuItem>>>(null);
+  const [isSelectedAll, setIsSelectedAll] = useState(false);
 
   function goToNextStep() {
     if (!canGoNext) return;
@@ -42,12 +45,21 @@ const Step1 = ({ setStep }) => {
       {
         id: number;
         required: boolean;
-        title: 'string';
+        title: string;
         desc: Nullable<string>;
       },
     ];
     const data = await fetchWrapper<Data>(`/public/data/signup/agree.json`);
     setData(data);
+  }
+
+  function selectAll() {
+    if (isSelectedAll) {
+      setSelected(new Set());
+    } else {
+      const _data = data?.map((v) => v.id);
+      setSelected(new Set(_data));
+    }
   }
 
   useEffect(() => {
@@ -63,12 +75,34 @@ const Step1 = ({ setStep }) => {
     }
   }, [selected, data]);
 
+  useEffect(() => {
+    if (data?.length === selected.size) {
+      setIsSelectedAll(true);
+    } else {
+      setIsSelectedAll(false);
+    }
+  }, [data, selected]);
+
   return (
     <div>
+      <div
+        css={css`
+          padding: 16px 0;
+          border-bottom: 1px solid ${theme.colors.grey[200]};
+          margin-bottom: 16px;
+        `}
+      >
+        <CheckBoxWithLabel
+          name='select all'
+          value={isSelectedAll}
+          onChange={selectAll}
+          label='전체 동의합니다.'
+        />
+      </div>
       {data?.map((v) => (
         <AccordionMenuItem
           key={v.id}
-          title={`[필수] ${v.title}`}
+          title={`${v.required ? '[필수] ' : ''}${v.title}`}
           data={v}
           selected={selected}
           setSelected={setSelected}

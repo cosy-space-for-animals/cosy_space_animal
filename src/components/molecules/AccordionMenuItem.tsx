@@ -48,7 +48,8 @@ export default function AccordionMenuItem({
   return (
     <div
       css={css`
-        padding: 20px;
+        padding: 20px 0;
+
         &:not(:first-of-type) {
           padding-top: 0;
         }
