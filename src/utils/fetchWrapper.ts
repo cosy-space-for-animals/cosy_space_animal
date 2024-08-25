@@ -15,12 +15,14 @@ const defaultOptions = {
 };
 
 const rewrite = (url: string): string => {
+  if (url.startsWith(`/public`)) {
+    // for local(public) json files
+    return url.slice(7);
+  }
   if (url.startsWith('/todos')) {
     return `${TEST_URL}${url}`;
   }
-
   return `${BASE_URL}${url}`;
-
 };
 
 /**
