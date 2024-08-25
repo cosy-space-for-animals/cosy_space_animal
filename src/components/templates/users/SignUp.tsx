@@ -38,7 +38,15 @@ const Step1 = ({ setStep }) => {
   }
 
   async function fetchData() {
-    const data = await fetchWrapper(`/data/signup/agree.json`);
+    type Data = [
+      {
+        id: number;
+        required: boolean;
+        title: 'string';
+        desc: Nullable<string>;
+      },
+    ];
+    const data = await fetchWrapper<Data>(`/data/signup/agree.json`);
     setData(data);
   }
 
@@ -99,7 +107,16 @@ const Step2 = ({ setStep }) => {
       setEmailErrorMessage('이메일을 정확히 입력해주세요.');
       return false;
     } else {
-      const data = await fetchWrapper(
+      type Data = {
+        data: {
+          duplicationCheckResponse: {
+            dscCode: string;
+            errMessage: string;
+          };
+        };
+      };
+
+      const data = await fetchWrapper<Data>(
         `${process.env.NEXT_PUBLIC_API_URL}/sign-in/duplication-check?email=${value}`,
       );
       if (data.data.duplicationCheckResponse.dscCode === '0') {

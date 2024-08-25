@@ -65,8 +65,13 @@ const UpdatePassword = ({
 
   async function submit() {
     // email
+
     try {
-      const response = await fetchWrapper(
+      type Data = {
+        data: { changeMyPasswordResponse: { dscCode: string } };
+      };
+
+      const data = await fetchWrapper<Data>(
         `${process.env.NEXT_PUBLIC_API_URL}/sign-in/my-password`,
         {
           method: 'POST',
@@ -80,7 +85,7 @@ const UpdatePassword = ({
         },
       );
 
-      if (response.data.changeMyPasswordResponse.dscCode === '1') {
+      if (data.data.changeMyPasswordResponse.dscCode === '1') {
         setComponent('updateCompleted');
       }
     } catch (error) {
@@ -267,7 +272,11 @@ const FindPassword = ({ setComponent, setParam }) => {
     if (!verification) {
       // 중복체크
       try {
-        const data = await fetchWrapper(
+        type Data = {
+          data: { duplicationCheckResponse: { dscCode: string } };
+        };
+
+        const data = await fetchWrapper<Data>(
           `${process.env.NEXT_PUBLIC_API_URL}/sign-in/duplication-check?email=${value}`,
         );
         if (data.data.duplicationCheckResponse.dscCode === '1') {
@@ -279,7 +288,10 @@ const FindPassword = ({ setComponent, setParam }) => {
           setErrorMessge(false);
           setVerification(true);
           try {
-            const response = await fetchWrapper(
+            type Data2 = {
+              data: { response: { authCode: string } };
+            };
+            const data = await fetchWrapper<Data2>(
               `${process.env.NEXT_PUBLIC_API_URL}/sign-in/verification`,
               {
                 method: 'POST',
@@ -291,7 +303,7 @@ const FindPassword = ({ setComponent, setParam }) => {
                 }),
               },
             );
-            setAuthCode(response.data.response.authCode);
+            setAuthCode(data.data.response.authCode);
           } catch (error) {
             // console.log(error)
           }
@@ -673,7 +685,10 @@ const FindEmail = ({ setComponent }) => {
     if (!name || !phoneNumber) return;
 
     try {
-      const response = await fetchWrapper(
+      type Data = {
+        data: { findMyIdResponse: any };
+      };
+      const data = await fetchWrapper<Data>(
         `${process.env.NEXT_PUBLIC_API_URL}/sign-in/my-id`,
         {
           method: 'POST',
@@ -687,7 +702,7 @@ const FindEmail = ({ setComponent }) => {
         },
       );
 
-      setUserData(response.data.findMyIdResponse);
+      setUserData(data.data.findMyIdResponse);
     } catch (error) {
       // console.log(error)
     }
@@ -926,8 +941,21 @@ const SignIn = ({ setComponent }) => {
   async function submit() {
     if (!Object.values(error).every((v) => v === false)) return;
 
+    type Data = {
+      data: {
+        loginInfo: {
+          username: string;
+          userStatus: string;
+          phoneNumYn: 'Y' | 'N';
+          userRole: string;
+          loginFailCount: number;
+          accessToken: string;
+          memberId: string;
+        };
+      };
+    };
     try {
-      const response = await fetchWrapper(
+      const data = await fetchWrapper<Data>(
         `${process.env.NEXT_PUBLIC_API_URL}/sign-in`,
         {
           method: 'POST',
@@ -935,10 +963,10 @@ const SignIn = ({ setComponent }) => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            email,
-            password,
-            // email: isDev ? process.env.NEXT_PUBLIC_LOGIN_ID : email,
-            // password: isDev ? process.env.NEXT_PUBLIC_LOGIN_PW : password,
+            // email,
+            // password,
+            email: isDev ? process.env.NEXT_PUBLIC_LOGIN_ID : email,
+            password: isDev ? process.env.NEXT_PUBLIC_LOGIN_PW : password,
           }),
         },
       );
@@ -952,7 +980,7 @@ const SignIn = ({ setComponent }) => {
 
       // accessToken 저장
       // TODO: 만료일 수정
-      const accessToken = response.data.loginInfo.accessToken;
+      const accessToken = data.data.loginInfo.accessToken;
       setCookie('accessToken', accessToken, 30);
       setErrorCode(null);
 
@@ -1406,7 +1434,20 @@ const OAuth = ({ setComponent, render }) => {
     onSuccess: (response) => {
       (async function (response: TokenResponse) {
         try {
-          const data = await fetchWrapper(
+          type Data = {
+            data: {
+              loginResponseDto: {
+                username: string;
+                userStatus: string;
+                phoneNumYn: 'Y' | 'N';
+                userRole: string;
+                accessToken: string;
+                email: string;
+                memberId: string;
+              };
+            };
+          };
+          const data = await fetchWrapper<Data>(
             `${process.env.NEXT_PUBLIC_API_URL}/login/oauth2/code/google`,
             {
               method: 'POST',
@@ -1421,7 +1462,6 @@ const OAuth = ({ setComponent, render }) => {
               }),
             },
           );
-          console.log(data);
 
           setCookie('accessToken', data.data.loginResponseDto.accessToken);
 
