@@ -37,10 +37,21 @@ declare global {
     naver: any;
   }
 }
-
+type Render = Dispatch<SetStateAction<boolean>>;
 interface ISignUpProps {
-  render: Dispatch<SetStateAction<boolean>>;
+  render: Render;
 }
+type UserComponent =
+  | 'oauth'
+  | 'signUp'
+  | 'signIn'
+  | 'findEmail'
+  | 'findPassword'
+  | 'updatePassword'
+  | 'updateCompleted'
+  | 'loginFailure'
+  | 'checkPhoneNumber';
+type SetUserComponent = Dispatch<SetStateAction<UserComponent>>;
 
 const UpdatePassword = ({
   render,
@@ -48,6 +59,12 @@ const UpdatePassword = ({
   component,
   param,
   setParam,
+}: {
+  render: Render;
+  setComponent: SetUserComponent;
+  component: UserComponent;
+  param: { [key: string]: string };
+  setParam: Dispatch<SetStateAction<{ [key: string]: string }>>;
 }) => {
   const { email } = param;
   const theme = useTheme();
@@ -135,7 +152,7 @@ const UpdatePassword = ({
           </RoundButton>
           <RoundButton
             onClick={() => {
-              setComponent('singIn');
+              setComponent('signIn');
             }}
             type='filled'
           >
@@ -222,7 +239,13 @@ const UpdatePassword = ({
   );
 };
 
-const FindPassword = ({ setComponent, setParam }) => {
+const FindPassword = ({
+  setComponent,
+  setParam,
+}: {
+  setComponent: SetUserComponent;
+  setParam: Dispatch<SetStateAction<{ [key: string]: string }>>;
+}) => {
   const theme = useTheme();
   const [value, setValue] = useState('');
   const phoneNumberInputRef = useRef<HTMLInputElement>(null);
@@ -659,7 +682,7 @@ const FindPassword = ({ setComponent, setParam }) => {
   );
 };
 
-const FindEmail = ({ setComponent }) => {
+const FindEmail = ({ setComponent }: { setComponent: SetUserComponent }) => {
   const theme = useTheme();
   const [name, setName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -913,7 +936,7 @@ const FindEmail = ({ setComponent }) => {
     </div>
   );
 };
-const SignIn = ({ setComponent }) => {
+const SignIn = ({ setComponent }: { setComponent: SetUserComponent }) => {
   const router = useRouter();
   const localStorageEmail = getItemWithExpireDate('email');
   const isDev = Boolean(process.env.NODE_ENV === 'development');
@@ -1417,9 +1440,14 @@ const CheckPhoneNumber = ({ setComponent }) => {
   );
 };
 
-const OAuth = ({ setComponent, render }) => {
+const OAuth = ({
+  setComponent,
+  render,
+}: {
+  setComponent: SetUserComponent;
+  render: Render;
+}) => {
   const theme = useTheme();
-
   const googleLogin = useGoogleLogin({
     onSuccess: (response) => {
       (async function (response: TokenResponse) {
@@ -1453,7 +1481,6 @@ const OAuth = ({ setComponent, render }) => {
           setCookie('accessToken', data.data.loginResponseDto.accessToken, 3);
 
           if (data.data.loginResponseDto.phoneNumYn === 'N') {
-            // TODO: 번호등록 모달로 이동
             setComponent('checkPhoneNumber');
           } else {
             render(false);
@@ -1609,51 +1636,46 @@ const OAuth = ({ setComponent, render }) => {
 };
 
 const SignInModal = ({ render }: ISignUpProps) => {
-  const [component, setComponent] = useState<
-    | 'oauth'
-    | 'signUp'
-    | 'signIn'
-    | 'findEmail'
-    | 'findPassword'
-    | 'updatePassword'
-    | 'updateCompleted'
-    | 'loginFailure'
-    | 'checkPhoneNumber'
-  >('oauth');
+  const [component, setComponent] = useState<UserComponent>('oauth');
+  const [step, setStep] = useState<1 | 2>(1);
+  const [param, setParam] = useState<{ [key: string]: string }>({});
 
-  const [step, setStep] = useState(1);
-  const [param, setParam] = useState({});
-
-  function titleHandler(): string {
+  function handleTitle(): string {
     if (component === 'signUp') {
       return step === 1 ? '이용약관 동의' : '회원가입';
-    } else if (component === 'signIn') {
-      return '이메일 로그인';
-    } else if (component === 'findEmail') {
-      return '이메일 찾기';
-    } else if (component === 'findPassword') {
-      return '비밀번호 찾기';
-    } else if (component === 'updatePassword') {
-      return '비밀번호 재설정';
-    } else if (component === 'oauth') {
-      return '시작하기';
-    } else if (component === 'loginFailure') {
-      return '로그인 실패';
-    } else if (component === 'checkPhoneNumber') {
-      return '휴대폰 인증';
-    } else {
-      return '';
     }
+    if (component === 'signIn') {
+      return '이메일 로그인';
+    }
+    if (component === 'findEmail') {
+      return '이메일 찾기';
+    }
+    if (component === 'findPassword') {
+      return '비밀번호 찾기';
+    }
+    if (component === 'updatePassword') {
+      return '비밀번호 재설정';
+    }
+    if (component === 'oauth') {
+      return '시작하기';
+    }
+    if (component === 'loginFailure') {
+      return '로그인 실패';
+    }
+    if (component === 'checkPhoneNumber') {
+      return '휴대폰 인증';
+    }
+    return '';
   }
 
   return (
-    <UserPopup title={titleHandler()} render={render}>
+    <UserPopup title={handleTitle()} render={render}>
       {component === 'oauth' && (
         <OAuth setComponent={setComponent} render={render} />
       )}
       {component === 'signIn' && <SignIn setComponent={setComponent} />}
       {component === 'signUp' && (
-        <SignUp step={step} setStep={setStep} render={render} />
+        <SignUp step={step} setStep={setStep} setComponent={setComponent} />
       )}
       {component === 'findEmail' && <FindEmail setComponent={setComponent} />}
       {component === 'findPassword' && (
