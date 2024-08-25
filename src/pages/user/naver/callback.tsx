@@ -40,7 +40,7 @@ const NaverCallback: React.FC = () => {
             },
           );
           const accessToken = data.data.loginResponseDto.accessToken;
-          setCookie('accessToken', accessToken, 30);
+          setCookie('accessToken', accessToken, 3);
 
           router.push('/');
         } catch (error) {

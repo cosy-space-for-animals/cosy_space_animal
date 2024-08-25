@@ -5,7 +5,6 @@ import InputPasswordItem from '@/components/atoms/input/InputPasswordItem';
 import UserPopup from '@/components/molecules/users/userPopup';
 import {
   getItemWithExpireDate,
-  restrictToNumbers,
   setCookie,
   setItemWithExpireDate,
   validateEmail,
@@ -987,7 +986,7 @@ const SignIn = ({ setComponent }) => {
       // accessToken 저장
       // TODO: 만료일 수정
       const accessToken = data.data.loginInfo.accessToken;
-      setCookie('accessToken', accessToken, 30);
+      setCookie('accessToken', accessToken, 3);
       setErrorCode(null);
 
       router.reload();
@@ -1469,7 +1468,7 @@ const OAuth = ({ setComponent, render }) => {
             },
           );
 
-          setCookie('accessToken', data.data.loginResponseDto.accessToken);
+          setCookie('accessToken', data.data.loginResponseDto.accessToken, 3);
 
           if (data.data.loginResponseDto.phoneNumYn === 'N') {
             // TODO: 번호등록 모달로 이동
