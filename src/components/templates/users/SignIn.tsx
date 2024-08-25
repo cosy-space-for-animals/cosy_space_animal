@@ -675,7 +675,7 @@ const FindEmail = ({ setComponent }) => {
     Nullable<{
       dscCode: string;
       email: string;
-      socialLoginProvider: string;
+      socialLoginProvider: Nullable<string>;
     }>
   >(null);
 
@@ -686,7 +686,13 @@ const FindEmail = ({ setComponent }) => {
 
     try {
       type Data = {
-        data: { findMyIdResponse: any };
+        data: {
+          findMyIdResponse: {
+            dscCode: string;
+            email: string;
+            socialLoginProvider: Nullable<string>;
+          };
+        };
       };
       const data = await fetchWrapper<Data>(
         `${process.env.NEXT_PUBLIC_API_URL}/sign-in/my-id`,
