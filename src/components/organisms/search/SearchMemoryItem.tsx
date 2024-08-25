@@ -63,7 +63,7 @@ const SearchMemoryItem = ({
           css={css`
             display: flex;
             flex-direction: column;
-            font-size: ${theme.fontSizes.sm};
+            font-size: ${theme.fontSizes.sm}px;
           `}
         >
           <p

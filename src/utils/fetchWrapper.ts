@@ -18,7 +18,9 @@ const rewrite = (url: string): string => {
   if (url.startsWith('/todos')) {
     return `${TEST_URL}${url}`;
   }
+
   return `${BASE_URL}${url}`;
+
 };
 
 /**
@@ -35,6 +37,7 @@ export const fetchWrapper = async <T>(
   try {
     const response = await fetch(rewrite(url), {
       ...mergedOptions,
+
       headers: {
         Authorization: `Bearer ${accessToken}`,
         ...mergedOptions?.headers,
