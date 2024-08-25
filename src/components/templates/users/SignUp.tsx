@@ -46,7 +46,7 @@ const Step1 = ({ setStep }) => {
         desc: Nullable<string>;
       },
     ];
-    const data = await fetchWrapper<Data>(`/data/signup/agree.json`);
+    const data = await fetchWrapper<Data>(`/public/data/signup/agree.json`);
     setData(data);
   }
 
