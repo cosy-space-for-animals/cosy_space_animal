@@ -64,7 +64,7 @@ const InputMobileVerification: React.FC<any> = ({
     if (!verification) {
       try {
         const { data } = await fetchWrapper(
-          `${process.env.NEXT_PUBLIC_API_URL}/send-sms?recipientPhone=${value}`,
+          `/send-sms?recipientPhone=${value}`,
         );
         setCode(data);
         setVerification(true);

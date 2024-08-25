@@ -38,7 +38,15 @@ const Step1 = ({ setStep }) => {
   }
 
   async function fetchData() {
-    const data = await fetchWrapper(`/data/signup/agree.json`);
+    type Data = [
+      {
+        id: number;
+        required: boolean;
+        title: 'string';
+        desc: Nullable<string>;
+      },
+    ];
+    const data = await fetchWrapper<Data>(`/data/signup/agree.json`);
     setData(data);
   }
 
@@ -99,8 +107,17 @@ const Step2 = ({ setStep }) => {
       setEmailErrorMessage('이메일을 정확히 입력해주세요.');
       return false;
     } else {
-      const data = await fetchWrapper(
-        `${process.env.NEXT_PUBLIC_API_URL}/sign-in/duplication-check?email=${value}`,
+      type Data = {
+        data: {
+          duplicationCheckResponse: {
+            dscCode: string;
+            errMessage: string;
+          };
+        };
+      };
+
+      const data = await fetchWrapper<Data>(
+        `/sign-in/duplication-check?email=${value}`,
       );
       if (data.data.duplicationCheckResponse.dscCode === '0') {
         setEmailErrorMessage('이미 가입한 계정입니다.');
@@ -115,22 +132,19 @@ const Step2 = ({ setStep }) => {
   async function submit() {
     if (!canGoNext) return;
 
-    const response = await fetchWrapper(
-      `${process.env.NEXT_PUBLIC_API_URL}/sign-up`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: name,
-          email,
-          password,
-          phoneNum: phoneNumber,
-          roleDscCode: '1',
-        }),
+    const response = await fetchWrapper(`/sign-up`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-    );
+      body: JSON.stringify({
+        username: name,
+        email,
+        password,
+        phoneNum: phoneNumber,
+        roleDscCode: '1',
+      }),
+    });
 
     if (response) {
       setStep(3);

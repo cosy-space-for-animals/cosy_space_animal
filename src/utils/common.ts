@@ -201,11 +201,15 @@ export function getItemWithExpireDate(key: string) {
   return obj.value;
 }
 
-export const setCookie = (name: string, value: string, days?: number): void => {
+export const setCookie = (
+  name: string,
+  value: string,
+  hours?: number,
+): void => {
   let expires = '';
-  if (days) {
+  if (hours) {
     const date = new Date();
-    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+    date.setTime(date.getTime() + hours * 60 * 60 * 1000);
     expires = `; expires=${date.toUTCString()}`;
   }
   document.cookie = `${name}=${value || ''}${expires};`;
@@ -224,7 +228,14 @@ export const getCookie = (name: string): string | null => {
   return null;
 };
 
-type DateFormat = 'YYYY-MM-DD' | 'YYYY-MM-DD hh:mm:ss' | 'YY-MM-DD' | 'YY-MM-DD hh:mm:ss' | 'MM-DD' | 'MM-DD hh:mm:ss' | string;
+type DateFormat =
+  | 'YYYY-MM-DD'
+  | 'YYYY-MM-DD hh:mm:ss'
+  | 'YY-MM-DD'
+  | 'YY-MM-DD hh:mm:ss'
+  | 'MM-DD'
+  | 'MM-DD hh:mm:ss'
+  | string;
 
 /**
  * @description 날짜를 포맷에 맞게 변환합니다.
@@ -232,7 +243,11 @@ type DateFormat = 'YYYY-MM-DD' | 'YYYY-MM-DD hh:mm:ss' | 'YY-MM-DD' | 'YY-MM-DD 
  * @param format
  * @param defaultValue
  */
-export function formatDate(date: string | number | Date, format: DateFormat, defaultValue: string = ''): string {
+export function formatDate(
+  date: string | number | Date,
+  format: DateFormat,
+  defaultValue: string = '',
+): string {
   if (!date) return defaultValue;
   date = new Date(date);
   const pad = (num: number) => (num < 10 ? '0' + num : num);
@@ -247,11 +262,14 @@ export function formatDate(date: string | number | Date, format: DateFormat, def
   const second = pad(date.getSeconds());
 
   if (format === 'YYYY-MM-DD') return `${yearFull}-${month}-${day}`;
-  if (format === 'YYYY-MM-DD hh:mm:ss') return `${yearFull}-${month}-${day} ${hour}:${minute}:${second}`;
+  if (format === 'YYYY-MM-DD hh:mm:ss')
+    return `${yearFull}-${month}-${day} ${hour}:${minute}:${second}`;
   if (format === 'YY-MM-DD') return `${year}-${month}-${day}`;
-  if (format === 'YY-MM-DD hh:mm:ss') return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+  if (format === 'YY-MM-DD hh:mm:ss')
+    return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
   if (format === 'MM-DD') return `${month}-${day}`;
-  if (format === 'MM-DD hh:mm:ss') return `${month}-${day} ${hour}:${minute}:${second}`;
+  if (format === 'MM-DD hh:mm:ss')
+    return `${month}-${day} ${hour}:${minute}:${second}`;
 
   return format
     .replace(/YYYY/g, yearFull.toString())

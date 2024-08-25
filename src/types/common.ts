@@ -36,17 +36,23 @@ export interface IInputItemProps2 {
   setError?: Dispatch<SetStateAction<{ [key: string]: boolean }>>;
 }
 
-export type TInputDateProps = TOverride<IInputItemProps, {
-  value: string;
-  deleteBtn?: boolean;
-  min?: string | Date;
-  max?: string | Date;
-}>;
+export type TInputDateProps = TOverride<
+  IInputItemProps,
+  {
+    value: string;
+    deleteBtn?: boolean;
+    min?: string | Date;
+    max?: string | Date;
+  }
+>;
 
-export type TTextareaProps = TOverride<IInputItemProps, {
-  value: string;
-  maxLength: number;
-}>;
+export type TTextareaProps = TOverride<
+  IInputItemProps,
+  {
+    value: string;
+    maxLength: number;
+  }
+>;
 
 export type TUploadImageResponse = {
   url: string;
@@ -62,4 +68,5 @@ export type TFetchResponse<T> = {
 export type TFetchError = {
   status: number;
   message: string;
+  response: Response;
 };
